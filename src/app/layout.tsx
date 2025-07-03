@@ -1,4 +1,5 @@
 import '@/app/globals.css'
+import { primFont } from '@/fonts'
 import type { Metadata } from 'next'
 import { connection } from 'next/server'
 
@@ -18,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      className={`scroll-smooth  antialiased`}
+      className={`${primFont.className} scroll-smooth  antialiased`}
       lang="pt"
       suppressHydrationWarning
     >

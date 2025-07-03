@@ -1,8 +1,7 @@
 import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { Bitcoin, Handshake } from 'lucide-react'
 import Image from 'next/image'
-import { ArrowBigLeft, ArrowBigRight, Send } from 'lucide-react'
-import { secFont } from '@/fonts'
+import Link from 'next/link'
 
 export default function Home() {
   return (
@@ -11,13 +10,17 @@ export default function Home() {
         <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold">
           git-freelas
         </h1>
-        <div className=" w-full flex flex-col-reverse md:flex-row  justify-center items-center gap-4">
-          <p className="flex flex-col flex-1 gap-8 md:gap-4 text-lg md:text-xl lg:text-2xl text-left">
-            Encontre profissionais freelancers ou oportunidades de freelas.
-          </p>
-          <p className="flex flex-col flex-1 gap-8 md:gap-4 text-lg md:text-xl lg:text-2xl text-left">
-            Pague e receba em cripto.
-          </p>
+        <div className=" w-full flex flex-col-reverse md:flex-row items-center gap-4 px-6 sm:px-0">
+          <div className="flex flex-col gap-4 items-start justify-start  ">
+            <p className="flex max-w-200 md:flex-col items-start gap-2 text-lg md:text-xl lg:text-3xl  text-left font-bold">
+              <Handshake className="w-10 h-10 md:w-20 md:h-20" />
+              Encontre profissionais freelancers ou oportunidades de freelas.
+            </p>
+            <p className="flex max-w-200 md:flex-col items-start  gap-2 text-lg md:text-xl lg:text-3xl  text-left font-bold">
+              <Bitcoin className="w-10 h-10 md:w-20 md:h-20" />
+              Pague e receba em cripto.
+            </p>
+          </div>
           <Image
             src="/hero.png"
             alt="Hero Image"
