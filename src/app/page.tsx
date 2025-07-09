@@ -1,3 +1,4 @@
+import { ConnectWallet } from '@/components/web3/connect-wallet'
 import { Button } from '@/components/ui/button'
 import { Bitcoin, Handshake } from 'lucide-react'
 import Image from 'next/image'
@@ -35,6 +36,7 @@ export default function Home() {
               Login
             </Button>
           </Link>
+          <ConnectWallet />
         </div>
       </div>
     </div>

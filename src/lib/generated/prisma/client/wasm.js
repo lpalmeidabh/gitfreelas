@@ -167,6 +167,59 @@ exports.Prisma.VerificationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.TaskScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  requirements: 'requirements',
+  valueInWei: 'valueInWei',
+  deadline: 'deadline',
+  allowOverdue: 'allowOverdue',
+  status: 'status',
+  contractTaskId: 'contractTaskId',
+  creatorId: 'creatorId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.TaskDeveloperScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  developerId: 'developerId',
+  walletAddress: 'walletAddress',
+  networkId: 'networkId',
+  appliedAt: 'appliedAt',
+  acceptedAt: 'acceptedAt'
+};
+
+exports.Prisma.TaskRepositoryScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  repositoryName: 'repositoryName',
+  repositoryUrl: 'repositoryUrl',
+  githubRepoId: 'githubRepoId',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.BlockchainTransactionScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  userId: 'userId',
+  type: 'type',
+  status: 'status',
+  txHash: 'txHash',
+  blockNumber: 'blockNumber',
+  gasUsed: 'gasUsed',
+  valueInWei: 'valueInWei',
+  networkId: 'networkId',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  confirmedAt: 'confirmedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -181,13 +234,40 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.TaskStatus = exports.$Enums.TaskStatus = {
+  OPEN: 'OPEN',
+  APPLIED: 'APPLIED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  PENDING_APPROVAL: 'PENDING_APPROVAL',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  OVERDUE: 'OVERDUE',
+  REFUNDED: 'REFUNDED'
+};
 
+exports.TransactionType = exports.$Enums.TransactionType = {
+  DEPOSIT: 'DEPOSIT',
+  RELEASE: 'RELEASE',
+  REFUND: 'REFUND',
+  PLATFORM_FEE: 'PLATFORM_FEE'
+};
+
+exports.TransactionStatus = exports.$Enums.TransactionStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification'
+  Verification: 'Verification',
+  Task: 'Task',
+  TaskDeveloper: 'TaskDeveloper',
+  TaskRepository: 'TaskRepository',
+  BlockchainTransaction: 'BlockchainTransaction'
 };
 
 /**

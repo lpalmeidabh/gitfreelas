@@ -33,6 +33,77 @@ export type Account = $Result.DefaultSelection<Prisma.$AccountPayload>
  * 
  */
 export type Verification = $Result.DefaultSelection<Prisma.$VerificationPayload>
+/**
+ * Model Task
+ * 
+ */
+export type Task = $Result.DefaultSelection<Prisma.$TaskPayload>
+/**
+ * Model TaskDeveloper
+ * 
+ */
+export type TaskDeveloper = $Result.DefaultSelection<Prisma.$TaskDeveloperPayload>
+/**
+ * Model TaskRepository
+ * 
+ */
+export type TaskRepository = $Result.DefaultSelection<Prisma.$TaskRepositoryPayload>
+/**
+ * Model BlockchainTransaction
+ * 
+ */
+export type BlockchainTransaction = $Result.DefaultSelection<Prisma.$BlockchainTransactionPayload>
+
+/**
+ * Enums
+ */
+export namespace $Enums {
+  export const TaskStatus: {
+  OPEN: 'OPEN',
+  APPLIED: 'APPLIED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  PENDING_APPROVAL: 'PENDING_APPROVAL',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  OVERDUE: 'OVERDUE',
+  REFUNDED: 'REFUNDED'
+};
+
+export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
+
+
+export const TransactionType: {
+  DEPOSIT: 'DEPOSIT',
+  RELEASE: 'RELEASE',
+  REFUND: 'REFUND',
+  PLATFORM_FEE: 'PLATFORM_FEE'
+};
+
+export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]
+
+
+export const TransactionStatus: {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type TransactionStatus = (typeof TransactionStatus)[keyof typeof TransactionStatus]
+
+}
+
+export type TaskStatus = $Enums.TaskStatus
+
+export const TaskStatus: typeof $Enums.TaskStatus
+
+export type TransactionType = $Enums.TransactionType
+
+export const TransactionType: typeof $Enums.TransactionType
+
+export type TransactionStatus = $Enums.TransactionStatus
+
+export const TransactionStatus: typeof $Enums.TransactionStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -198,6 +269,46 @@ export class PrismaClient<
     * ```
     */
   get verification(): Prisma.VerificationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.task`: Exposes CRUD operations for the **Task** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Tasks
+    * const tasks = await prisma.task.findMany()
+    * ```
+    */
+  get task(): Prisma.TaskDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.taskDeveloper`: Exposes CRUD operations for the **TaskDeveloper** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TaskDevelopers
+    * const taskDevelopers = await prisma.taskDeveloper.findMany()
+    * ```
+    */
+  get taskDeveloper(): Prisma.TaskDeveloperDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.taskRepository`: Exposes CRUD operations for the **TaskRepository** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TaskRepositories
+    * const taskRepositories = await prisma.taskRepository.findMany()
+    * ```
+    */
+  get taskRepository(): Prisma.TaskRepositoryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.blockchainTransaction`: Exposes CRUD operations for the **BlockchainTransaction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BlockchainTransactions
+    * const blockchainTransactions = await prisma.blockchainTransaction.findMany()
+    * ```
+    */
+  get blockchainTransaction(): Prisma.BlockchainTransactionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -641,7 +752,11 @@ export namespace Prisma {
     User: 'User',
     Session: 'Session',
     Account: 'Account',
-    Verification: 'Verification'
+    Verification: 'Verification',
+    Task: 'Task',
+    TaskDeveloper: 'TaskDeveloper',
+    TaskRepository: 'TaskRepository',
+    BlockchainTransaction: 'BlockchainTransaction'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -660,7 +775,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification"
+      modelProps: "user" | "session" | "account" | "verification" | "task" | "taskDeveloper" | "taskRepository" | "blockchainTransaction"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -960,6 +1075,302 @@ export namespace Prisma {
           }
         }
       }
+      Task: {
+        payload: Prisma.$TaskPayload<ExtArgs>
+        fields: Prisma.TaskFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TaskFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TaskFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          findFirst: {
+            args: Prisma.TaskFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TaskFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          findMany: {
+            args: Prisma.TaskFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>[]
+          }
+          create: {
+            args: Prisma.TaskCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          createMany: {
+            args: Prisma.TaskCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TaskCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>[]
+          }
+          delete: {
+            args: Prisma.TaskDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          update: {
+            args: Prisma.TaskUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          deleteMany: {
+            args: Prisma.TaskDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TaskUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TaskUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>[]
+          }
+          upsert: {
+            args: Prisma.TaskUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskPayload>
+          }
+          aggregate: {
+            args: Prisma.TaskAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTask>
+          }
+          groupBy: {
+            args: Prisma.TaskGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TaskGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TaskCountArgs<ExtArgs>
+            result: $Utils.Optional<TaskCountAggregateOutputType> | number
+          }
+        }
+      }
+      TaskDeveloper: {
+        payload: Prisma.$TaskDeveloperPayload<ExtArgs>
+        fields: Prisma.TaskDeveloperFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TaskDeveloperFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskDeveloperPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TaskDeveloperFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskDeveloperPayload>
+          }
+          findFirst: {
+            args: Prisma.TaskDeveloperFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskDeveloperPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TaskDeveloperFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskDeveloperPayload>
+          }
+          findMany: {
+            args: Prisma.TaskDeveloperFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskDeveloperPayload>[]
+          }
+          create: {
+            args: Prisma.TaskDeveloperCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskDeveloperPayload>
+          }
+          createMany: {
+            args: Prisma.TaskDeveloperCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TaskDeveloperCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskDeveloperPayload>[]
+          }
+          delete: {
+            args: Prisma.TaskDeveloperDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskDeveloperPayload>
+          }
+          update: {
+            args: Prisma.TaskDeveloperUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskDeveloperPayload>
+          }
+          deleteMany: {
+            args: Prisma.TaskDeveloperDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TaskDeveloperUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TaskDeveloperUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskDeveloperPayload>[]
+          }
+          upsert: {
+            args: Prisma.TaskDeveloperUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskDeveloperPayload>
+          }
+          aggregate: {
+            args: Prisma.TaskDeveloperAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTaskDeveloper>
+          }
+          groupBy: {
+            args: Prisma.TaskDeveloperGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TaskDeveloperGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TaskDeveloperCountArgs<ExtArgs>
+            result: $Utils.Optional<TaskDeveloperCountAggregateOutputType> | number
+          }
+        }
+      }
+      TaskRepository: {
+        payload: Prisma.$TaskRepositoryPayload<ExtArgs>
+        fields: Prisma.TaskRepositoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TaskRepositoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskRepositoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TaskRepositoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskRepositoryPayload>
+          }
+          findFirst: {
+            args: Prisma.TaskRepositoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskRepositoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TaskRepositoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskRepositoryPayload>
+          }
+          findMany: {
+            args: Prisma.TaskRepositoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskRepositoryPayload>[]
+          }
+          create: {
+            args: Prisma.TaskRepositoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskRepositoryPayload>
+          }
+          createMany: {
+            args: Prisma.TaskRepositoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TaskRepositoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskRepositoryPayload>[]
+          }
+          delete: {
+            args: Prisma.TaskRepositoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskRepositoryPayload>
+          }
+          update: {
+            args: Prisma.TaskRepositoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskRepositoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.TaskRepositoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TaskRepositoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TaskRepositoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskRepositoryPayload>[]
+          }
+          upsert: {
+            args: Prisma.TaskRepositoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TaskRepositoryPayload>
+          }
+          aggregate: {
+            args: Prisma.TaskRepositoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTaskRepository>
+          }
+          groupBy: {
+            args: Prisma.TaskRepositoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TaskRepositoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TaskRepositoryCountArgs<ExtArgs>
+            result: $Utils.Optional<TaskRepositoryCountAggregateOutputType> | number
+          }
+        }
+      }
+      BlockchainTransaction: {
+        payload: Prisma.$BlockchainTransactionPayload<ExtArgs>
+        fields: Prisma.BlockchainTransactionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BlockchainTransactionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BlockchainTransactionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BlockchainTransactionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BlockchainTransactionPayload>
+          }
+          findFirst: {
+            args: Prisma.BlockchainTransactionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BlockchainTransactionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BlockchainTransactionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BlockchainTransactionPayload>
+          }
+          findMany: {
+            args: Prisma.BlockchainTransactionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BlockchainTransactionPayload>[]
+          }
+          create: {
+            args: Prisma.BlockchainTransactionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BlockchainTransactionPayload>
+          }
+          createMany: {
+            args: Prisma.BlockchainTransactionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BlockchainTransactionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BlockchainTransactionPayload>[]
+          }
+          delete: {
+            args: Prisma.BlockchainTransactionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BlockchainTransactionPayload>
+          }
+          update: {
+            args: Prisma.BlockchainTransactionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BlockchainTransactionPayload>
+          }
+          deleteMany: {
+            args: Prisma.BlockchainTransactionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BlockchainTransactionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BlockchainTransactionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BlockchainTransactionPayload>[]
+          }
+          upsert: {
+            args: Prisma.BlockchainTransactionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BlockchainTransactionPayload>
+          }
+          aggregate: {
+            args: Prisma.BlockchainTransactionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBlockchainTransaction>
+          }
+          groupBy: {
+            args: Prisma.BlockchainTransactionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BlockchainTransactionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BlockchainTransactionCountArgs<ExtArgs>
+            result: $Utils.Optional<BlockchainTransactionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1048,6 +1459,10 @@ export namespace Prisma {
     session?: SessionOmit
     account?: AccountOmit
     verification?: VerificationOmit
+    task?: TaskOmit
+    taskDeveloper?: TaskDeveloperOmit
+    taskRepository?: TaskRepositoryOmit
+    blockchainTransaction?: BlockchainTransactionOmit
   }
 
   /* Types for Logging */
@@ -1144,11 +1559,17 @@ export namespace Prisma {
   export type UserCountOutputType = {
     sessions: number
     accounts: number
+    createdTasks: number
+    taskDevelopers: number
+    transactions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+    createdTasks?: boolean | UserCountOutputTypeCountCreatedTasksArgs
+    taskDevelopers?: boolean | UserCountOutputTypeCountTaskDevelopersArgs
+    transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
   }
 
   // Custom InputTypes
@@ -1174,6 +1595,58 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AccountWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCreatedTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountTaskDevelopersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskDeveloperWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BlockchainTransactionWhereInput
+  }
+
+
+  /**
+   * Count Type TaskCountOutputType
+   */
+
+  export type TaskCountOutputType = {
+    transactions: number
+  }
+
+  export type TaskCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transactions?: boolean | TaskCountOutputTypeCountTransactionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TaskCountOutputType without action
+   */
+  export type TaskCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskCountOutputType
+     */
+    select?: TaskCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TaskCountOutputType without action
+   */
+  export type TaskCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BlockchainTransactionWhereInput
   }
 
 
@@ -1371,6 +1844,9 @@ export namespace Prisma {
     role?: boolean
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
+    createdTasks?: boolean | User$createdTasksArgs<ExtArgs>
+    taskDevelopers?: boolean | User$taskDevelopersArgs<ExtArgs>
+    transactions?: boolean | User$transactionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1411,6 +1887,9 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
+    createdTasks?: boolean | User$createdTasksArgs<ExtArgs>
+    taskDevelopers?: boolean | User$taskDevelopersArgs<ExtArgs>
+    transactions?: boolean | User$transactionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1421,6 +1900,9 @@ export namespace Prisma {
     objects: {
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       accounts: Prisma.$AccountPayload<ExtArgs>[]
+      createdTasks: Prisma.$TaskPayload<ExtArgs>[]
+      taskDevelopers: Prisma.$TaskDeveloperPayload<ExtArgs>[]
+      transactions: Prisma.$BlockchainTransactionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1827,6 +2309,9 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    createdTasks<T extends User$createdTasksArgs<ExtArgs> = {}>(args?: Subset<T, User$createdTasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    taskDevelopers<T extends User$taskDevelopersArgs<ExtArgs> = {}>(args?: Subset<T, User$taskDevelopersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    transactions<T extends User$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2297,6 +2782,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AccountScalarFieldEnum | AccountScalarFieldEnum[]
+  }
+
+  /**
+   * User.createdTasks
+   */
+  export type User$createdTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    where?: TaskWhereInput
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    cursor?: TaskWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
+   * User.taskDevelopers
+   */
+  export type User$taskDevelopersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+    where?: TaskDeveloperWhereInput
+    orderBy?: TaskDeveloperOrderByWithRelationInput | TaskDeveloperOrderByWithRelationInput[]
+    cursor?: TaskDeveloperWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TaskDeveloperScalarFieldEnum | TaskDeveloperScalarFieldEnum[]
+  }
+
+  /**
+   * User.transactions
+   */
+  export type User$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+    where?: BlockchainTransactionWhereInput
+    orderBy?: BlockchainTransactionOrderByWithRelationInput | BlockchainTransactionOrderByWithRelationInput[]
+    cursor?: BlockchainTransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BlockchainTransactionScalarFieldEnum | BlockchainTransactionScalarFieldEnum[]
   }
 
   /**
@@ -5586,6 +6143,4690 @@ export namespace Prisma {
 
 
   /**
+   * Model Task
+   */
+
+  export type AggregateTask = {
+    _count: TaskCountAggregateOutputType | null
+    _min: TaskMinAggregateOutputType | null
+    _max: TaskMaxAggregateOutputType | null
+  }
+
+  export type TaskMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    requirements: string | null
+    valueInWei: string | null
+    deadline: Date | null
+    allowOverdue: boolean | null
+    status: $Enums.TaskStatus | null
+    contractTaskId: string | null
+    creatorId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type TaskMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    requirements: string | null
+    valueInWei: string | null
+    deadline: Date | null
+    allowOverdue: boolean | null
+    status: $Enums.TaskStatus | null
+    contractTaskId: string | null
+    creatorId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type TaskCountAggregateOutputType = {
+    id: number
+    title: number
+    description: number
+    requirements: number
+    valueInWei: number
+    deadline: number
+    allowOverdue: number
+    status: number
+    contractTaskId: number
+    creatorId: number
+    createdAt: number
+    updatedAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type TaskMinAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    requirements?: true
+    valueInWei?: true
+    deadline?: true
+    allowOverdue?: true
+    status?: true
+    contractTaskId?: true
+    creatorId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type TaskMaxAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    requirements?: true
+    valueInWei?: true
+    deadline?: true
+    allowOverdue?: true
+    status?: true
+    contractTaskId?: true
+    creatorId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+  }
+
+  export type TaskCountAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    requirements?: true
+    valueInWei?: true
+    deadline?: true
+    allowOverdue?: true
+    status?: true
+    contractTaskId?: true
+    creatorId?: true
+    createdAt?: true
+    updatedAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type TaskAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Task to aggregate.
+     */
+    where?: TaskWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tasks to fetch.
+     */
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TaskWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tasks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Tasks
+    **/
+    _count?: true | TaskCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TaskMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TaskMaxAggregateInputType
+  }
+
+  export type GetTaskAggregateType<T extends TaskAggregateArgs> = {
+        [P in keyof T & keyof AggregateTask]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTask[P]>
+      : GetScalarType<T[P], AggregateTask[P]>
+  }
+
+
+
+
+  export type TaskGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskWhereInput
+    orderBy?: TaskOrderByWithAggregationInput | TaskOrderByWithAggregationInput[]
+    by: TaskScalarFieldEnum[] | TaskScalarFieldEnum
+    having?: TaskScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TaskCountAggregateInputType | true
+    _min?: TaskMinAggregateInputType
+    _max?: TaskMaxAggregateInputType
+  }
+
+  export type TaskGroupByOutputType = {
+    id: string
+    title: string
+    description: string
+    requirements: string | null
+    valueInWei: string
+    deadline: Date
+    allowOverdue: boolean
+    status: $Enums.TaskStatus
+    contractTaskId: string | null
+    creatorId: string
+    createdAt: Date
+    updatedAt: Date
+    deletedAt: Date | null
+    _count: TaskCountAggregateOutputType | null
+    _min: TaskMinAggregateOutputType | null
+    _max: TaskMaxAggregateOutputType | null
+  }
+
+  type GetTaskGroupByPayload<T extends TaskGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TaskGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TaskGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TaskGroupByOutputType[P]>
+            : GetScalarType<T[P], TaskGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TaskSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    requirements?: boolean
+    valueInWei?: boolean
+    deadline?: boolean
+    allowOverdue?: boolean
+    status?: boolean
+    contractTaskId?: boolean
+    creatorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    taskDeveloper?: boolean | Task$taskDeveloperArgs<ExtArgs>
+    repository?: boolean | Task$repositoryArgs<ExtArgs>
+    transactions?: boolean | Task$transactionsArgs<ExtArgs>
+    _count?: boolean | TaskCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["task"]>
+
+  export type TaskSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    requirements?: boolean
+    valueInWei?: boolean
+    deadline?: boolean
+    allowOverdue?: boolean
+    status?: boolean
+    contractTaskId?: boolean
+    creatorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["task"]>
+
+  export type TaskSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    requirements?: boolean
+    valueInWei?: boolean
+    deadline?: boolean
+    allowOverdue?: boolean
+    status?: boolean
+    contractTaskId?: boolean
+    creatorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["task"]>
+
+  export type TaskSelectScalar = {
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    requirements?: boolean
+    valueInWei?: boolean
+    deadline?: boolean
+    allowOverdue?: boolean
+    status?: boolean
+    contractTaskId?: boolean
+    creatorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type TaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "requirements" | "valueInWei" | "deadline" | "allowOverdue" | "status" | "contractTaskId" | "creatorId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["task"]>
+  export type TaskInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+    taskDeveloper?: boolean | Task$taskDeveloperArgs<ExtArgs>
+    repository?: boolean | Task$repositoryArgs<ExtArgs>
+    transactions?: boolean | Task$transactionsArgs<ExtArgs>
+    _count?: boolean | TaskCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type TaskIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type TaskIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $TaskPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Task"
+    objects: {
+      creator: Prisma.$UserPayload<ExtArgs>
+      taskDeveloper: Prisma.$TaskDeveloperPayload<ExtArgs> | null
+      repository: Prisma.$TaskRepositoryPayload<ExtArgs> | null
+      transactions: Prisma.$BlockchainTransactionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      description: string
+      requirements: string | null
+      valueInWei: string
+      deadline: Date
+      allowOverdue: boolean
+      status: $Enums.TaskStatus
+      contractTaskId: string | null
+      creatorId: string
+      createdAt: Date
+      updatedAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["task"]>
+    composites: {}
+  }
+
+  type TaskGetPayload<S extends boolean | null | undefined | TaskDefaultArgs> = $Result.GetResult<Prisma.$TaskPayload, S>
+
+  type TaskCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TaskFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TaskCountAggregateInputType | true
+    }
+
+  export interface TaskDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Task'], meta: { name: 'Task' } }
+    /**
+     * Find zero or one Task that matches the filter.
+     * @param {TaskFindUniqueArgs} args - Arguments to find a Task
+     * @example
+     * // Get one Task
+     * const task = await prisma.task.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TaskFindUniqueArgs>(args: SelectSubset<T, TaskFindUniqueArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Task that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TaskFindUniqueOrThrowArgs} args - Arguments to find a Task
+     * @example
+     * // Get one Task
+     * const task = await prisma.task.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TaskFindUniqueOrThrowArgs>(args: SelectSubset<T, TaskFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Task that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskFindFirstArgs} args - Arguments to find a Task
+     * @example
+     * // Get one Task
+     * const task = await prisma.task.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TaskFindFirstArgs>(args?: SelectSubset<T, TaskFindFirstArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Task that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskFindFirstOrThrowArgs} args - Arguments to find a Task
+     * @example
+     * // Get one Task
+     * const task = await prisma.task.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TaskFindFirstOrThrowArgs>(args?: SelectSubset<T, TaskFindFirstOrThrowArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Tasks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Tasks
+     * const tasks = await prisma.task.findMany()
+     * 
+     * // Get first 10 Tasks
+     * const tasks = await prisma.task.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const taskWithIdOnly = await prisma.task.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TaskFindManyArgs>(args?: SelectSubset<T, TaskFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Task.
+     * @param {TaskCreateArgs} args - Arguments to create a Task.
+     * @example
+     * // Create one Task
+     * const Task = await prisma.task.create({
+     *   data: {
+     *     // ... data to create a Task
+     *   }
+     * })
+     * 
+     */
+    create<T extends TaskCreateArgs>(args: SelectSubset<T, TaskCreateArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Tasks.
+     * @param {TaskCreateManyArgs} args - Arguments to create many Tasks.
+     * @example
+     * // Create many Tasks
+     * const task = await prisma.task.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TaskCreateManyArgs>(args?: SelectSubset<T, TaskCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Tasks and returns the data saved in the database.
+     * @param {TaskCreateManyAndReturnArgs} args - Arguments to create many Tasks.
+     * @example
+     * // Create many Tasks
+     * const task = await prisma.task.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Tasks and only return the `id`
+     * const taskWithIdOnly = await prisma.task.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TaskCreateManyAndReturnArgs>(args?: SelectSubset<T, TaskCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Task.
+     * @param {TaskDeleteArgs} args - Arguments to delete one Task.
+     * @example
+     * // Delete one Task
+     * const Task = await prisma.task.delete({
+     *   where: {
+     *     // ... filter to delete one Task
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TaskDeleteArgs>(args: SelectSubset<T, TaskDeleteArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Task.
+     * @param {TaskUpdateArgs} args - Arguments to update one Task.
+     * @example
+     * // Update one Task
+     * const task = await prisma.task.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TaskUpdateArgs>(args: SelectSubset<T, TaskUpdateArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Tasks.
+     * @param {TaskDeleteManyArgs} args - Arguments to filter Tasks to delete.
+     * @example
+     * // Delete a few Tasks
+     * const { count } = await prisma.task.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TaskDeleteManyArgs>(args?: SelectSubset<T, TaskDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tasks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Tasks
+     * const task = await prisma.task.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TaskUpdateManyArgs>(args: SelectSubset<T, TaskUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tasks and returns the data updated in the database.
+     * @param {TaskUpdateManyAndReturnArgs} args - Arguments to update many Tasks.
+     * @example
+     * // Update many Tasks
+     * const task = await prisma.task.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Tasks and only return the `id`
+     * const taskWithIdOnly = await prisma.task.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TaskUpdateManyAndReturnArgs>(args: SelectSubset<T, TaskUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Task.
+     * @param {TaskUpsertArgs} args - Arguments to update or create a Task.
+     * @example
+     * // Update or create a Task
+     * const task = await prisma.task.upsert({
+     *   create: {
+     *     // ... data to create a Task
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Task we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TaskUpsertArgs>(args: SelectSubset<T, TaskUpsertArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Tasks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskCountArgs} args - Arguments to filter Tasks to count.
+     * @example
+     * // Count the number of Tasks
+     * const count = await prisma.task.count({
+     *   where: {
+     *     // ... the filter for the Tasks we want to count
+     *   }
+     * })
+    **/
+    count<T extends TaskCountArgs>(
+      args?: Subset<T, TaskCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TaskCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Task.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TaskAggregateArgs>(args: Subset<T, TaskAggregateArgs>): Prisma.PrismaPromise<GetTaskAggregateType<T>>
+
+    /**
+     * Group by Task.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TaskGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TaskGroupByArgs['orderBy'] }
+        : { orderBy?: TaskGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TaskGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTaskGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Task model
+   */
+  readonly fields: TaskFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Task.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TaskClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    creator<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    taskDeveloper<T extends Task$taskDeveloperArgs<ExtArgs> = {}>(args?: Subset<T, Task$taskDeveloperArgs<ExtArgs>>): Prisma__TaskDeveloperClient<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    repository<T extends Task$repositoryArgs<ExtArgs> = {}>(args?: Subset<T, Task$repositoryArgs<ExtArgs>>): Prisma__TaskRepositoryClient<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    transactions<T extends Task$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, Task$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Task model
+   */
+  interface TaskFieldRefs {
+    readonly id: FieldRef<"Task", 'String'>
+    readonly title: FieldRef<"Task", 'String'>
+    readonly description: FieldRef<"Task", 'String'>
+    readonly requirements: FieldRef<"Task", 'String'>
+    readonly valueInWei: FieldRef<"Task", 'String'>
+    readonly deadline: FieldRef<"Task", 'DateTime'>
+    readonly allowOverdue: FieldRef<"Task", 'Boolean'>
+    readonly status: FieldRef<"Task", 'TaskStatus'>
+    readonly contractTaskId: FieldRef<"Task", 'String'>
+    readonly creatorId: FieldRef<"Task", 'String'>
+    readonly createdAt: FieldRef<"Task", 'DateTime'>
+    readonly updatedAt: FieldRef<"Task", 'DateTime'>
+    readonly deletedAt: FieldRef<"Task", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Task findUnique
+   */
+  export type TaskFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter, which Task to fetch.
+     */
+    where: TaskWhereUniqueInput
+  }
+
+  /**
+   * Task findUniqueOrThrow
+   */
+  export type TaskFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter, which Task to fetch.
+     */
+    where: TaskWhereUniqueInput
+  }
+
+  /**
+   * Task findFirst
+   */
+  export type TaskFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter, which Task to fetch.
+     */
+    where?: TaskWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tasks to fetch.
+     */
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tasks.
+     */
+    cursor?: TaskWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tasks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tasks.
+     */
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
+   * Task findFirstOrThrow
+   */
+  export type TaskFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter, which Task to fetch.
+     */
+    where?: TaskWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tasks to fetch.
+     */
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tasks.
+     */
+    cursor?: TaskWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tasks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tasks.
+     */
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
+   * Task findMany
+   */
+  export type TaskFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter, which Tasks to fetch.
+     */
+    where?: TaskWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tasks to fetch.
+     */
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Tasks.
+     */
+    cursor?: TaskWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tasks.
+     */
+    skip?: number
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
+   * Task create
+   */
+  export type TaskCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Task.
+     */
+    data: XOR<TaskCreateInput, TaskUncheckedCreateInput>
+  }
+
+  /**
+   * Task createMany
+   */
+  export type TaskCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Tasks.
+     */
+    data: TaskCreateManyInput | TaskCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Task createManyAndReturn
+   */
+  export type TaskCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * The data used to create many Tasks.
+     */
+    data: TaskCreateManyInput | TaskCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Task update
+   */
+  export type TaskUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Task.
+     */
+    data: XOR<TaskUpdateInput, TaskUncheckedUpdateInput>
+    /**
+     * Choose, which Task to update.
+     */
+    where: TaskWhereUniqueInput
+  }
+
+  /**
+   * Task updateMany
+   */
+  export type TaskUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Tasks.
+     */
+    data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyInput>
+    /**
+     * Filter which Tasks to update
+     */
+    where?: TaskWhereInput
+    /**
+     * Limit how many Tasks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Task updateManyAndReturn
+   */
+  export type TaskUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * The data used to update Tasks.
+     */
+    data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyInput>
+    /**
+     * Filter which Tasks to update
+     */
+    where?: TaskWhereInput
+    /**
+     * Limit how many Tasks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Task upsert
+   */
+  export type TaskUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Task to update in case it exists.
+     */
+    where: TaskWhereUniqueInput
+    /**
+     * In case the Task found by the `where` argument doesn't exist, create a new Task with this data.
+     */
+    create: XOR<TaskCreateInput, TaskUncheckedCreateInput>
+    /**
+     * In case the Task was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TaskUpdateInput, TaskUncheckedUpdateInput>
+  }
+
+  /**
+   * Task delete
+   */
+  export type TaskDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    /**
+     * Filter which Task to delete.
+     */
+    where: TaskWhereUniqueInput
+  }
+
+  /**
+   * Task deleteMany
+   */
+  export type TaskDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Tasks to delete
+     */
+    where?: TaskWhereInput
+    /**
+     * Limit how many Tasks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Task.taskDeveloper
+   */
+  export type Task$taskDeveloperArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+    where?: TaskDeveloperWhereInput
+  }
+
+  /**
+   * Task.repository
+   */
+  export type Task$repositoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryInclude<ExtArgs> | null
+    where?: TaskRepositoryWhereInput
+  }
+
+  /**
+   * Task.transactions
+   */
+  export type Task$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+    where?: BlockchainTransactionWhereInput
+    orderBy?: BlockchainTransactionOrderByWithRelationInput | BlockchainTransactionOrderByWithRelationInput[]
+    cursor?: BlockchainTransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BlockchainTransactionScalarFieldEnum | BlockchainTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * Task without action
+   */
+  export type TaskDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TaskDeveloper
+   */
+
+  export type AggregateTaskDeveloper = {
+    _count: TaskDeveloperCountAggregateOutputType | null
+    _min: TaskDeveloperMinAggregateOutputType | null
+    _max: TaskDeveloperMaxAggregateOutputType | null
+  }
+
+  export type TaskDeveloperMinAggregateOutputType = {
+    id: string | null
+    taskId: string | null
+    developerId: string | null
+    walletAddress: string | null
+    networkId: string | null
+    appliedAt: Date | null
+    acceptedAt: Date | null
+  }
+
+  export type TaskDeveloperMaxAggregateOutputType = {
+    id: string | null
+    taskId: string | null
+    developerId: string | null
+    walletAddress: string | null
+    networkId: string | null
+    appliedAt: Date | null
+    acceptedAt: Date | null
+  }
+
+  export type TaskDeveloperCountAggregateOutputType = {
+    id: number
+    taskId: number
+    developerId: number
+    walletAddress: number
+    networkId: number
+    appliedAt: number
+    acceptedAt: number
+    _all: number
+  }
+
+
+  export type TaskDeveloperMinAggregateInputType = {
+    id?: true
+    taskId?: true
+    developerId?: true
+    walletAddress?: true
+    networkId?: true
+    appliedAt?: true
+    acceptedAt?: true
+  }
+
+  export type TaskDeveloperMaxAggregateInputType = {
+    id?: true
+    taskId?: true
+    developerId?: true
+    walletAddress?: true
+    networkId?: true
+    appliedAt?: true
+    acceptedAt?: true
+  }
+
+  export type TaskDeveloperCountAggregateInputType = {
+    id?: true
+    taskId?: true
+    developerId?: true
+    walletAddress?: true
+    networkId?: true
+    appliedAt?: true
+    acceptedAt?: true
+    _all?: true
+  }
+
+  export type TaskDeveloperAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TaskDeveloper to aggregate.
+     */
+    where?: TaskDeveloperWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskDevelopers to fetch.
+     */
+    orderBy?: TaskDeveloperOrderByWithRelationInput | TaskDeveloperOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TaskDeveloperWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskDevelopers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskDevelopers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TaskDevelopers
+    **/
+    _count?: true | TaskDeveloperCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TaskDeveloperMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TaskDeveloperMaxAggregateInputType
+  }
+
+  export type GetTaskDeveloperAggregateType<T extends TaskDeveloperAggregateArgs> = {
+        [P in keyof T & keyof AggregateTaskDeveloper]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTaskDeveloper[P]>
+      : GetScalarType<T[P], AggregateTaskDeveloper[P]>
+  }
+
+
+
+
+  export type TaskDeveloperGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskDeveloperWhereInput
+    orderBy?: TaskDeveloperOrderByWithAggregationInput | TaskDeveloperOrderByWithAggregationInput[]
+    by: TaskDeveloperScalarFieldEnum[] | TaskDeveloperScalarFieldEnum
+    having?: TaskDeveloperScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TaskDeveloperCountAggregateInputType | true
+    _min?: TaskDeveloperMinAggregateInputType
+    _max?: TaskDeveloperMaxAggregateInputType
+  }
+
+  export type TaskDeveloperGroupByOutputType = {
+    id: string
+    taskId: string
+    developerId: string
+    walletAddress: string
+    networkId: string
+    appliedAt: Date
+    acceptedAt: Date | null
+    _count: TaskDeveloperCountAggregateOutputType | null
+    _min: TaskDeveloperMinAggregateOutputType | null
+    _max: TaskDeveloperMaxAggregateOutputType | null
+  }
+
+  type GetTaskDeveloperGroupByPayload<T extends TaskDeveloperGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TaskDeveloperGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TaskDeveloperGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TaskDeveloperGroupByOutputType[P]>
+            : GetScalarType<T[P], TaskDeveloperGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TaskDeveloperSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    taskId?: boolean
+    developerId?: boolean
+    walletAddress?: boolean
+    networkId?: boolean
+    appliedAt?: boolean
+    acceptedAt?: boolean
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    developer?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["taskDeveloper"]>
+
+  export type TaskDeveloperSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    taskId?: boolean
+    developerId?: boolean
+    walletAddress?: boolean
+    networkId?: boolean
+    appliedAt?: boolean
+    acceptedAt?: boolean
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    developer?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["taskDeveloper"]>
+
+  export type TaskDeveloperSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    taskId?: boolean
+    developerId?: boolean
+    walletAddress?: boolean
+    networkId?: boolean
+    appliedAt?: boolean
+    acceptedAt?: boolean
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    developer?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["taskDeveloper"]>
+
+  export type TaskDeveloperSelectScalar = {
+    id?: boolean
+    taskId?: boolean
+    developerId?: boolean
+    walletAddress?: boolean
+    networkId?: boolean
+    appliedAt?: boolean
+    acceptedAt?: boolean
+  }
+
+  export type TaskDeveloperOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "taskId" | "developerId" | "walletAddress" | "networkId" | "appliedAt" | "acceptedAt", ExtArgs["result"]["taskDeveloper"]>
+  export type TaskDeveloperInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    developer?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type TaskDeveloperIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    developer?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type TaskDeveloperIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    developer?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $TaskDeveloperPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TaskDeveloper"
+    objects: {
+      task: Prisma.$TaskPayload<ExtArgs>
+      developer: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      taskId: string
+      developerId: string
+      walletAddress: string
+      networkId: string
+      appliedAt: Date
+      acceptedAt: Date | null
+    }, ExtArgs["result"]["taskDeveloper"]>
+    composites: {}
+  }
+
+  type TaskDeveloperGetPayload<S extends boolean | null | undefined | TaskDeveloperDefaultArgs> = $Result.GetResult<Prisma.$TaskDeveloperPayload, S>
+
+  type TaskDeveloperCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TaskDeveloperFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TaskDeveloperCountAggregateInputType | true
+    }
+
+  export interface TaskDeveloperDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TaskDeveloper'], meta: { name: 'TaskDeveloper' } }
+    /**
+     * Find zero or one TaskDeveloper that matches the filter.
+     * @param {TaskDeveloperFindUniqueArgs} args - Arguments to find a TaskDeveloper
+     * @example
+     * // Get one TaskDeveloper
+     * const taskDeveloper = await prisma.taskDeveloper.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TaskDeveloperFindUniqueArgs>(args: SelectSubset<T, TaskDeveloperFindUniqueArgs<ExtArgs>>): Prisma__TaskDeveloperClient<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TaskDeveloper that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TaskDeveloperFindUniqueOrThrowArgs} args - Arguments to find a TaskDeveloper
+     * @example
+     * // Get one TaskDeveloper
+     * const taskDeveloper = await prisma.taskDeveloper.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TaskDeveloperFindUniqueOrThrowArgs>(args: SelectSubset<T, TaskDeveloperFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TaskDeveloperClient<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TaskDeveloper that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskDeveloperFindFirstArgs} args - Arguments to find a TaskDeveloper
+     * @example
+     * // Get one TaskDeveloper
+     * const taskDeveloper = await prisma.taskDeveloper.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TaskDeveloperFindFirstArgs>(args?: SelectSubset<T, TaskDeveloperFindFirstArgs<ExtArgs>>): Prisma__TaskDeveloperClient<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TaskDeveloper that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskDeveloperFindFirstOrThrowArgs} args - Arguments to find a TaskDeveloper
+     * @example
+     * // Get one TaskDeveloper
+     * const taskDeveloper = await prisma.taskDeveloper.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TaskDeveloperFindFirstOrThrowArgs>(args?: SelectSubset<T, TaskDeveloperFindFirstOrThrowArgs<ExtArgs>>): Prisma__TaskDeveloperClient<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TaskDevelopers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskDeveloperFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TaskDevelopers
+     * const taskDevelopers = await prisma.taskDeveloper.findMany()
+     * 
+     * // Get first 10 TaskDevelopers
+     * const taskDevelopers = await prisma.taskDeveloper.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const taskDeveloperWithIdOnly = await prisma.taskDeveloper.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TaskDeveloperFindManyArgs>(args?: SelectSubset<T, TaskDeveloperFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TaskDeveloper.
+     * @param {TaskDeveloperCreateArgs} args - Arguments to create a TaskDeveloper.
+     * @example
+     * // Create one TaskDeveloper
+     * const TaskDeveloper = await prisma.taskDeveloper.create({
+     *   data: {
+     *     // ... data to create a TaskDeveloper
+     *   }
+     * })
+     * 
+     */
+    create<T extends TaskDeveloperCreateArgs>(args: SelectSubset<T, TaskDeveloperCreateArgs<ExtArgs>>): Prisma__TaskDeveloperClient<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TaskDevelopers.
+     * @param {TaskDeveloperCreateManyArgs} args - Arguments to create many TaskDevelopers.
+     * @example
+     * // Create many TaskDevelopers
+     * const taskDeveloper = await prisma.taskDeveloper.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TaskDeveloperCreateManyArgs>(args?: SelectSubset<T, TaskDeveloperCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TaskDevelopers and returns the data saved in the database.
+     * @param {TaskDeveloperCreateManyAndReturnArgs} args - Arguments to create many TaskDevelopers.
+     * @example
+     * // Create many TaskDevelopers
+     * const taskDeveloper = await prisma.taskDeveloper.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TaskDevelopers and only return the `id`
+     * const taskDeveloperWithIdOnly = await prisma.taskDeveloper.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TaskDeveloperCreateManyAndReturnArgs>(args?: SelectSubset<T, TaskDeveloperCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TaskDeveloper.
+     * @param {TaskDeveloperDeleteArgs} args - Arguments to delete one TaskDeveloper.
+     * @example
+     * // Delete one TaskDeveloper
+     * const TaskDeveloper = await prisma.taskDeveloper.delete({
+     *   where: {
+     *     // ... filter to delete one TaskDeveloper
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TaskDeveloperDeleteArgs>(args: SelectSubset<T, TaskDeveloperDeleteArgs<ExtArgs>>): Prisma__TaskDeveloperClient<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TaskDeveloper.
+     * @param {TaskDeveloperUpdateArgs} args - Arguments to update one TaskDeveloper.
+     * @example
+     * // Update one TaskDeveloper
+     * const taskDeveloper = await prisma.taskDeveloper.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TaskDeveloperUpdateArgs>(args: SelectSubset<T, TaskDeveloperUpdateArgs<ExtArgs>>): Prisma__TaskDeveloperClient<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TaskDevelopers.
+     * @param {TaskDeveloperDeleteManyArgs} args - Arguments to filter TaskDevelopers to delete.
+     * @example
+     * // Delete a few TaskDevelopers
+     * const { count } = await prisma.taskDeveloper.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TaskDeveloperDeleteManyArgs>(args?: SelectSubset<T, TaskDeveloperDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TaskDevelopers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskDeveloperUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TaskDevelopers
+     * const taskDeveloper = await prisma.taskDeveloper.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TaskDeveloperUpdateManyArgs>(args: SelectSubset<T, TaskDeveloperUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TaskDevelopers and returns the data updated in the database.
+     * @param {TaskDeveloperUpdateManyAndReturnArgs} args - Arguments to update many TaskDevelopers.
+     * @example
+     * // Update many TaskDevelopers
+     * const taskDeveloper = await prisma.taskDeveloper.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TaskDevelopers and only return the `id`
+     * const taskDeveloperWithIdOnly = await prisma.taskDeveloper.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TaskDeveloperUpdateManyAndReturnArgs>(args: SelectSubset<T, TaskDeveloperUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TaskDeveloper.
+     * @param {TaskDeveloperUpsertArgs} args - Arguments to update or create a TaskDeveloper.
+     * @example
+     * // Update or create a TaskDeveloper
+     * const taskDeveloper = await prisma.taskDeveloper.upsert({
+     *   create: {
+     *     // ... data to create a TaskDeveloper
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TaskDeveloper we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TaskDeveloperUpsertArgs>(args: SelectSubset<T, TaskDeveloperUpsertArgs<ExtArgs>>): Prisma__TaskDeveloperClient<$Result.GetResult<Prisma.$TaskDeveloperPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TaskDevelopers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskDeveloperCountArgs} args - Arguments to filter TaskDevelopers to count.
+     * @example
+     * // Count the number of TaskDevelopers
+     * const count = await prisma.taskDeveloper.count({
+     *   where: {
+     *     // ... the filter for the TaskDevelopers we want to count
+     *   }
+     * })
+    **/
+    count<T extends TaskDeveloperCountArgs>(
+      args?: Subset<T, TaskDeveloperCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TaskDeveloperCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TaskDeveloper.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskDeveloperAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TaskDeveloperAggregateArgs>(args: Subset<T, TaskDeveloperAggregateArgs>): Prisma.PrismaPromise<GetTaskDeveloperAggregateType<T>>
+
+    /**
+     * Group by TaskDeveloper.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskDeveloperGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TaskDeveloperGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TaskDeveloperGroupByArgs['orderBy'] }
+        : { orderBy?: TaskDeveloperGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TaskDeveloperGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTaskDeveloperGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TaskDeveloper model
+   */
+  readonly fields: TaskDeveloperFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TaskDeveloper.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TaskDeveloperClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    task<T extends TaskDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TaskDefaultArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    developer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TaskDeveloper model
+   */
+  interface TaskDeveloperFieldRefs {
+    readonly id: FieldRef<"TaskDeveloper", 'String'>
+    readonly taskId: FieldRef<"TaskDeveloper", 'String'>
+    readonly developerId: FieldRef<"TaskDeveloper", 'String'>
+    readonly walletAddress: FieldRef<"TaskDeveloper", 'String'>
+    readonly networkId: FieldRef<"TaskDeveloper", 'String'>
+    readonly appliedAt: FieldRef<"TaskDeveloper", 'DateTime'>
+    readonly acceptedAt: FieldRef<"TaskDeveloper", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TaskDeveloper findUnique
+   */
+  export type TaskDeveloperFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskDeveloper to fetch.
+     */
+    where: TaskDeveloperWhereUniqueInput
+  }
+
+  /**
+   * TaskDeveloper findUniqueOrThrow
+   */
+  export type TaskDeveloperFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskDeveloper to fetch.
+     */
+    where: TaskDeveloperWhereUniqueInput
+  }
+
+  /**
+   * TaskDeveloper findFirst
+   */
+  export type TaskDeveloperFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskDeveloper to fetch.
+     */
+    where?: TaskDeveloperWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskDevelopers to fetch.
+     */
+    orderBy?: TaskDeveloperOrderByWithRelationInput | TaskDeveloperOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TaskDevelopers.
+     */
+    cursor?: TaskDeveloperWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskDevelopers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskDevelopers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TaskDevelopers.
+     */
+    distinct?: TaskDeveloperScalarFieldEnum | TaskDeveloperScalarFieldEnum[]
+  }
+
+  /**
+   * TaskDeveloper findFirstOrThrow
+   */
+  export type TaskDeveloperFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskDeveloper to fetch.
+     */
+    where?: TaskDeveloperWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskDevelopers to fetch.
+     */
+    orderBy?: TaskDeveloperOrderByWithRelationInput | TaskDeveloperOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TaskDevelopers.
+     */
+    cursor?: TaskDeveloperWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskDevelopers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskDevelopers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TaskDevelopers.
+     */
+    distinct?: TaskDeveloperScalarFieldEnum | TaskDeveloperScalarFieldEnum[]
+  }
+
+  /**
+   * TaskDeveloper findMany
+   */
+  export type TaskDeveloperFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskDevelopers to fetch.
+     */
+    where?: TaskDeveloperWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskDevelopers to fetch.
+     */
+    orderBy?: TaskDeveloperOrderByWithRelationInput | TaskDeveloperOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TaskDevelopers.
+     */
+    cursor?: TaskDeveloperWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskDevelopers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskDevelopers.
+     */
+    skip?: number
+    distinct?: TaskDeveloperScalarFieldEnum | TaskDeveloperScalarFieldEnum[]
+  }
+
+  /**
+   * TaskDeveloper create
+   */
+  export type TaskDeveloperCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TaskDeveloper.
+     */
+    data: XOR<TaskDeveloperCreateInput, TaskDeveloperUncheckedCreateInput>
+  }
+
+  /**
+   * TaskDeveloper createMany
+   */
+  export type TaskDeveloperCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TaskDevelopers.
+     */
+    data: TaskDeveloperCreateManyInput | TaskDeveloperCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TaskDeveloper createManyAndReturn
+   */
+  export type TaskDeveloperCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * The data used to create many TaskDevelopers.
+     */
+    data: TaskDeveloperCreateManyInput | TaskDeveloperCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TaskDeveloper update
+   */
+  export type TaskDeveloperUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TaskDeveloper.
+     */
+    data: XOR<TaskDeveloperUpdateInput, TaskDeveloperUncheckedUpdateInput>
+    /**
+     * Choose, which TaskDeveloper to update.
+     */
+    where: TaskDeveloperWhereUniqueInput
+  }
+
+  /**
+   * TaskDeveloper updateMany
+   */
+  export type TaskDeveloperUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TaskDevelopers.
+     */
+    data: XOR<TaskDeveloperUpdateManyMutationInput, TaskDeveloperUncheckedUpdateManyInput>
+    /**
+     * Filter which TaskDevelopers to update
+     */
+    where?: TaskDeveloperWhereInput
+    /**
+     * Limit how many TaskDevelopers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TaskDeveloper updateManyAndReturn
+   */
+  export type TaskDeveloperUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * The data used to update TaskDevelopers.
+     */
+    data: XOR<TaskDeveloperUpdateManyMutationInput, TaskDeveloperUncheckedUpdateManyInput>
+    /**
+     * Filter which TaskDevelopers to update
+     */
+    where?: TaskDeveloperWhereInput
+    /**
+     * Limit how many TaskDevelopers to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TaskDeveloper upsert
+   */
+  export type TaskDeveloperUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TaskDeveloper to update in case it exists.
+     */
+    where: TaskDeveloperWhereUniqueInput
+    /**
+     * In case the TaskDeveloper found by the `where` argument doesn't exist, create a new TaskDeveloper with this data.
+     */
+    create: XOR<TaskDeveloperCreateInput, TaskDeveloperUncheckedCreateInput>
+    /**
+     * In case the TaskDeveloper was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TaskDeveloperUpdateInput, TaskDeveloperUncheckedUpdateInput>
+  }
+
+  /**
+   * TaskDeveloper delete
+   */
+  export type TaskDeveloperDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+    /**
+     * Filter which TaskDeveloper to delete.
+     */
+    where: TaskDeveloperWhereUniqueInput
+  }
+
+  /**
+   * TaskDeveloper deleteMany
+   */
+  export type TaskDeveloperDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TaskDevelopers to delete
+     */
+    where?: TaskDeveloperWhereInput
+    /**
+     * Limit how many TaskDevelopers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TaskDeveloper without action
+   */
+  export type TaskDeveloperDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskDeveloper
+     */
+    select?: TaskDeveloperSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskDeveloper
+     */
+    omit?: TaskDeveloperOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskDeveloperInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TaskRepository
+   */
+
+  export type AggregateTaskRepository = {
+    _count: TaskRepositoryCountAggregateOutputType | null
+    _avg: TaskRepositoryAvgAggregateOutputType | null
+    _sum: TaskRepositorySumAggregateOutputType | null
+    _min: TaskRepositoryMinAggregateOutputType | null
+    _max: TaskRepositoryMaxAggregateOutputType | null
+  }
+
+  export type TaskRepositoryAvgAggregateOutputType = {
+    githubRepoId: number | null
+  }
+
+  export type TaskRepositorySumAggregateOutputType = {
+    githubRepoId: number | null
+  }
+
+  export type TaskRepositoryMinAggregateOutputType = {
+    id: string | null
+    taskId: string | null
+    repositoryName: string | null
+    repositoryUrl: string | null
+    githubRepoId: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type TaskRepositoryMaxAggregateOutputType = {
+    id: string | null
+    taskId: string | null
+    repositoryName: string | null
+    repositoryUrl: string | null
+    githubRepoId: number | null
+    isActive: boolean | null
+    createdAt: Date | null
+    deletedAt: Date | null
+  }
+
+  export type TaskRepositoryCountAggregateOutputType = {
+    id: number
+    taskId: number
+    repositoryName: number
+    repositoryUrl: number
+    githubRepoId: number
+    isActive: number
+    createdAt: number
+    deletedAt: number
+    _all: number
+  }
+
+
+  export type TaskRepositoryAvgAggregateInputType = {
+    githubRepoId?: true
+  }
+
+  export type TaskRepositorySumAggregateInputType = {
+    githubRepoId?: true
+  }
+
+  export type TaskRepositoryMinAggregateInputType = {
+    id?: true
+    taskId?: true
+    repositoryName?: true
+    repositoryUrl?: true
+    githubRepoId?: true
+    isActive?: true
+    createdAt?: true
+    deletedAt?: true
+  }
+
+  export type TaskRepositoryMaxAggregateInputType = {
+    id?: true
+    taskId?: true
+    repositoryName?: true
+    repositoryUrl?: true
+    githubRepoId?: true
+    isActive?: true
+    createdAt?: true
+    deletedAt?: true
+  }
+
+  export type TaskRepositoryCountAggregateInputType = {
+    id?: true
+    taskId?: true
+    repositoryName?: true
+    repositoryUrl?: true
+    githubRepoId?: true
+    isActive?: true
+    createdAt?: true
+    deletedAt?: true
+    _all?: true
+  }
+
+  export type TaskRepositoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TaskRepository to aggregate.
+     */
+    where?: TaskRepositoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskRepositories to fetch.
+     */
+    orderBy?: TaskRepositoryOrderByWithRelationInput | TaskRepositoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TaskRepositoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskRepositories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskRepositories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TaskRepositories
+    **/
+    _count?: true | TaskRepositoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TaskRepositoryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TaskRepositorySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TaskRepositoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TaskRepositoryMaxAggregateInputType
+  }
+
+  export type GetTaskRepositoryAggregateType<T extends TaskRepositoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateTaskRepository]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTaskRepository[P]>
+      : GetScalarType<T[P], AggregateTaskRepository[P]>
+  }
+
+
+
+
+  export type TaskRepositoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskRepositoryWhereInput
+    orderBy?: TaskRepositoryOrderByWithAggregationInput | TaskRepositoryOrderByWithAggregationInput[]
+    by: TaskRepositoryScalarFieldEnum[] | TaskRepositoryScalarFieldEnum
+    having?: TaskRepositoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TaskRepositoryCountAggregateInputType | true
+    _avg?: TaskRepositoryAvgAggregateInputType
+    _sum?: TaskRepositorySumAggregateInputType
+    _min?: TaskRepositoryMinAggregateInputType
+    _max?: TaskRepositoryMaxAggregateInputType
+  }
+
+  export type TaskRepositoryGroupByOutputType = {
+    id: string
+    taskId: string
+    repositoryName: string
+    repositoryUrl: string
+    githubRepoId: number | null
+    isActive: boolean
+    createdAt: Date
+    deletedAt: Date | null
+    _count: TaskRepositoryCountAggregateOutputType | null
+    _avg: TaskRepositoryAvgAggregateOutputType | null
+    _sum: TaskRepositorySumAggregateOutputType | null
+    _min: TaskRepositoryMinAggregateOutputType | null
+    _max: TaskRepositoryMaxAggregateOutputType | null
+  }
+
+  type GetTaskRepositoryGroupByPayload<T extends TaskRepositoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TaskRepositoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TaskRepositoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TaskRepositoryGroupByOutputType[P]>
+            : GetScalarType<T[P], TaskRepositoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TaskRepositorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    taskId?: boolean
+    repositoryName?: boolean
+    repositoryUrl?: boolean
+    githubRepoId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    deletedAt?: boolean
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["taskRepository"]>
+
+  export type TaskRepositorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    taskId?: boolean
+    repositoryName?: boolean
+    repositoryUrl?: boolean
+    githubRepoId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    deletedAt?: boolean
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["taskRepository"]>
+
+  export type TaskRepositorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    taskId?: boolean
+    repositoryName?: boolean
+    repositoryUrl?: boolean
+    githubRepoId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    deletedAt?: boolean
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["taskRepository"]>
+
+  export type TaskRepositorySelectScalar = {
+    id?: boolean
+    taskId?: boolean
+    repositoryName?: boolean
+    repositoryUrl?: boolean
+    githubRepoId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    deletedAt?: boolean
+  }
+
+  export type TaskRepositoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "taskId" | "repositoryName" | "repositoryUrl" | "githubRepoId" | "isActive" | "createdAt" | "deletedAt", ExtArgs["result"]["taskRepository"]>
+  export type TaskRepositoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+  }
+  export type TaskRepositoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+  }
+  export type TaskRepositoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+  }
+
+  export type $TaskRepositoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TaskRepository"
+    objects: {
+      task: Prisma.$TaskPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      taskId: string
+      repositoryName: string
+      repositoryUrl: string
+      githubRepoId: number | null
+      isActive: boolean
+      createdAt: Date
+      deletedAt: Date | null
+    }, ExtArgs["result"]["taskRepository"]>
+    composites: {}
+  }
+
+  type TaskRepositoryGetPayload<S extends boolean | null | undefined | TaskRepositoryDefaultArgs> = $Result.GetResult<Prisma.$TaskRepositoryPayload, S>
+
+  type TaskRepositoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TaskRepositoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TaskRepositoryCountAggregateInputType | true
+    }
+
+  export interface TaskRepositoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TaskRepository'], meta: { name: 'TaskRepository' } }
+    /**
+     * Find zero or one TaskRepository that matches the filter.
+     * @param {TaskRepositoryFindUniqueArgs} args - Arguments to find a TaskRepository
+     * @example
+     * // Get one TaskRepository
+     * const taskRepository = await prisma.taskRepository.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TaskRepositoryFindUniqueArgs>(args: SelectSubset<T, TaskRepositoryFindUniqueArgs<ExtArgs>>): Prisma__TaskRepositoryClient<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TaskRepository that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TaskRepositoryFindUniqueOrThrowArgs} args - Arguments to find a TaskRepository
+     * @example
+     * // Get one TaskRepository
+     * const taskRepository = await prisma.taskRepository.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TaskRepositoryFindUniqueOrThrowArgs>(args: SelectSubset<T, TaskRepositoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TaskRepositoryClient<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TaskRepository that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskRepositoryFindFirstArgs} args - Arguments to find a TaskRepository
+     * @example
+     * // Get one TaskRepository
+     * const taskRepository = await prisma.taskRepository.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TaskRepositoryFindFirstArgs>(args?: SelectSubset<T, TaskRepositoryFindFirstArgs<ExtArgs>>): Prisma__TaskRepositoryClient<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TaskRepository that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskRepositoryFindFirstOrThrowArgs} args - Arguments to find a TaskRepository
+     * @example
+     * // Get one TaskRepository
+     * const taskRepository = await prisma.taskRepository.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TaskRepositoryFindFirstOrThrowArgs>(args?: SelectSubset<T, TaskRepositoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__TaskRepositoryClient<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TaskRepositories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskRepositoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TaskRepositories
+     * const taskRepositories = await prisma.taskRepository.findMany()
+     * 
+     * // Get first 10 TaskRepositories
+     * const taskRepositories = await prisma.taskRepository.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const taskRepositoryWithIdOnly = await prisma.taskRepository.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TaskRepositoryFindManyArgs>(args?: SelectSubset<T, TaskRepositoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TaskRepository.
+     * @param {TaskRepositoryCreateArgs} args - Arguments to create a TaskRepository.
+     * @example
+     * // Create one TaskRepository
+     * const TaskRepository = await prisma.taskRepository.create({
+     *   data: {
+     *     // ... data to create a TaskRepository
+     *   }
+     * })
+     * 
+     */
+    create<T extends TaskRepositoryCreateArgs>(args: SelectSubset<T, TaskRepositoryCreateArgs<ExtArgs>>): Prisma__TaskRepositoryClient<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TaskRepositories.
+     * @param {TaskRepositoryCreateManyArgs} args - Arguments to create many TaskRepositories.
+     * @example
+     * // Create many TaskRepositories
+     * const taskRepository = await prisma.taskRepository.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TaskRepositoryCreateManyArgs>(args?: SelectSubset<T, TaskRepositoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TaskRepositories and returns the data saved in the database.
+     * @param {TaskRepositoryCreateManyAndReturnArgs} args - Arguments to create many TaskRepositories.
+     * @example
+     * // Create many TaskRepositories
+     * const taskRepository = await prisma.taskRepository.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TaskRepositories and only return the `id`
+     * const taskRepositoryWithIdOnly = await prisma.taskRepository.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TaskRepositoryCreateManyAndReturnArgs>(args?: SelectSubset<T, TaskRepositoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TaskRepository.
+     * @param {TaskRepositoryDeleteArgs} args - Arguments to delete one TaskRepository.
+     * @example
+     * // Delete one TaskRepository
+     * const TaskRepository = await prisma.taskRepository.delete({
+     *   where: {
+     *     // ... filter to delete one TaskRepository
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TaskRepositoryDeleteArgs>(args: SelectSubset<T, TaskRepositoryDeleteArgs<ExtArgs>>): Prisma__TaskRepositoryClient<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TaskRepository.
+     * @param {TaskRepositoryUpdateArgs} args - Arguments to update one TaskRepository.
+     * @example
+     * // Update one TaskRepository
+     * const taskRepository = await prisma.taskRepository.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TaskRepositoryUpdateArgs>(args: SelectSubset<T, TaskRepositoryUpdateArgs<ExtArgs>>): Prisma__TaskRepositoryClient<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TaskRepositories.
+     * @param {TaskRepositoryDeleteManyArgs} args - Arguments to filter TaskRepositories to delete.
+     * @example
+     * // Delete a few TaskRepositories
+     * const { count } = await prisma.taskRepository.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TaskRepositoryDeleteManyArgs>(args?: SelectSubset<T, TaskRepositoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TaskRepositories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskRepositoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TaskRepositories
+     * const taskRepository = await prisma.taskRepository.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TaskRepositoryUpdateManyArgs>(args: SelectSubset<T, TaskRepositoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TaskRepositories and returns the data updated in the database.
+     * @param {TaskRepositoryUpdateManyAndReturnArgs} args - Arguments to update many TaskRepositories.
+     * @example
+     * // Update many TaskRepositories
+     * const taskRepository = await prisma.taskRepository.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TaskRepositories and only return the `id`
+     * const taskRepositoryWithIdOnly = await prisma.taskRepository.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TaskRepositoryUpdateManyAndReturnArgs>(args: SelectSubset<T, TaskRepositoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TaskRepository.
+     * @param {TaskRepositoryUpsertArgs} args - Arguments to update or create a TaskRepository.
+     * @example
+     * // Update or create a TaskRepository
+     * const taskRepository = await prisma.taskRepository.upsert({
+     *   create: {
+     *     // ... data to create a TaskRepository
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TaskRepository we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TaskRepositoryUpsertArgs>(args: SelectSubset<T, TaskRepositoryUpsertArgs<ExtArgs>>): Prisma__TaskRepositoryClient<$Result.GetResult<Prisma.$TaskRepositoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TaskRepositories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskRepositoryCountArgs} args - Arguments to filter TaskRepositories to count.
+     * @example
+     * // Count the number of TaskRepositories
+     * const count = await prisma.taskRepository.count({
+     *   where: {
+     *     // ... the filter for the TaskRepositories we want to count
+     *   }
+     * })
+    **/
+    count<T extends TaskRepositoryCountArgs>(
+      args?: Subset<T, TaskRepositoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TaskRepositoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TaskRepository.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskRepositoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TaskRepositoryAggregateArgs>(args: Subset<T, TaskRepositoryAggregateArgs>): Prisma.PrismaPromise<GetTaskRepositoryAggregateType<T>>
+
+    /**
+     * Group by TaskRepository.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TaskRepositoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TaskRepositoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TaskRepositoryGroupByArgs['orderBy'] }
+        : { orderBy?: TaskRepositoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TaskRepositoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTaskRepositoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TaskRepository model
+   */
+  readonly fields: TaskRepositoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TaskRepository.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TaskRepositoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    task<T extends TaskDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TaskDefaultArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TaskRepository model
+   */
+  interface TaskRepositoryFieldRefs {
+    readonly id: FieldRef<"TaskRepository", 'String'>
+    readonly taskId: FieldRef<"TaskRepository", 'String'>
+    readonly repositoryName: FieldRef<"TaskRepository", 'String'>
+    readonly repositoryUrl: FieldRef<"TaskRepository", 'String'>
+    readonly githubRepoId: FieldRef<"TaskRepository", 'Int'>
+    readonly isActive: FieldRef<"TaskRepository", 'Boolean'>
+    readonly createdAt: FieldRef<"TaskRepository", 'DateTime'>
+    readonly deletedAt: FieldRef<"TaskRepository", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TaskRepository findUnique
+   */
+  export type TaskRepositoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskRepository to fetch.
+     */
+    where: TaskRepositoryWhereUniqueInput
+  }
+
+  /**
+   * TaskRepository findUniqueOrThrow
+   */
+  export type TaskRepositoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskRepository to fetch.
+     */
+    where: TaskRepositoryWhereUniqueInput
+  }
+
+  /**
+   * TaskRepository findFirst
+   */
+  export type TaskRepositoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskRepository to fetch.
+     */
+    where?: TaskRepositoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskRepositories to fetch.
+     */
+    orderBy?: TaskRepositoryOrderByWithRelationInput | TaskRepositoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TaskRepositories.
+     */
+    cursor?: TaskRepositoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskRepositories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskRepositories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TaskRepositories.
+     */
+    distinct?: TaskRepositoryScalarFieldEnum | TaskRepositoryScalarFieldEnum[]
+  }
+
+  /**
+   * TaskRepository findFirstOrThrow
+   */
+  export type TaskRepositoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskRepository to fetch.
+     */
+    where?: TaskRepositoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskRepositories to fetch.
+     */
+    orderBy?: TaskRepositoryOrderByWithRelationInput | TaskRepositoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TaskRepositories.
+     */
+    cursor?: TaskRepositoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskRepositories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskRepositories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TaskRepositories.
+     */
+    distinct?: TaskRepositoryScalarFieldEnum | TaskRepositoryScalarFieldEnum[]
+  }
+
+  /**
+   * TaskRepository findMany
+   */
+  export type TaskRepositoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TaskRepositories to fetch.
+     */
+    where?: TaskRepositoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TaskRepositories to fetch.
+     */
+    orderBy?: TaskRepositoryOrderByWithRelationInput | TaskRepositoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TaskRepositories.
+     */
+    cursor?: TaskRepositoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TaskRepositories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TaskRepositories.
+     */
+    skip?: number
+    distinct?: TaskRepositoryScalarFieldEnum | TaskRepositoryScalarFieldEnum[]
+  }
+
+  /**
+   * TaskRepository create
+   */
+  export type TaskRepositoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TaskRepository.
+     */
+    data: XOR<TaskRepositoryCreateInput, TaskRepositoryUncheckedCreateInput>
+  }
+
+  /**
+   * TaskRepository createMany
+   */
+  export type TaskRepositoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TaskRepositories.
+     */
+    data: TaskRepositoryCreateManyInput | TaskRepositoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TaskRepository createManyAndReturn
+   */
+  export type TaskRepositoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many TaskRepositories.
+     */
+    data: TaskRepositoryCreateManyInput | TaskRepositoryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TaskRepository update
+   */
+  export type TaskRepositoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TaskRepository.
+     */
+    data: XOR<TaskRepositoryUpdateInput, TaskRepositoryUncheckedUpdateInput>
+    /**
+     * Choose, which TaskRepository to update.
+     */
+    where: TaskRepositoryWhereUniqueInput
+  }
+
+  /**
+   * TaskRepository updateMany
+   */
+  export type TaskRepositoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TaskRepositories.
+     */
+    data: XOR<TaskRepositoryUpdateManyMutationInput, TaskRepositoryUncheckedUpdateManyInput>
+    /**
+     * Filter which TaskRepositories to update
+     */
+    where?: TaskRepositoryWhereInput
+    /**
+     * Limit how many TaskRepositories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TaskRepository updateManyAndReturn
+   */
+  export type TaskRepositoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * The data used to update TaskRepositories.
+     */
+    data: XOR<TaskRepositoryUpdateManyMutationInput, TaskRepositoryUncheckedUpdateManyInput>
+    /**
+     * Filter which TaskRepositories to update
+     */
+    where?: TaskRepositoryWhereInput
+    /**
+     * Limit how many TaskRepositories to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TaskRepository upsert
+   */
+  export type TaskRepositoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TaskRepository to update in case it exists.
+     */
+    where: TaskRepositoryWhereUniqueInput
+    /**
+     * In case the TaskRepository found by the `where` argument doesn't exist, create a new TaskRepository with this data.
+     */
+    create: XOR<TaskRepositoryCreateInput, TaskRepositoryUncheckedCreateInput>
+    /**
+     * In case the TaskRepository was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TaskRepositoryUpdateInput, TaskRepositoryUncheckedUpdateInput>
+  }
+
+  /**
+   * TaskRepository delete
+   */
+  export type TaskRepositoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryInclude<ExtArgs> | null
+    /**
+     * Filter which TaskRepository to delete.
+     */
+    where: TaskRepositoryWhereUniqueInput
+  }
+
+  /**
+   * TaskRepository deleteMany
+   */
+  export type TaskRepositoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TaskRepositories to delete
+     */
+    where?: TaskRepositoryWhereInput
+    /**
+     * Limit how many TaskRepositories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TaskRepository without action
+   */
+  export type TaskRepositoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaskRepository
+     */
+    select?: TaskRepositorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaskRepository
+     */
+    omit?: TaskRepositoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskRepositoryInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model BlockchainTransaction
+   */
+
+  export type AggregateBlockchainTransaction = {
+    _count: BlockchainTransactionCountAggregateOutputType | null
+    _avg: BlockchainTransactionAvgAggregateOutputType | null
+    _sum: BlockchainTransactionSumAggregateOutputType | null
+    _min: BlockchainTransactionMinAggregateOutputType | null
+    _max: BlockchainTransactionMaxAggregateOutputType | null
+  }
+
+  export type BlockchainTransactionAvgAggregateOutputType = {
+    blockNumber: number | null
+  }
+
+  export type BlockchainTransactionSumAggregateOutputType = {
+    blockNumber: number | null
+  }
+
+  export type BlockchainTransactionMinAggregateOutputType = {
+    id: string | null
+    taskId: string | null
+    userId: string | null
+    type: $Enums.TransactionType | null
+    status: $Enums.TransactionStatus | null
+    txHash: string | null
+    blockNumber: number | null
+    gasUsed: string | null
+    valueInWei: string | null
+    networkId: string | null
+    errorMessage: string | null
+    createdAt: Date | null
+    confirmedAt: Date | null
+  }
+
+  export type BlockchainTransactionMaxAggregateOutputType = {
+    id: string | null
+    taskId: string | null
+    userId: string | null
+    type: $Enums.TransactionType | null
+    status: $Enums.TransactionStatus | null
+    txHash: string | null
+    blockNumber: number | null
+    gasUsed: string | null
+    valueInWei: string | null
+    networkId: string | null
+    errorMessage: string | null
+    createdAt: Date | null
+    confirmedAt: Date | null
+  }
+
+  export type BlockchainTransactionCountAggregateOutputType = {
+    id: number
+    taskId: number
+    userId: number
+    type: number
+    status: number
+    txHash: number
+    blockNumber: number
+    gasUsed: number
+    valueInWei: number
+    networkId: number
+    errorMessage: number
+    createdAt: number
+    confirmedAt: number
+    _all: number
+  }
+
+
+  export type BlockchainTransactionAvgAggregateInputType = {
+    blockNumber?: true
+  }
+
+  export type BlockchainTransactionSumAggregateInputType = {
+    blockNumber?: true
+  }
+
+  export type BlockchainTransactionMinAggregateInputType = {
+    id?: true
+    taskId?: true
+    userId?: true
+    type?: true
+    status?: true
+    txHash?: true
+    blockNumber?: true
+    gasUsed?: true
+    valueInWei?: true
+    networkId?: true
+    errorMessage?: true
+    createdAt?: true
+    confirmedAt?: true
+  }
+
+  export type BlockchainTransactionMaxAggregateInputType = {
+    id?: true
+    taskId?: true
+    userId?: true
+    type?: true
+    status?: true
+    txHash?: true
+    blockNumber?: true
+    gasUsed?: true
+    valueInWei?: true
+    networkId?: true
+    errorMessage?: true
+    createdAt?: true
+    confirmedAt?: true
+  }
+
+  export type BlockchainTransactionCountAggregateInputType = {
+    id?: true
+    taskId?: true
+    userId?: true
+    type?: true
+    status?: true
+    txHash?: true
+    blockNumber?: true
+    gasUsed?: true
+    valueInWei?: true
+    networkId?: true
+    errorMessage?: true
+    createdAt?: true
+    confirmedAt?: true
+    _all?: true
+  }
+
+  export type BlockchainTransactionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BlockchainTransaction to aggregate.
+     */
+    where?: BlockchainTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BlockchainTransactions to fetch.
+     */
+    orderBy?: BlockchainTransactionOrderByWithRelationInput | BlockchainTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BlockchainTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BlockchainTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BlockchainTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BlockchainTransactions
+    **/
+    _count?: true | BlockchainTransactionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BlockchainTransactionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BlockchainTransactionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BlockchainTransactionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BlockchainTransactionMaxAggregateInputType
+  }
+
+  export type GetBlockchainTransactionAggregateType<T extends BlockchainTransactionAggregateArgs> = {
+        [P in keyof T & keyof AggregateBlockchainTransaction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBlockchainTransaction[P]>
+      : GetScalarType<T[P], AggregateBlockchainTransaction[P]>
+  }
+
+
+
+
+  export type BlockchainTransactionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BlockchainTransactionWhereInput
+    orderBy?: BlockchainTransactionOrderByWithAggregationInput | BlockchainTransactionOrderByWithAggregationInput[]
+    by: BlockchainTransactionScalarFieldEnum[] | BlockchainTransactionScalarFieldEnum
+    having?: BlockchainTransactionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BlockchainTransactionCountAggregateInputType | true
+    _avg?: BlockchainTransactionAvgAggregateInputType
+    _sum?: BlockchainTransactionSumAggregateInputType
+    _min?: BlockchainTransactionMinAggregateInputType
+    _max?: BlockchainTransactionMaxAggregateInputType
+  }
+
+  export type BlockchainTransactionGroupByOutputType = {
+    id: string
+    taskId: string
+    userId: string | null
+    type: $Enums.TransactionType
+    status: $Enums.TransactionStatus
+    txHash: string | null
+    blockNumber: number | null
+    gasUsed: string | null
+    valueInWei: string
+    networkId: string
+    errorMessage: string | null
+    createdAt: Date
+    confirmedAt: Date | null
+    _count: BlockchainTransactionCountAggregateOutputType | null
+    _avg: BlockchainTransactionAvgAggregateOutputType | null
+    _sum: BlockchainTransactionSumAggregateOutputType | null
+    _min: BlockchainTransactionMinAggregateOutputType | null
+    _max: BlockchainTransactionMaxAggregateOutputType | null
+  }
+
+  type GetBlockchainTransactionGroupByPayload<T extends BlockchainTransactionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BlockchainTransactionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BlockchainTransactionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BlockchainTransactionGroupByOutputType[P]>
+            : GetScalarType<T[P], BlockchainTransactionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BlockchainTransactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    taskId?: boolean
+    userId?: boolean
+    type?: boolean
+    status?: boolean
+    txHash?: boolean
+    blockNumber?: boolean
+    gasUsed?: boolean
+    valueInWei?: boolean
+    networkId?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    confirmedAt?: boolean
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    user?: boolean | BlockchainTransaction$userArgs<ExtArgs>
+  }, ExtArgs["result"]["blockchainTransaction"]>
+
+  export type BlockchainTransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    taskId?: boolean
+    userId?: boolean
+    type?: boolean
+    status?: boolean
+    txHash?: boolean
+    blockNumber?: boolean
+    gasUsed?: boolean
+    valueInWei?: boolean
+    networkId?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    confirmedAt?: boolean
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    user?: boolean | BlockchainTransaction$userArgs<ExtArgs>
+  }, ExtArgs["result"]["blockchainTransaction"]>
+
+  export type BlockchainTransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    taskId?: boolean
+    userId?: boolean
+    type?: boolean
+    status?: boolean
+    txHash?: boolean
+    blockNumber?: boolean
+    gasUsed?: boolean
+    valueInWei?: boolean
+    networkId?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    confirmedAt?: boolean
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    user?: boolean | BlockchainTransaction$userArgs<ExtArgs>
+  }, ExtArgs["result"]["blockchainTransaction"]>
+
+  export type BlockchainTransactionSelectScalar = {
+    id?: boolean
+    taskId?: boolean
+    userId?: boolean
+    type?: boolean
+    status?: boolean
+    txHash?: boolean
+    blockNumber?: boolean
+    gasUsed?: boolean
+    valueInWei?: boolean
+    networkId?: boolean
+    errorMessage?: boolean
+    createdAt?: boolean
+    confirmedAt?: boolean
+  }
+
+  export type BlockchainTransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "taskId" | "userId" | "type" | "status" | "txHash" | "blockNumber" | "gasUsed" | "valueInWei" | "networkId" | "errorMessage" | "createdAt" | "confirmedAt", ExtArgs["result"]["blockchainTransaction"]>
+  export type BlockchainTransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    user?: boolean | BlockchainTransaction$userArgs<ExtArgs>
+  }
+  export type BlockchainTransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    user?: boolean | BlockchainTransaction$userArgs<ExtArgs>
+  }
+  export type BlockchainTransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    task?: boolean | TaskDefaultArgs<ExtArgs>
+    user?: boolean | BlockchainTransaction$userArgs<ExtArgs>
+  }
+
+  export type $BlockchainTransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BlockchainTransaction"
+    objects: {
+      task: Prisma.$TaskPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      taskId: string
+      userId: string | null
+      type: $Enums.TransactionType
+      status: $Enums.TransactionStatus
+      txHash: string | null
+      blockNumber: number | null
+      gasUsed: string | null
+      valueInWei: string
+      networkId: string
+      errorMessage: string | null
+      createdAt: Date
+      confirmedAt: Date | null
+    }, ExtArgs["result"]["blockchainTransaction"]>
+    composites: {}
+  }
+
+  type BlockchainTransactionGetPayload<S extends boolean | null | undefined | BlockchainTransactionDefaultArgs> = $Result.GetResult<Prisma.$BlockchainTransactionPayload, S>
+
+  type BlockchainTransactionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BlockchainTransactionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BlockchainTransactionCountAggregateInputType | true
+    }
+
+  export interface BlockchainTransactionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BlockchainTransaction'], meta: { name: 'BlockchainTransaction' } }
+    /**
+     * Find zero or one BlockchainTransaction that matches the filter.
+     * @param {BlockchainTransactionFindUniqueArgs} args - Arguments to find a BlockchainTransaction
+     * @example
+     * // Get one BlockchainTransaction
+     * const blockchainTransaction = await prisma.blockchainTransaction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BlockchainTransactionFindUniqueArgs>(args: SelectSubset<T, BlockchainTransactionFindUniqueArgs<ExtArgs>>): Prisma__BlockchainTransactionClient<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BlockchainTransaction that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BlockchainTransactionFindUniqueOrThrowArgs} args - Arguments to find a BlockchainTransaction
+     * @example
+     * // Get one BlockchainTransaction
+     * const blockchainTransaction = await prisma.blockchainTransaction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BlockchainTransactionFindUniqueOrThrowArgs>(args: SelectSubset<T, BlockchainTransactionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BlockchainTransactionClient<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BlockchainTransaction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BlockchainTransactionFindFirstArgs} args - Arguments to find a BlockchainTransaction
+     * @example
+     * // Get one BlockchainTransaction
+     * const blockchainTransaction = await prisma.blockchainTransaction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BlockchainTransactionFindFirstArgs>(args?: SelectSubset<T, BlockchainTransactionFindFirstArgs<ExtArgs>>): Prisma__BlockchainTransactionClient<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BlockchainTransaction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BlockchainTransactionFindFirstOrThrowArgs} args - Arguments to find a BlockchainTransaction
+     * @example
+     * // Get one BlockchainTransaction
+     * const blockchainTransaction = await prisma.blockchainTransaction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BlockchainTransactionFindFirstOrThrowArgs>(args?: SelectSubset<T, BlockchainTransactionFindFirstOrThrowArgs<ExtArgs>>): Prisma__BlockchainTransactionClient<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BlockchainTransactions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BlockchainTransactionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BlockchainTransactions
+     * const blockchainTransactions = await prisma.blockchainTransaction.findMany()
+     * 
+     * // Get first 10 BlockchainTransactions
+     * const blockchainTransactions = await prisma.blockchainTransaction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const blockchainTransactionWithIdOnly = await prisma.blockchainTransaction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BlockchainTransactionFindManyArgs>(args?: SelectSubset<T, BlockchainTransactionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BlockchainTransaction.
+     * @param {BlockchainTransactionCreateArgs} args - Arguments to create a BlockchainTransaction.
+     * @example
+     * // Create one BlockchainTransaction
+     * const BlockchainTransaction = await prisma.blockchainTransaction.create({
+     *   data: {
+     *     // ... data to create a BlockchainTransaction
+     *   }
+     * })
+     * 
+     */
+    create<T extends BlockchainTransactionCreateArgs>(args: SelectSubset<T, BlockchainTransactionCreateArgs<ExtArgs>>): Prisma__BlockchainTransactionClient<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BlockchainTransactions.
+     * @param {BlockchainTransactionCreateManyArgs} args - Arguments to create many BlockchainTransactions.
+     * @example
+     * // Create many BlockchainTransactions
+     * const blockchainTransaction = await prisma.blockchainTransaction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BlockchainTransactionCreateManyArgs>(args?: SelectSubset<T, BlockchainTransactionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BlockchainTransactions and returns the data saved in the database.
+     * @param {BlockchainTransactionCreateManyAndReturnArgs} args - Arguments to create many BlockchainTransactions.
+     * @example
+     * // Create many BlockchainTransactions
+     * const blockchainTransaction = await prisma.blockchainTransaction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BlockchainTransactions and only return the `id`
+     * const blockchainTransactionWithIdOnly = await prisma.blockchainTransaction.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BlockchainTransactionCreateManyAndReturnArgs>(args?: SelectSubset<T, BlockchainTransactionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BlockchainTransaction.
+     * @param {BlockchainTransactionDeleteArgs} args - Arguments to delete one BlockchainTransaction.
+     * @example
+     * // Delete one BlockchainTransaction
+     * const BlockchainTransaction = await prisma.blockchainTransaction.delete({
+     *   where: {
+     *     // ... filter to delete one BlockchainTransaction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BlockchainTransactionDeleteArgs>(args: SelectSubset<T, BlockchainTransactionDeleteArgs<ExtArgs>>): Prisma__BlockchainTransactionClient<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BlockchainTransaction.
+     * @param {BlockchainTransactionUpdateArgs} args - Arguments to update one BlockchainTransaction.
+     * @example
+     * // Update one BlockchainTransaction
+     * const blockchainTransaction = await prisma.blockchainTransaction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BlockchainTransactionUpdateArgs>(args: SelectSubset<T, BlockchainTransactionUpdateArgs<ExtArgs>>): Prisma__BlockchainTransactionClient<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BlockchainTransactions.
+     * @param {BlockchainTransactionDeleteManyArgs} args - Arguments to filter BlockchainTransactions to delete.
+     * @example
+     * // Delete a few BlockchainTransactions
+     * const { count } = await prisma.blockchainTransaction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BlockchainTransactionDeleteManyArgs>(args?: SelectSubset<T, BlockchainTransactionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BlockchainTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BlockchainTransactionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BlockchainTransactions
+     * const blockchainTransaction = await prisma.blockchainTransaction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BlockchainTransactionUpdateManyArgs>(args: SelectSubset<T, BlockchainTransactionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BlockchainTransactions and returns the data updated in the database.
+     * @param {BlockchainTransactionUpdateManyAndReturnArgs} args - Arguments to update many BlockchainTransactions.
+     * @example
+     * // Update many BlockchainTransactions
+     * const blockchainTransaction = await prisma.blockchainTransaction.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BlockchainTransactions and only return the `id`
+     * const blockchainTransactionWithIdOnly = await prisma.blockchainTransaction.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BlockchainTransactionUpdateManyAndReturnArgs>(args: SelectSubset<T, BlockchainTransactionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BlockchainTransaction.
+     * @param {BlockchainTransactionUpsertArgs} args - Arguments to update or create a BlockchainTransaction.
+     * @example
+     * // Update or create a BlockchainTransaction
+     * const blockchainTransaction = await prisma.blockchainTransaction.upsert({
+     *   create: {
+     *     // ... data to create a BlockchainTransaction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BlockchainTransaction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BlockchainTransactionUpsertArgs>(args: SelectSubset<T, BlockchainTransactionUpsertArgs<ExtArgs>>): Prisma__BlockchainTransactionClient<$Result.GetResult<Prisma.$BlockchainTransactionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BlockchainTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BlockchainTransactionCountArgs} args - Arguments to filter BlockchainTransactions to count.
+     * @example
+     * // Count the number of BlockchainTransactions
+     * const count = await prisma.blockchainTransaction.count({
+     *   where: {
+     *     // ... the filter for the BlockchainTransactions we want to count
+     *   }
+     * })
+    **/
+    count<T extends BlockchainTransactionCountArgs>(
+      args?: Subset<T, BlockchainTransactionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BlockchainTransactionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BlockchainTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BlockchainTransactionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BlockchainTransactionAggregateArgs>(args: Subset<T, BlockchainTransactionAggregateArgs>): Prisma.PrismaPromise<GetBlockchainTransactionAggregateType<T>>
+
+    /**
+     * Group by BlockchainTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BlockchainTransactionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BlockchainTransactionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BlockchainTransactionGroupByArgs['orderBy'] }
+        : { orderBy?: BlockchainTransactionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BlockchainTransactionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBlockchainTransactionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BlockchainTransaction model
+   */
+  readonly fields: BlockchainTransactionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BlockchainTransaction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BlockchainTransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    task<T extends TaskDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TaskDefaultArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends BlockchainTransaction$userArgs<ExtArgs> = {}>(args?: Subset<T, BlockchainTransaction$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BlockchainTransaction model
+   */
+  interface BlockchainTransactionFieldRefs {
+    readonly id: FieldRef<"BlockchainTransaction", 'String'>
+    readonly taskId: FieldRef<"BlockchainTransaction", 'String'>
+    readonly userId: FieldRef<"BlockchainTransaction", 'String'>
+    readonly type: FieldRef<"BlockchainTransaction", 'TransactionType'>
+    readonly status: FieldRef<"BlockchainTransaction", 'TransactionStatus'>
+    readonly txHash: FieldRef<"BlockchainTransaction", 'String'>
+    readonly blockNumber: FieldRef<"BlockchainTransaction", 'Int'>
+    readonly gasUsed: FieldRef<"BlockchainTransaction", 'String'>
+    readonly valueInWei: FieldRef<"BlockchainTransaction", 'String'>
+    readonly networkId: FieldRef<"BlockchainTransaction", 'String'>
+    readonly errorMessage: FieldRef<"BlockchainTransaction", 'String'>
+    readonly createdAt: FieldRef<"BlockchainTransaction", 'DateTime'>
+    readonly confirmedAt: FieldRef<"BlockchainTransaction", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BlockchainTransaction findUnique
+   */
+  export type BlockchainTransactionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which BlockchainTransaction to fetch.
+     */
+    where: BlockchainTransactionWhereUniqueInput
+  }
+
+  /**
+   * BlockchainTransaction findUniqueOrThrow
+   */
+  export type BlockchainTransactionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which BlockchainTransaction to fetch.
+     */
+    where: BlockchainTransactionWhereUniqueInput
+  }
+
+  /**
+   * BlockchainTransaction findFirst
+   */
+  export type BlockchainTransactionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which BlockchainTransaction to fetch.
+     */
+    where?: BlockchainTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BlockchainTransactions to fetch.
+     */
+    orderBy?: BlockchainTransactionOrderByWithRelationInput | BlockchainTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BlockchainTransactions.
+     */
+    cursor?: BlockchainTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BlockchainTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BlockchainTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BlockchainTransactions.
+     */
+    distinct?: BlockchainTransactionScalarFieldEnum | BlockchainTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * BlockchainTransaction findFirstOrThrow
+   */
+  export type BlockchainTransactionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which BlockchainTransaction to fetch.
+     */
+    where?: BlockchainTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BlockchainTransactions to fetch.
+     */
+    orderBy?: BlockchainTransactionOrderByWithRelationInput | BlockchainTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BlockchainTransactions.
+     */
+    cursor?: BlockchainTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BlockchainTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BlockchainTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BlockchainTransactions.
+     */
+    distinct?: BlockchainTransactionScalarFieldEnum | BlockchainTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * BlockchainTransaction findMany
+   */
+  export type BlockchainTransactionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which BlockchainTransactions to fetch.
+     */
+    where?: BlockchainTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BlockchainTransactions to fetch.
+     */
+    orderBy?: BlockchainTransactionOrderByWithRelationInput | BlockchainTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BlockchainTransactions.
+     */
+    cursor?: BlockchainTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BlockchainTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BlockchainTransactions.
+     */
+    skip?: number
+    distinct?: BlockchainTransactionScalarFieldEnum | BlockchainTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * BlockchainTransaction create
+   */
+  export type BlockchainTransactionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BlockchainTransaction.
+     */
+    data: XOR<BlockchainTransactionCreateInput, BlockchainTransactionUncheckedCreateInput>
+  }
+
+  /**
+   * BlockchainTransaction createMany
+   */
+  export type BlockchainTransactionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BlockchainTransactions.
+     */
+    data: BlockchainTransactionCreateManyInput | BlockchainTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BlockchainTransaction createManyAndReturn
+   */
+  export type BlockchainTransactionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * The data used to create many BlockchainTransactions.
+     */
+    data: BlockchainTransactionCreateManyInput | BlockchainTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BlockchainTransaction update
+   */
+  export type BlockchainTransactionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BlockchainTransaction.
+     */
+    data: XOR<BlockchainTransactionUpdateInput, BlockchainTransactionUncheckedUpdateInput>
+    /**
+     * Choose, which BlockchainTransaction to update.
+     */
+    where: BlockchainTransactionWhereUniqueInput
+  }
+
+  /**
+   * BlockchainTransaction updateMany
+   */
+  export type BlockchainTransactionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BlockchainTransactions.
+     */
+    data: XOR<BlockchainTransactionUpdateManyMutationInput, BlockchainTransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which BlockchainTransactions to update
+     */
+    where?: BlockchainTransactionWhereInput
+    /**
+     * Limit how many BlockchainTransactions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BlockchainTransaction updateManyAndReturn
+   */
+  export type BlockchainTransactionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * The data used to update BlockchainTransactions.
+     */
+    data: XOR<BlockchainTransactionUpdateManyMutationInput, BlockchainTransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which BlockchainTransactions to update
+     */
+    where?: BlockchainTransactionWhereInput
+    /**
+     * Limit how many BlockchainTransactions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BlockchainTransaction upsert
+   */
+  export type BlockchainTransactionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BlockchainTransaction to update in case it exists.
+     */
+    where: BlockchainTransactionWhereUniqueInput
+    /**
+     * In case the BlockchainTransaction found by the `where` argument doesn't exist, create a new BlockchainTransaction with this data.
+     */
+    create: XOR<BlockchainTransactionCreateInput, BlockchainTransactionUncheckedCreateInput>
+    /**
+     * In case the BlockchainTransaction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BlockchainTransactionUpdateInput, BlockchainTransactionUncheckedUpdateInput>
+  }
+
+  /**
+   * BlockchainTransaction delete
+   */
+  export type BlockchainTransactionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+    /**
+     * Filter which BlockchainTransaction to delete.
+     */
+    where: BlockchainTransactionWhereUniqueInput
+  }
+
+  /**
+   * BlockchainTransaction deleteMany
+   */
+  export type BlockchainTransactionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BlockchainTransactions to delete
+     */
+    where?: BlockchainTransactionWhereInput
+    /**
+     * Limit how many BlockchainTransactions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BlockchainTransaction.user
+   */
+  export type BlockchainTransaction$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * BlockchainTransaction without action
+   */
+  export type BlockchainTransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BlockchainTransaction
+     */
+    select?: BlockchainTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BlockchainTransaction
+     */
+    omit?: BlockchainTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BlockchainTransactionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -5658,6 +10899,71 @@ export namespace Prisma {
   export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
+  export const TaskScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    description: 'description',
+    requirements: 'requirements',
+    valueInWei: 'valueInWei',
+    deadline: 'deadline',
+    allowOverdue: 'allowOverdue',
+    status: 'status',
+    contractTaskId: 'contractTaskId',
+    creatorId: 'creatorId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+  export const TaskDeveloperScalarFieldEnum: {
+    id: 'id',
+    taskId: 'taskId',
+    developerId: 'developerId',
+    walletAddress: 'walletAddress',
+    networkId: 'networkId',
+    appliedAt: 'appliedAt',
+    acceptedAt: 'acceptedAt'
+  };
+
+  export type TaskDeveloperScalarFieldEnum = (typeof TaskDeveloperScalarFieldEnum)[keyof typeof TaskDeveloperScalarFieldEnum]
+
+
+  export const TaskRepositoryScalarFieldEnum: {
+    id: 'id',
+    taskId: 'taskId',
+    repositoryName: 'repositoryName',
+    repositoryUrl: 'repositoryUrl',
+    githubRepoId: 'githubRepoId',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    deletedAt: 'deletedAt'
+  };
+
+  export type TaskRepositoryScalarFieldEnum = (typeof TaskRepositoryScalarFieldEnum)[keyof typeof TaskRepositoryScalarFieldEnum]
+
+
+  export const BlockchainTransactionScalarFieldEnum: {
+    id: 'id',
+    taskId: 'taskId',
+    userId: 'userId',
+    type: 'type',
+    status: 'status',
+    txHash: 'txHash',
+    blockNumber: 'blockNumber',
+    gasUsed: 'gasUsed',
+    valueInWei: 'valueInWei',
+    networkId: 'networkId',
+    errorMessage: 'errorMessage',
+    createdAt: 'createdAt',
+    confirmedAt: 'confirmedAt'
+  };
+
+  export type BlockchainTransactionScalarFieldEnum = (typeof BlockchainTransactionScalarFieldEnum)[keyof typeof BlockchainTransactionScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -5723,6 +11029,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'TaskStatus'
+   */
+  export type EnumTaskStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TaskStatus[]'
+   */
+  export type ListEnumTaskStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -5733,6 +11053,48 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TransactionType'
+   */
+  export type EnumTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionType'>
+    
+
+
+  /**
+   * Reference to a field of type 'TransactionType[]'
+   */
+  export type ListEnumTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TransactionStatus'
+   */
+  export type EnumTransactionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TransactionStatus[]'
+   */
+  export type ListEnumTransactionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -5753,6 +11115,9 @@ export namespace Prisma {
     role?: StringNullableFilter<"User"> | string | null
     sessions?: SessionListRelationFilter
     accounts?: AccountListRelationFilter
+    createdTasks?: TaskListRelationFilter
+    taskDevelopers?: TaskDeveloperListRelationFilter
+    transactions?: BlockchainTransactionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -5766,6 +11131,9 @@ export namespace Prisma {
     role?: SortOrderInput | SortOrder
     sessions?: SessionOrderByRelationAggregateInput
     accounts?: AccountOrderByRelationAggregateInput
+    createdTasks?: TaskOrderByRelationAggregateInput
+    taskDevelopers?: TaskDeveloperOrderByRelationAggregateInput
+    transactions?: BlockchainTransactionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -5782,6 +11150,9 @@ export namespace Prisma {
     role?: StringNullableFilter<"User"> | string | null
     sessions?: SessionListRelationFilter
     accounts?: AccountListRelationFilter
+    createdTasks?: TaskListRelationFilter
+    taskDevelopers?: TaskDeveloperListRelationFilter
+    transactions?: BlockchainTransactionListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -6034,6 +11405,350 @@ export namespace Prisma {
     updatedAt?: DateTimeNullableWithAggregatesFilter<"Verification"> | Date | string | null
   }
 
+  export type TaskWhereInput = {
+    AND?: TaskWhereInput | TaskWhereInput[]
+    OR?: TaskWhereInput[]
+    NOT?: TaskWhereInput | TaskWhereInput[]
+    id?: StringFilter<"Task"> | string
+    title?: StringFilter<"Task"> | string
+    description?: StringFilter<"Task"> | string
+    requirements?: StringNullableFilter<"Task"> | string | null
+    valueInWei?: StringFilter<"Task"> | string
+    deadline?: DateTimeFilter<"Task"> | Date | string
+    allowOverdue?: BoolFilter<"Task"> | boolean
+    status?: EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
+    contractTaskId?: StringNullableFilter<"Task"> | string | null
+    creatorId?: StringFilter<"Task"> | string
+    createdAt?: DateTimeFilter<"Task"> | Date | string
+    updatedAt?: DateTimeFilter<"Task"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
+    taskDeveloper?: XOR<TaskDeveloperNullableScalarRelationFilter, TaskDeveloperWhereInput> | null
+    repository?: XOR<TaskRepositoryNullableScalarRelationFilter, TaskRepositoryWhereInput> | null
+    transactions?: BlockchainTransactionListRelationFilter
+  }
+
+  export type TaskOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    requirements?: SortOrderInput | SortOrder
+    valueInWei?: SortOrder
+    deadline?: SortOrder
+    allowOverdue?: SortOrder
+    status?: SortOrder
+    contractTaskId?: SortOrderInput | SortOrder
+    creatorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    creator?: UserOrderByWithRelationInput
+    taskDeveloper?: TaskDeveloperOrderByWithRelationInput
+    repository?: TaskRepositoryOrderByWithRelationInput
+    transactions?: BlockchainTransactionOrderByRelationAggregateInput
+  }
+
+  export type TaskWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TaskWhereInput | TaskWhereInput[]
+    OR?: TaskWhereInput[]
+    NOT?: TaskWhereInput | TaskWhereInput[]
+    title?: StringFilter<"Task"> | string
+    description?: StringFilter<"Task"> | string
+    requirements?: StringNullableFilter<"Task"> | string | null
+    valueInWei?: StringFilter<"Task"> | string
+    deadline?: DateTimeFilter<"Task"> | Date | string
+    allowOverdue?: BoolFilter<"Task"> | boolean
+    status?: EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
+    contractTaskId?: StringNullableFilter<"Task"> | string | null
+    creatorId?: StringFilter<"Task"> | string
+    createdAt?: DateTimeFilter<"Task"> | Date | string
+    updatedAt?: DateTimeFilter<"Task"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
+    taskDeveloper?: XOR<TaskDeveloperNullableScalarRelationFilter, TaskDeveloperWhereInput> | null
+    repository?: XOR<TaskRepositoryNullableScalarRelationFilter, TaskRepositoryWhereInput> | null
+    transactions?: BlockchainTransactionListRelationFilter
+  }, "id">
+
+  export type TaskOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    requirements?: SortOrderInput | SortOrder
+    valueInWei?: SortOrder
+    deadline?: SortOrder
+    allowOverdue?: SortOrder
+    status?: SortOrder
+    contractTaskId?: SortOrderInput | SortOrder
+    creatorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: TaskCountOrderByAggregateInput
+    _max?: TaskMaxOrderByAggregateInput
+    _min?: TaskMinOrderByAggregateInput
+  }
+
+  export type TaskScalarWhereWithAggregatesInput = {
+    AND?: TaskScalarWhereWithAggregatesInput | TaskScalarWhereWithAggregatesInput[]
+    OR?: TaskScalarWhereWithAggregatesInput[]
+    NOT?: TaskScalarWhereWithAggregatesInput | TaskScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Task"> | string
+    title?: StringWithAggregatesFilter<"Task"> | string
+    description?: StringWithAggregatesFilter<"Task"> | string
+    requirements?: StringNullableWithAggregatesFilter<"Task"> | string | null
+    valueInWei?: StringWithAggregatesFilter<"Task"> | string
+    deadline?: DateTimeWithAggregatesFilter<"Task"> | Date | string
+    allowOverdue?: BoolWithAggregatesFilter<"Task"> | boolean
+    status?: EnumTaskStatusWithAggregatesFilter<"Task"> | $Enums.TaskStatus
+    contractTaskId?: StringNullableWithAggregatesFilter<"Task"> | string | null
+    creatorId?: StringWithAggregatesFilter<"Task"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Task"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Task"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
+  }
+
+  export type TaskDeveloperWhereInput = {
+    AND?: TaskDeveloperWhereInput | TaskDeveloperWhereInput[]
+    OR?: TaskDeveloperWhereInput[]
+    NOT?: TaskDeveloperWhereInput | TaskDeveloperWhereInput[]
+    id?: StringFilter<"TaskDeveloper"> | string
+    taskId?: StringFilter<"TaskDeveloper"> | string
+    developerId?: StringFilter<"TaskDeveloper"> | string
+    walletAddress?: StringFilter<"TaskDeveloper"> | string
+    networkId?: StringFilter<"TaskDeveloper"> | string
+    appliedAt?: DateTimeFilter<"TaskDeveloper"> | Date | string
+    acceptedAt?: DateTimeNullableFilter<"TaskDeveloper"> | Date | string | null
+    task?: XOR<TaskScalarRelationFilter, TaskWhereInput>
+    developer?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type TaskDeveloperOrderByWithRelationInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    developerId?: SortOrder
+    walletAddress?: SortOrder
+    networkId?: SortOrder
+    appliedAt?: SortOrder
+    acceptedAt?: SortOrderInput | SortOrder
+    task?: TaskOrderByWithRelationInput
+    developer?: UserOrderByWithRelationInput
+  }
+
+  export type TaskDeveloperWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    taskId?: string
+    AND?: TaskDeveloperWhereInput | TaskDeveloperWhereInput[]
+    OR?: TaskDeveloperWhereInput[]
+    NOT?: TaskDeveloperWhereInput | TaskDeveloperWhereInput[]
+    developerId?: StringFilter<"TaskDeveloper"> | string
+    walletAddress?: StringFilter<"TaskDeveloper"> | string
+    networkId?: StringFilter<"TaskDeveloper"> | string
+    appliedAt?: DateTimeFilter<"TaskDeveloper"> | Date | string
+    acceptedAt?: DateTimeNullableFilter<"TaskDeveloper"> | Date | string | null
+    task?: XOR<TaskScalarRelationFilter, TaskWhereInput>
+    developer?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "taskId">
+
+  export type TaskDeveloperOrderByWithAggregationInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    developerId?: SortOrder
+    walletAddress?: SortOrder
+    networkId?: SortOrder
+    appliedAt?: SortOrder
+    acceptedAt?: SortOrderInput | SortOrder
+    _count?: TaskDeveloperCountOrderByAggregateInput
+    _max?: TaskDeveloperMaxOrderByAggregateInput
+    _min?: TaskDeveloperMinOrderByAggregateInput
+  }
+
+  export type TaskDeveloperScalarWhereWithAggregatesInput = {
+    AND?: TaskDeveloperScalarWhereWithAggregatesInput | TaskDeveloperScalarWhereWithAggregatesInput[]
+    OR?: TaskDeveloperScalarWhereWithAggregatesInput[]
+    NOT?: TaskDeveloperScalarWhereWithAggregatesInput | TaskDeveloperScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TaskDeveloper"> | string
+    taskId?: StringWithAggregatesFilter<"TaskDeveloper"> | string
+    developerId?: StringWithAggregatesFilter<"TaskDeveloper"> | string
+    walletAddress?: StringWithAggregatesFilter<"TaskDeveloper"> | string
+    networkId?: StringWithAggregatesFilter<"TaskDeveloper"> | string
+    appliedAt?: DateTimeWithAggregatesFilter<"TaskDeveloper"> | Date | string
+    acceptedAt?: DateTimeNullableWithAggregatesFilter<"TaskDeveloper"> | Date | string | null
+  }
+
+  export type TaskRepositoryWhereInput = {
+    AND?: TaskRepositoryWhereInput | TaskRepositoryWhereInput[]
+    OR?: TaskRepositoryWhereInput[]
+    NOT?: TaskRepositoryWhereInput | TaskRepositoryWhereInput[]
+    id?: StringFilter<"TaskRepository"> | string
+    taskId?: StringFilter<"TaskRepository"> | string
+    repositoryName?: StringFilter<"TaskRepository"> | string
+    repositoryUrl?: StringFilter<"TaskRepository"> | string
+    githubRepoId?: IntNullableFilter<"TaskRepository"> | number | null
+    isActive?: BoolFilter<"TaskRepository"> | boolean
+    createdAt?: DateTimeFilter<"TaskRepository"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"TaskRepository"> | Date | string | null
+    task?: XOR<TaskScalarRelationFilter, TaskWhereInput>
+  }
+
+  export type TaskRepositoryOrderByWithRelationInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    repositoryName?: SortOrder
+    repositoryUrl?: SortOrder
+    githubRepoId?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    task?: TaskOrderByWithRelationInput
+  }
+
+  export type TaskRepositoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    taskId?: string
+    AND?: TaskRepositoryWhereInput | TaskRepositoryWhereInput[]
+    OR?: TaskRepositoryWhereInput[]
+    NOT?: TaskRepositoryWhereInput | TaskRepositoryWhereInput[]
+    repositoryName?: StringFilter<"TaskRepository"> | string
+    repositoryUrl?: StringFilter<"TaskRepository"> | string
+    githubRepoId?: IntNullableFilter<"TaskRepository"> | number | null
+    isActive?: BoolFilter<"TaskRepository"> | boolean
+    createdAt?: DateTimeFilter<"TaskRepository"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"TaskRepository"> | Date | string | null
+    task?: XOR<TaskScalarRelationFilter, TaskWhereInput>
+  }, "id" | "taskId">
+
+  export type TaskRepositoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    repositoryName?: SortOrder
+    repositoryUrl?: SortOrder
+    githubRepoId?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
+    _count?: TaskRepositoryCountOrderByAggregateInput
+    _avg?: TaskRepositoryAvgOrderByAggregateInput
+    _max?: TaskRepositoryMaxOrderByAggregateInput
+    _min?: TaskRepositoryMinOrderByAggregateInput
+    _sum?: TaskRepositorySumOrderByAggregateInput
+  }
+
+  export type TaskRepositoryScalarWhereWithAggregatesInput = {
+    AND?: TaskRepositoryScalarWhereWithAggregatesInput | TaskRepositoryScalarWhereWithAggregatesInput[]
+    OR?: TaskRepositoryScalarWhereWithAggregatesInput[]
+    NOT?: TaskRepositoryScalarWhereWithAggregatesInput | TaskRepositoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TaskRepository"> | string
+    taskId?: StringWithAggregatesFilter<"TaskRepository"> | string
+    repositoryName?: StringWithAggregatesFilter<"TaskRepository"> | string
+    repositoryUrl?: StringWithAggregatesFilter<"TaskRepository"> | string
+    githubRepoId?: IntNullableWithAggregatesFilter<"TaskRepository"> | number | null
+    isActive?: BoolWithAggregatesFilter<"TaskRepository"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"TaskRepository"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"TaskRepository"> | Date | string | null
+  }
+
+  export type BlockchainTransactionWhereInput = {
+    AND?: BlockchainTransactionWhereInput | BlockchainTransactionWhereInput[]
+    OR?: BlockchainTransactionWhereInput[]
+    NOT?: BlockchainTransactionWhereInput | BlockchainTransactionWhereInput[]
+    id?: StringFilter<"BlockchainTransaction"> | string
+    taskId?: StringFilter<"BlockchainTransaction"> | string
+    userId?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    type?: EnumTransactionTypeFilter<"BlockchainTransaction"> | $Enums.TransactionType
+    status?: EnumTransactionStatusFilter<"BlockchainTransaction"> | $Enums.TransactionStatus
+    txHash?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    blockNumber?: IntNullableFilter<"BlockchainTransaction"> | number | null
+    gasUsed?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    valueInWei?: StringFilter<"BlockchainTransaction"> | string
+    networkId?: StringFilter<"BlockchainTransaction"> | string
+    errorMessage?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    createdAt?: DateTimeFilter<"BlockchainTransaction"> | Date | string
+    confirmedAt?: DateTimeNullableFilter<"BlockchainTransaction"> | Date | string | null
+    task?: XOR<TaskScalarRelationFilter, TaskWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type BlockchainTransactionOrderByWithRelationInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    txHash?: SortOrderInput | SortOrder
+    blockNumber?: SortOrderInput | SortOrder
+    gasUsed?: SortOrderInput | SortOrder
+    valueInWei?: SortOrder
+    networkId?: SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    confirmedAt?: SortOrderInput | SortOrder
+    task?: TaskOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type BlockchainTransactionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: BlockchainTransactionWhereInput | BlockchainTransactionWhereInput[]
+    OR?: BlockchainTransactionWhereInput[]
+    NOT?: BlockchainTransactionWhereInput | BlockchainTransactionWhereInput[]
+    taskId?: StringFilter<"BlockchainTransaction"> | string
+    userId?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    type?: EnumTransactionTypeFilter<"BlockchainTransaction"> | $Enums.TransactionType
+    status?: EnumTransactionStatusFilter<"BlockchainTransaction"> | $Enums.TransactionStatus
+    txHash?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    blockNumber?: IntNullableFilter<"BlockchainTransaction"> | number | null
+    gasUsed?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    valueInWei?: StringFilter<"BlockchainTransaction"> | string
+    networkId?: StringFilter<"BlockchainTransaction"> | string
+    errorMessage?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    createdAt?: DateTimeFilter<"BlockchainTransaction"> | Date | string
+    confirmedAt?: DateTimeNullableFilter<"BlockchainTransaction"> | Date | string | null
+    task?: XOR<TaskScalarRelationFilter, TaskWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type BlockchainTransactionOrderByWithAggregationInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    txHash?: SortOrderInput | SortOrder
+    blockNumber?: SortOrderInput | SortOrder
+    gasUsed?: SortOrderInput | SortOrder
+    valueInWei?: SortOrder
+    networkId?: SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    confirmedAt?: SortOrderInput | SortOrder
+    _count?: BlockchainTransactionCountOrderByAggregateInput
+    _avg?: BlockchainTransactionAvgOrderByAggregateInput
+    _max?: BlockchainTransactionMaxOrderByAggregateInput
+    _min?: BlockchainTransactionMinOrderByAggregateInput
+    _sum?: BlockchainTransactionSumOrderByAggregateInput
+  }
+
+  export type BlockchainTransactionScalarWhereWithAggregatesInput = {
+    AND?: BlockchainTransactionScalarWhereWithAggregatesInput | BlockchainTransactionScalarWhereWithAggregatesInput[]
+    OR?: BlockchainTransactionScalarWhereWithAggregatesInput[]
+    NOT?: BlockchainTransactionScalarWhereWithAggregatesInput | BlockchainTransactionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"BlockchainTransaction"> | string
+    taskId?: StringWithAggregatesFilter<"BlockchainTransaction"> | string
+    userId?: StringNullableWithAggregatesFilter<"BlockchainTransaction"> | string | null
+    type?: EnumTransactionTypeWithAggregatesFilter<"BlockchainTransaction"> | $Enums.TransactionType
+    status?: EnumTransactionStatusWithAggregatesFilter<"BlockchainTransaction"> | $Enums.TransactionStatus
+    txHash?: StringNullableWithAggregatesFilter<"BlockchainTransaction"> | string | null
+    blockNumber?: IntNullableWithAggregatesFilter<"BlockchainTransaction"> | number | null
+    gasUsed?: StringNullableWithAggregatesFilter<"BlockchainTransaction"> | string | null
+    valueInWei?: StringWithAggregatesFilter<"BlockchainTransaction"> | string
+    networkId?: StringWithAggregatesFilter<"BlockchainTransaction"> | string
+    errorMessage?: StringNullableWithAggregatesFilter<"BlockchainTransaction"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"BlockchainTransaction"> | Date | string
+    confirmedAt?: DateTimeNullableWithAggregatesFilter<"BlockchainTransaction"> | Date | string | null
+  }
+
   export type UserCreateInput = {
     id: string
     name: string
@@ -6045,6 +11760,9 @@ export namespace Prisma {
     role?: string | null
     sessions?: SessionCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatorInput
+    taskDevelopers?: TaskDeveloperCreateNestedManyWithoutDeveloperInput
+    transactions?: BlockchainTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -6058,6 +11776,9 @@ export namespace Prisma {
     role?: string | null
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatorInput
+    taskDevelopers?: TaskDeveloperUncheckedCreateNestedManyWithoutDeveloperInput
+    transactions?: BlockchainTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -6071,6 +11792,9 @@ export namespace Prisma {
     role?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatorNestedInput
+    taskDevelopers?: TaskDeveloperUpdateManyWithoutDeveloperNestedInput
+    transactions?: BlockchainTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -6084,6 +11808,9 @@ export namespace Prisma {
     role?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatorNestedInput
+    taskDevelopers?: TaskDeveloperUncheckedUpdateManyWithoutDeveloperNestedInput
+    transactions?: BlockchainTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -6369,6 +12096,383 @@ export namespace Prisma {
     updatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type TaskCreateInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    creator: UserCreateNestedOneWithoutCreatedTasksInput
+    taskDeveloper?: TaskDeveloperCreateNestedOneWithoutTaskInput
+    repository?: TaskRepositoryCreateNestedOneWithoutTaskInput
+    transactions?: BlockchainTransactionCreateNestedManyWithoutTaskInput
+  }
+
+  export type TaskUncheckedCreateInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    creatorId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    taskDeveloper?: TaskDeveloperUncheckedCreateNestedOneWithoutTaskInput
+    repository?: TaskRepositoryUncheckedCreateNestedOneWithoutTaskInput
+    transactions?: BlockchainTransactionUncheckedCreateNestedManyWithoutTaskInput
+  }
+
+  export type TaskUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    creator?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
+    taskDeveloper?: TaskDeveloperUpdateOneWithoutTaskNestedInput
+    repository?: TaskRepositoryUpdateOneWithoutTaskNestedInput
+    transactions?: BlockchainTransactionUpdateManyWithoutTaskNestedInput
+  }
+
+  export type TaskUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taskDeveloper?: TaskDeveloperUncheckedUpdateOneWithoutTaskNestedInput
+    repository?: TaskRepositoryUncheckedUpdateOneWithoutTaskNestedInput
+    transactions?: BlockchainTransactionUncheckedUpdateManyWithoutTaskNestedInput
+  }
+
+  export type TaskCreateManyInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    creatorId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type TaskUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TaskUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TaskDeveloperCreateInput = {
+    id?: string
+    walletAddress: string
+    networkId?: string
+    appliedAt?: Date | string
+    acceptedAt?: Date | string | null
+    task: TaskCreateNestedOneWithoutTaskDeveloperInput
+    developer: UserCreateNestedOneWithoutTaskDevelopersInput
+  }
+
+  export type TaskDeveloperUncheckedCreateInput = {
+    id?: string
+    taskId: string
+    developerId: string
+    walletAddress: string
+    networkId?: string
+    appliedAt?: Date | string
+    acceptedAt?: Date | string | null
+  }
+
+  export type TaskDeveloperUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    walletAddress?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    task?: TaskUpdateOneRequiredWithoutTaskDeveloperNestedInput
+    developer?: UserUpdateOneRequiredWithoutTaskDevelopersNestedInput
+  }
+
+  export type TaskDeveloperUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: StringFieldUpdateOperationsInput | string
+    developerId?: StringFieldUpdateOperationsInput | string
+    walletAddress?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TaskDeveloperCreateManyInput = {
+    id?: string
+    taskId: string
+    developerId: string
+    walletAddress: string
+    networkId?: string
+    appliedAt?: Date | string
+    acceptedAt?: Date | string | null
+  }
+
+  export type TaskDeveloperUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    walletAddress?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TaskDeveloperUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: StringFieldUpdateOperationsInput | string
+    developerId?: StringFieldUpdateOperationsInput | string
+    walletAddress?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TaskRepositoryCreateInput = {
+    id?: string
+    repositoryName: string
+    repositoryUrl: string
+    githubRepoId?: number | null
+    isActive?: boolean
+    createdAt?: Date | string
+    deletedAt?: Date | string | null
+    task: TaskCreateNestedOneWithoutRepositoryInput
+  }
+
+  export type TaskRepositoryUncheckedCreateInput = {
+    id?: string
+    taskId: string
+    repositoryName: string
+    repositoryUrl: string
+    githubRepoId?: number | null
+    isActive?: boolean
+    createdAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type TaskRepositoryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    repositoryName?: StringFieldUpdateOperationsInput | string
+    repositoryUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoId?: NullableIntFieldUpdateOperationsInput | number | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    task?: TaskUpdateOneRequiredWithoutRepositoryNestedInput
+  }
+
+  export type TaskRepositoryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: StringFieldUpdateOperationsInput | string
+    repositoryName?: StringFieldUpdateOperationsInput | string
+    repositoryUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoId?: NullableIntFieldUpdateOperationsInput | number | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TaskRepositoryCreateManyInput = {
+    id?: string
+    taskId: string
+    repositoryName: string
+    repositoryUrl: string
+    githubRepoId?: number | null
+    isActive?: boolean
+    createdAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type TaskRepositoryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    repositoryName?: StringFieldUpdateOperationsInput | string
+    repositoryUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoId?: NullableIntFieldUpdateOperationsInput | number | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TaskRepositoryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: StringFieldUpdateOperationsInput | string
+    repositoryName?: StringFieldUpdateOperationsInput | string
+    repositoryUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoId?: NullableIntFieldUpdateOperationsInput | number | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BlockchainTransactionCreateInput = {
+    id?: string
+    type: $Enums.TransactionType
+    status?: $Enums.TransactionStatus
+    txHash?: string | null
+    blockNumber?: number | null
+    gasUsed?: string | null
+    valueInWei: string
+    networkId?: string
+    errorMessage?: string | null
+    createdAt?: Date | string
+    confirmedAt?: Date | string | null
+    task: TaskCreateNestedOneWithoutTransactionsInput
+    user?: UserCreateNestedOneWithoutTransactionsInput
+  }
+
+  export type BlockchainTransactionUncheckedCreateInput = {
+    id?: string
+    taskId: string
+    userId?: string | null
+    type: $Enums.TransactionType
+    status?: $Enums.TransactionStatus
+    txHash?: string | null
+    blockNumber?: number | null
+    gasUsed?: string | null
+    valueInWei: string
+    networkId?: string
+    errorMessage?: string | null
+    createdAt?: Date | string
+    confirmedAt?: Date | string | null
+  }
+
+  export type BlockchainTransactionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
+    blockNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    gasUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    task?: TaskUpdateOneRequiredWithoutTransactionsNestedInput
+    user?: UserUpdateOneWithoutTransactionsNestedInput
+  }
+
+  export type BlockchainTransactionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
+    blockNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    gasUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BlockchainTransactionCreateManyInput = {
+    id?: string
+    taskId: string
+    userId?: string | null
+    type: $Enums.TransactionType
+    status?: $Enums.TransactionStatus
+    txHash?: string | null
+    blockNumber?: number | null
+    gasUsed?: string | null
+    valueInWei: string
+    networkId?: string
+    errorMessage?: string | null
+    createdAt?: Date | string
+    confirmedAt?: Date | string | null
+  }
+
+  export type BlockchainTransactionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
+    blockNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    gasUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BlockchainTransactionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
+    blockNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    gasUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -6427,6 +12531,24 @@ export namespace Prisma {
     none?: AccountWhereInput
   }
 
+  export type TaskListRelationFilter = {
+    every?: TaskWhereInput
+    some?: TaskWhereInput
+    none?: TaskWhereInput
+  }
+
+  export type TaskDeveloperListRelationFilter = {
+    every?: TaskDeveloperWhereInput
+    some?: TaskDeveloperWhereInput
+    none?: TaskDeveloperWhereInput
+  }
+
+  export type BlockchainTransactionListRelationFilter = {
+    every?: BlockchainTransactionWhereInput
+    some?: BlockchainTransactionWhereInput
+    none?: BlockchainTransactionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -6437,6 +12559,18 @@ export namespace Prisma {
   }
 
   export type AccountOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TaskOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TaskDeveloperOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BlockchainTransactionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -6669,6 +12803,279 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type EnumTaskStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskStatus | EnumTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskStatusFilter<$PrismaModel> | $Enums.TaskStatus
+  }
+
+  export type TaskDeveloperNullableScalarRelationFilter = {
+    is?: TaskDeveloperWhereInput | null
+    isNot?: TaskDeveloperWhereInput | null
+  }
+
+  export type TaskRepositoryNullableScalarRelationFilter = {
+    is?: TaskRepositoryWhereInput | null
+    isNot?: TaskRepositoryWhereInput | null
+  }
+
+  export type TaskCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    requirements?: SortOrder
+    valueInWei?: SortOrder
+    deadline?: SortOrder
+    allowOverdue?: SortOrder
+    status?: SortOrder
+    contractTaskId?: SortOrder
+    creatorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type TaskMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    requirements?: SortOrder
+    valueInWei?: SortOrder
+    deadline?: SortOrder
+    allowOverdue?: SortOrder
+    status?: SortOrder
+    contractTaskId?: SortOrder
+    creatorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type TaskMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    requirements?: SortOrder
+    valueInWei?: SortOrder
+    deadline?: SortOrder
+    allowOverdue?: SortOrder
+    status?: SortOrder
+    contractTaskId?: SortOrder
+    creatorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type EnumTaskStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskStatus | EnumTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskStatusWithAggregatesFilter<$PrismaModel> | $Enums.TaskStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTaskStatusFilter<$PrismaModel>
+    _max?: NestedEnumTaskStatusFilter<$PrismaModel>
+  }
+
+  export type TaskScalarRelationFilter = {
+    is?: TaskWhereInput
+    isNot?: TaskWhereInput
+  }
+
+  export type TaskDeveloperCountOrderByAggregateInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    developerId?: SortOrder
+    walletAddress?: SortOrder
+    networkId?: SortOrder
+    appliedAt?: SortOrder
+    acceptedAt?: SortOrder
+  }
+
+  export type TaskDeveloperMaxOrderByAggregateInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    developerId?: SortOrder
+    walletAddress?: SortOrder
+    networkId?: SortOrder
+    appliedAt?: SortOrder
+    acceptedAt?: SortOrder
+  }
+
+  export type TaskDeveloperMinOrderByAggregateInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    developerId?: SortOrder
+    walletAddress?: SortOrder
+    networkId?: SortOrder
+    appliedAt?: SortOrder
+    acceptedAt?: SortOrder
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type TaskRepositoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    repositoryName?: SortOrder
+    repositoryUrl?: SortOrder
+    githubRepoId?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type TaskRepositoryAvgOrderByAggregateInput = {
+    githubRepoId?: SortOrder
+  }
+
+  export type TaskRepositoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    repositoryName?: SortOrder
+    repositoryUrl?: SortOrder
+    githubRepoId?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type TaskRepositoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    repositoryName?: SortOrder
+    repositoryUrl?: SortOrder
+    githubRepoId?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    deletedAt?: SortOrder
+  }
+
+  export type TaskRepositorySumOrderByAggregateInput = {
+    githubRepoId?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type EnumTransactionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionType | EnumTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionTypeFilter<$PrismaModel> | $Enums.TransactionType
+  }
+
+  export type EnumTransactionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionStatus | EnumTransactionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionStatus[] | ListEnumTransactionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionStatus[] | ListEnumTransactionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionStatusFilter<$PrismaModel> | $Enums.TransactionStatus
+  }
+
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type BlockchainTransactionCountOrderByAggregateInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    txHash?: SortOrder
+    blockNumber?: SortOrder
+    gasUsed?: SortOrder
+    valueInWei?: SortOrder
+    networkId?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    confirmedAt?: SortOrder
+  }
+
+  export type BlockchainTransactionAvgOrderByAggregateInput = {
+    blockNumber?: SortOrder
+  }
+
+  export type BlockchainTransactionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    txHash?: SortOrder
+    blockNumber?: SortOrder
+    gasUsed?: SortOrder
+    valueInWei?: SortOrder
+    networkId?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    confirmedAt?: SortOrder
+  }
+
+  export type BlockchainTransactionMinOrderByAggregateInput = {
+    id?: SortOrder
+    taskId?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    status?: SortOrder
+    txHash?: SortOrder
+    blockNumber?: SortOrder
+    gasUsed?: SortOrder
+    valueInWei?: SortOrder
+    networkId?: SortOrder
+    errorMessage?: SortOrder
+    createdAt?: SortOrder
+    confirmedAt?: SortOrder
+  }
+
+  export type BlockchainTransactionSumOrderByAggregateInput = {
+    blockNumber?: SortOrder
+  }
+
+  export type EnumTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionType | EnumTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionTypeWithAggregatesFilter<$PrismaModel> | $Enums.TransactionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTransactionTypeFilter<$PrismaModel>
+    _max?: NestedEnumTransactionTypeFilter<$PrismaModel>
+  }
+
+  export type EnumTransactionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionStatus | EnumTransactionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionStatus[] | ListEnumTransactionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionStatus[] | ListEnumTransactionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionStatusWithAggregatesFilter<$PrismaModel> | $Enums.TransactionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTransactionStatusFilter<$PrismaModel>
+    _max?: NestedEnumTransactionStatusFilter<$PrismaModel>
+  }
+
   export type SessionCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -6683,6 +13090,27 @@ export namespace Prisma {
     connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
   }
 
+  export type TaskCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<TaskCreateWithoutCreatorInput, TaskUncheckedCreateWithoutCreatorInput> | TaskCreateWithoutCreatorInput[] | TaskUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCreatorInput | TaskCreateOrConnectWithoutCreatorInput[]
+    createMany?: TaskCreateManyCreatorInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+  }
+
+  export type TaskDeveloperCreateNestedManyWithoutDeveloperInput = {
+    create?: XOR<TaskDeveloperCreateWithoutDeveloperInput, TaskDeveloperUncheckedCreateWithoutDeveloperInput> | TaskDeveloperCreateWithoutDeveloperInput[] | TaskDeveloperUncheckedCreateWithoutDeveloperInput[]
+    connectOrCreate?: TaskDeveloperCreateOrConnectWithoutDeveloperInput | TaskDeveloperCreateOrConnectWithoutDeveloperInput[]
+    createMany?: TaskDeveloperCreateManyDeveloperInputEnvelope
+    connect?: TaskDeveloperWhereUniqueInput | TaskDeveloperWhereUniqueInput[]
+  }
+
+  export type BlockchainTransactionCreateNestedManyWithoutUserInput = {
+    create?: XOR<BlockchainTransactionCreateWithoutUserInput, BlockchainTransactionUncheckedCreateWithoutUserInput> | BlockchainTransactionCreateWithoutUserInput[] | BlockchainTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BlockchainTransactionCreateOrConnectWithoutUserInput | BlockchainTransactionCreateOrConnectWithoutUserInput[]
+    createMany?: BlockchainTransactionCreateManyUserInputEnvelope
+    connect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+  }
+
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -6695,6 +13123,27 @@ export namespace Prisma {
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
     createMany?: AccountCreateManyUserInputEnvelope
     connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+  }
+
+  export type TaskUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<TaskCreateWithoutCreatorInput, TaskUncheckedCreateWithoutCreatorInput> | TaskCreateWithoutCreatorInput[] | TaskUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCreatorInput | TaskCreateOrConnectWithoutCreatorInput[]
+    createMany?: TaskCreateManyCreatorInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+  }
+
+  export type TaskDeveloperUncheckedCreateNestedManyWithoutDeveloperInput = {
+    create?: XOR<TaskDeveloperCreateWithoutDeveloperInput, TaskDeveloperUncheckedCreateWithoutDeveloperInput> | TaskDeveloperCreateWithoutDeveloperInput[] | TaskDeveloperUncheckedCreateWithoutDeveloperInput[]
+    connectOrCreate?: TaskDeveloperCreateOrConnectWithoutDeveloperInput | TaskDeveloperCreateOrConnectWithoutDeveloperInput[]
+    createMany?: TaskDeveloperCreateManyDeveloperInputEnvelope
+    connect?: TaskDeveloperWhereUniqueInput | TaskDeveloperWhereUniqueInput[]
+  }
+
+  export type BlockchainTransactionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<BlockchainTransactionCreateWithoutUserInput, BlockchainTransactionUncheckedCreateWithoutUserInput> | BlockchainTransactionCreateWithoutUserInput[] | BlockchainTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BlockchainTransactionCreateOrConnectWithoutUserInput | BlockchainTransactionCreateOrConnectWithoutUserInput[]
+    createMany?: BlockchainTransactionCreateManyUserInputEnvelope
+    connect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -6741,6 +13190,48 @@ export namespace Prisma {
     deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
   }
 
+  export type TaskUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<TaskCreateWithoutCreatorInput, TaskUncheckedCreateWithoutCreatorInput> | TaskCreateWithoutCreatorInput[] | TaskUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCreatorInput | TaskCreateOrConnectWithoutCreatorInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutCreatorInput | TaskUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: TaskCreateManyCreatorInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutCreatorInput | TaskUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutCreatorInput | TaskUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
+  export type TaskDeveloperUpdateManyWithoutDeveloperNestedInput = {
+    create?: XOR<TaskDeveloperCreateWithoutDeveloperInput, TaskDeveloperUncheckedCreateWithoutDeveloperInput> | TaskDeveloperCreateWithoutDeveloperInput[] | TaskDeveloperUncheckedCreateWithoutDeveloperInput[]
+    connectOrCreate?: TaskDeveloperCreateOrConnectWithoutDeveloperInput | TaskDeveloperCreateOrConnectWithoutDeveloperInput[]
+    upsert?: TaskDeveloperUpsertWithWhereUniqueWithoutDeveloperInput | TaskDeveloperUpsertWithWhereUniqueWithoutDeveloperInput[]
+    createMany?: TaskDeveloperCreateManyDeveloperInputEnvelope
+    set?: TaskDeveloperWhereUniqueInput | TaskDeveloperWhereUniqueInput[]
+    disconnect?: TaskDeveloperWhereUniqueInput | TaskDeveloperWhereUniqueInput[]
+    delete?: TaskDeveloperWhereUniqueInput | TaskDeveloperWhereUniqueInput[]
+    connect?: TaskDeveloperWhereUniqueInput | TaskDeveloperWhereUniqueInput[]
+    update?: TaskDeveloperUpdateWithWhereUniqueWithoutDeveloperInput | TaskDeveloperUpdateWithWhereUniqueWithoutDeveloperInput[]
+    updateMany?: TaskDeveloperUpdateManyWithWhereWithoutDeveloperInput | TaskDeveloperUpdateManyWithWhereWithoutDeveloperInput[]
+    deleteMany?: TaskDeveloperScalarWhereInput | TaskDeveloperScalarWhereInput[]
+  }
+
+  export type BlockchainTransactionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<BlockchainTransactionCreateWithoutUserInput, BlockchainTransactionUncheckedCreateWithoutUserInput> | BlockchainTransactionCreateWithoutUserInput[] | BlockchainTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BlockchainTransactionCreateOrConnectWithoutUserInput | BlockchainTransactionCreateOrConnectWithoutUserInput[]
+    upsert?: BlockchainTransactionUpsertWithWhereUniqueWithoutUserInput | BlockchainTransactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: BlockchainTransactionCreateManyUserInputEnvelope
+    set?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    disconnect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    delete?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    connect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    update?: BlockchainTransactionUpdateWithWhereUniqueWithoutUserInput | BlockchainTransactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: BlockchainTransactionUpdateManyWithWhereWithoutUserInput | BlockchainTransactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: BlockchainTransactionScalarWhereInput | BlockchainTransactionScalarWhereInput[]
+  }
+
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -6767,6 +13258,48 @@ export namespace Prisma {
     update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
+  }
+
+  export type TaskUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<TaskCreateWithoutCreatorInput, TaskUncheckedCreateWithoutCreatorInput> | TaskCreateWithoutCreatorInput[] | TaskUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutCreatorInput | TaskCreateOrConnectWithoutCreatorInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutCreatorInput | TaskUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: TaskCreateManyCreatorInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutCreatorInput | TaskUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutCreatorInput | TaskUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
+  export type TaskDeveloperUncheckedUpdateManyWithoutDeveloperNestedInput = {
+    create?: XOR<TaskDeveloperCreateWithoutDeveloperInput, TaskDeveloperUncheckedCreateWithoutDeveloperInput> | TaskDeveloperCreateWithoutDeveloperInput[] | TaskDeveloperUncheckedCreateWithoutDeveloperInput[]
+    connectOrCreate?: TaskDeveloperCreateOrConnectWithoutDeveloperInput | TaskDeveloperCreateOrConnectWithoutDeveloperInput[]
+    upsert?: TaskDeveloperUpsertWithWhereUniqueWithoutDeveloperInput | TaskDeveloperUpsertWithWhereUniqueWithoutDeveloperInput[]
+    createMany?: TaskDeveloperCreateManyDeveloperInputEnvelope
+    set?: TaskDeveloperWhereUniqueInput | TaskDeveloperWhereUniqueInput[]
+    disconnect?: TaskDeveloperWhereUniqueInput | TaskDeveloperWhereUniqueInput[]
+    delete?: TaskDeveloperWhereUniqueInput | TaskDeveloperWhereUniqueInput[]
+    connect?: TaskDeveloperWhereUniqueInput | TaskDeveloperWhereUniqueInput[]
+    update?: TaskDeveloperUpdateWithWhereUniqueWithoutDeveloperInput | TaskDeveloperUpdateWithWhereUniqueWithoutDeveloperInput[]
+    updateMany?: TaskDeveloperUpdateManyWithWhereWithoutDeveloperInput | TaskDeveloperUpdateManyWithWhereWithoutDeveloperInput[]
+    deleteMany?: TaskDeveloperScalarWhereInput | TaskDeveloperScalarWhereInput[]
+  }
+
+  export type BlockchainTransactionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<BlockchainTransactionCreateWithoutUserInput, BlockchainTransactionUncheckedCreateWithoutUserInput> | BlockchainTransactionCreateWithoutUserInput[] | BlockchainTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BlockchainTransactionCreateOrConnectWithoutUserInput | BlockchainTransactionCreateOrConnectWithoutUserInput[]
+    upsert?: BlockchainTransactionUpsertWithWhereUniqueWithoutUserInput | BlockchainTransactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: BlockchainTransactionCreateManyUserInputEnvelope
+    set?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    disconnect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    delete?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    connect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    update?: BlockchainTransactionUpdateWithWhereUniqueWithoutUserInput | BlockchainTransactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: BlockchainTransactionUpdateManyWithWhereWithoutUserInput | BlockchainTransactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: BlockchainTransactionScalarWhereInput | BlockchainTransactionScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSessionsInput = {
@@ -6799,6 +13332,218 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutAccountsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAccountsInput, UserUpdateWithoutAccountsInput>, UserUncheckedUpdateWithoutAccountsInput>
+  }
+
+  export type UserCreateNestedOneWithoutCreatedTasksInput = {
+    create?: XOR<UserCreateWithoutCreatedTasksInput, UserUncheckedCreateWithoutCreatedTasksInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatedTasksInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TaskDeveloperCreateNestedOneWithoutTaskInput = {
+    create?: XOR<TaskDeveloperCreateWithoutTaskInput, TaskDeveloperUncheckedCreateWithoutTaskInput>
+    connectOrCreate?: TaskDeveloperCreateOrConnectWithoutTaskInput
+    connect?: TaskDeveloperWhereUniqueInput
+  }
+
+  export type TaskRepositoryCreateNestedOneWithoutTaskInput = {
+    create?: XOR<TaskRepositoryCreateWithoutTaskInput, TaskRepositoryUncheckedCreateWithoutTaskInput>
+    connectOrCreate?: TaskRepositoryCreateOrConnectWithoutTaskInput
+    connect?: TaskRepositoryWhereUniqueInput
+  }
+
+  export type BlockchainTransactionCreateNestedManyWithoutTaskInput = {
+    create?: XOR<BlockchainTransactionCreateWithoutTaskInput, BlockchainTransactionUncheckedCreateWithoutTaskInput> | BlockchainTransactionCreateWithoutTaskInput[] | BlockchainTransactionUncheckedCreateWithoutTaskInput[]
+    connectOrCreate?: BlockchainTransactionCreateOrConnectWithoutTaskInput | BlockchainTransactionCreateOrConnectWithoutTaskInput[]
+    createMany?: BlockchainTransactionCreateManyTaskInputEnvelope
+    connect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+  }
+
+  export type TaskDeveloperUncheckedCreateNestedOneWithoutTaskInput = {
+    create?: XOR<TaskDeveloperCreateWithoutTaskInput, TaskDeveloperUncheckedCreateWithoutTaskInput>
+    connectOrCreate?: TaskDeveloperCreateOrConnectWithoutTaskInput
+    connect?: TaskDeveloperWhereUniqueInput
+  }
+
+  export type TaskRepositoryUncheckedCreateNestedOneWithoutTaskInput = {
+    create?: XOR<TaskRepositoryCreateWithoutTaskInput, TaskRepositoryUncheckedCreateWithoutTaskInput>
+    connectOrCreate?: TaskRepositoryCreateOrConnectWithoutTaskInput
+    connect?: TaskRepositoryWhereUniqueInput
+  }
+
+  export type BlockchainTransactionUncheckedCreateNestedManyWithoutTaskInput = {
+    create?: XOR<BlockchainTransactionCreateWithoutTaskInput, BlockchainTransactionUncheckedCreateWithoutTaskInput> | BlockchainTransactionCreateWithoutTaskInput[] | BlockchainTransactionUncheckedCreateWithoutTaskInput[]
+    connectOrCreate?: BlockchainTransactionCreateOrConnectWithoutTaskInput | BlockchainTransactionCreateOrConnectWithoutTaskInput[]
+    createMany?: BlockchainTransactionCreateManyTaskInputEnvelope
+    connect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+  }
+
+  export type EnumTaskStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TaskStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutCreatedTasksNestedInput = {
+    create?: XOR<UserCreateWithoutCreatedTasksInput, UserUncheckedCreateWithoutCreatedTasksInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatedTasksInput
+    upsert?: UserUpsertWithoutCreatedTasksInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreatedTasksInput, UserUpdateWithoutCreatedTasksInput>, UserUncheckedUpdateWithoutCreatedTasksInput>
+  }
+
+  export type TaskDeveloperUpdateOneWithoutTaskNestedInput = {
+    create?: XOR<TaskDeveloperCreateWithoutTaskInput, TaskDeveloperUncheckedCreateWithoutTaskInput>
+    connectOrCreate?: TaskDeveloperCreateOrConnectWithoutTaskInput
+    upsert?: TaskDeveloperUpsertWithoutTaskInput
+    disconnect?: TaskDeveloperWhereInput | boolean
+    delete?: TaskDeveloperWhereInput | boolean
+    connect?: TaskDeveloperWhereUniqueInput
+    update?: XOR<XOR<TaskDeveloperUpdateToOneWithWhereWithoutTaskInput, TaskDeveloperUpdateWithoutTaskInput>, TaskDeveloperUncheckedUpdateWithoutTaskInput>
+  }
+
+  export type TaskRepositoryUpdateOneWithoutTaskNestedInput = {
+    create?: XOR<TaskRepositoryCreateWithoutTaskInput, TaskRepositoryUncheckedCreateWithoutTaskInput>
+    connectOrCreate?: TaskRepositoryCreateOrConnectWithoutTaskInput
+    upsert?: TaskRepositoryUpsertWithoutTaskInput
+    disconnect?: TaskRepositoryWhereInput | boolean
+    delete?: TaskRepositoryWhereInput | boolean
+    connect?: TaskRepositoryWhereUniqueInput
+    update?: XOR<XOR<TaskRepositoryUpdateToOneWithWhereWithoutTaskInput, TaskRepositoryUpdateWithoutTaskInput>, TaskRepositoryUncheckedUpdateWithoutTaskInput>
+  }
+
+  export type BlockchainTransactionUpdateManyWithoutTaskNestedInput = {
+    create?: XOR<BlockchainTransactionCreateWithoutTaskInput, BlockchainTransactionUncheckedCreateWithoutTaskInput> | BlockchainTransactionCreateWithoutTaskInput[] | BlockchainTransactionUncheckedCreateWithoutTaskInput[]
+    connectOrCreate?: BlockchainTransactionCreateOrConnectWithoutTaskInput | BlockchainTransactionCreateOrConnectWithoutTaskInput[]
+    upsert?: BlockchainTransactionUpsertWithWhereUniqueWithoutTaskInput | BlockchainTransactionUpsertWithWhereUniqueWithoutTaskInput[]
+    createMany?: BlockchainTransactionCreateManyTaskInputEnvelope
+    set?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    disconnect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    delete?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    connect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    update?: BlockchainTransactionUpdateWithWhereUniqueWithoutTaskInput | BlockchainTransactionUpdateWithWhereUniqueWithoutTaskInput[]
+    updateMany?: BlockchainTransactionUpdateManyWithWhereWithoutTaskInput | BlockchainTransactionUpdateManyWithWhereWithoutTaskInput[]
+    deleteMany?: BlockchainTransactionScalarWhereInput | BlockchainTransactionScalarWhereInput[]
+  }
+
+  export type TaskDeveloperUncheckedUpdateOneWithoutTaskNestedInput = {
+    create?: XOR<TaskDeveloperCreateWithoutTaskInput, TaskDeveloperUncheckedCreateWithoutTaskInput>
+    connectOrCreate?: TaskDeveloperCreateOrConnectWithoutTaskInput
+    upsert?: TaskDeveloperUpsertWithoutTaskInput
+    disconnect?: TaskDeveloperWhereInput | boolean
+    delete?: TaskDeveloperWhereInput | boolean
+    connect?: TaskDeveloperWhereUniqueInput
+    update?: XOR<XOR<TaskDeveloperUpdateToOneWithWhereWithoutTaskInput, TaskDeveloperUpdateWithoutTaskInput>, TaskDeveloperUncheckedUpdateWithoutTaskInput>
+  }
+
+  export type TaskRepositoryUncheckedUpdateOneWithoutTaskNestedInput = {
+    create?: XOR<TaskRepositoryCreateWithoutTaskInput, TaskRepositoryUncheckedCreateWithoutTaskInput>
+    connectOrCreate?: TaskRepositoryCreateOrConnectWithoutTaskInput
+    upsert?: TaskRepositoryUpsertWithoutTaskInput
+    disconnect?: TaskRepositoryWhereInput | boolean
+    delete?: TaskRepositoryWhereInput | boolean
+    connect?: TaskRepositoryWhereUniqueInput
+    update?: XOR<XOR<TaskRepositoryUpdateToOneWithWhereWithoutTaskInput, TaskRepositoryUpdateWithoutTaskInput>, TaskRepositoryUncheckedUpdateWithoutTaskInput>
+  }
+
+  export type BlockchainTransactionUncheckedUpdateManyWithoutTaskNestedInput = {
+    create?: XOR<BlockchainTransactionCreateWithoutTaskInput, BlockchainTransactionUncheckedCreateWithoutTaskInput> | BlockchainTransactionCreateWithoutTaskInput[] | BlockchainTransactionUncheckedCreateWithoutTaskInput[]
+    connectOrCreate?: BlockchainTransactionCreateOrConnectWithoutTaskInput | BlockchainTransactionCreateOrConnectWithoutTaskInput[]
+    upsert?: BlockchainTransactionUpsertWithWhereUniqueWithoutTaskInput | BlockchainTransactionUpsertWithWhereUniqueWithoutTaskInput[]
+    createMany?: BlockchainTransactionCreateManyTaskInputEnvelope
+    set?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    disconnect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    delete?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    connect?: BlockchainTransactionWhereUniqueInput | BlockchainTransactionWhereUniqueInput[]
+    update?: BlockchainTransactionUpdateWithWhereUniqueWithoutTaskInput | BlockchainTransactionUpdateWithWhereUniqueWithoutTaskInput[]
+    updateMany?: BlockchainTransactionUpdateManyWithWhereWithoutTaskInput | BlockchainTransactionUpdateManyWithWhereWithoutTaskInput[]
+    deleteMany?: BlockchainTransactionScalarWhereInput | BlockchainTransactionScalarWhereInput[]
+  }
+
+  export type TaskCreateNestedOneWithoutTaskDeveloperInput = {
+    create?: XOR<TaskCreateWithoutTaskDeveloperInput, TaskUncheckedCreateWithoutTaskDeveloperInput>
+    connectOrCreate?: TaskCreateOrConnectWithoutTaskDeveloperInput
+    connect?: TaskWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutTaskDevelopersInput = {
+    create?: XOR<UserCreateWithoutTaskDevelopersInput, UserUncheckedCreateWithoutTaskDevelopersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTaskDevelopersInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TaskUpdateOneRequiredWithoutTaskDeveloperNestedInput = {
+    create?: XOR<TaskCreateWithoutTaskDeveloperInput, TaskUncheckedCreateWithoutTaskDeveloperInput>
+    connectOrCreate?: TaskCreateOrConnectWithoutTaskDeveloperInput
+    upsert?: TaskUpsertWithoutTaskDeveloperInput
+    connect?: TaskWhereUniqueInput
+    update?: XOR<XOR<TaskUpdateToOneWithWhereWithoutTaskDeveloperInput, TaskUpdateWithoutTaskDeveloperInput>, TaskUncheckedUpdateWithoutTaskDeveloperInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutTaskDevelopersNestedInput = {
+    create?: XOR<UserCreateWithoutTaskDevelopersInput, UserUncheckedCreateWithoutTaskDevelopersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTaskDevelopersInput
+    upsert?: UserUpsertWithoutTaskDevelopersInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTaskDevelopersInput, UserUpdateWithoutTaskDevelopersInput>, UserUncheckedUpdateWithoutTaskDevelopersInput>
+  }
+
+  export type TaskCreateNestedOneWithoutRepositoryInput = {
+    create?: XOR<TaskCreateWithoutRepositoryInput, TaskUncheckedCreateWithoutRepositoryInput>
+    connectOrCreate?: TaskCreateOrConnectWithoutRepositoryInput
+    connect?: TaskWhereUniqueInput
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type TaskUpdateOneRequiredWithoutRepositoryNestedInput = {
+    create?: XOR<TaskCreateWithoutRepositoryInput, TaskUncheckedCreateWithoutRepositoryInput>
+    connectOrCreate?: TaskCreateOrConnectWithoutRepositoryInput
+    upsert?: TaskUpsertWithoutRepositoryInput
+    connect?: TaskWhereUniqueInput
+    update?: XOR<XOR<TaskUpdateToOneWithWhereWithoutRepositoryInput, TaskUpdateWithoutRepositoryInput>, TaskUncheckedUpdateWithoutRepositoryInput>
+  }
+
+  export type TaskCreateNestedOneWithoutTransactionsInput = {
+    create?: XOR<TaskCreateWithoutTransactionsInput, TaskUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: TaskCreateOrConnectWithoutTransactionsInput
+    connect?: TaskWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutTransactionsInput = {
+    create?: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransactionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumTransactionTypeFieldUpdateOperationsInput = {
+    set?: $Enums.TransactionType
+  }
+
+  export type EnumTransactionStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TransactionStatus
+  }
+
+  export type TaskUpdateOneRequiredWithoutTransactionsNestedInput = {
+    create?: XOR<TaskCreateWithoutTransactionsInput, TaskUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: TaskCreateOrConnectWithoutTransactionsInput
+    upsert?: TaskUpsertWithoutTransactionsInput
+    connect?: TaskWhereUniqueInput
+    update?: XOR<XOR<TaskUpdateToOneWithWhereWithoutTransactionsInput, TaskUpdateWithoutTransactionsInput>, TaskUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type UserUpdateOneWithoutTransactionsNestedInput = {
+    create?: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransactionsInput
+    upsert?: UserUpsertWithoutTransactionsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactionsInput, UserUpdateWithoutTransactionsInput>, UserUncheckedUpdateWithoutTransactionsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -6948,6 +13693,84 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedEnumTaskStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskStatus | EnumTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskStatusFilter<$PrismaModel> | $Enums.TaskStatus
+  }
+
+  export type NestedEnumTaskStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TaskStatus | EnumTaskStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTaskStatusWithAggregatesFilter<$PrismaModel> | $Enums.TaskStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTaskStatusFilter<$PrismaModel>
+    _max?: NestedEnumTaskStatusFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumTransactionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionType | EnumTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionTypeFilter<$PrismaModel> | $Enums.TransactionType
+  }
+
+  export type NestedEnumTransactionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionStatus | EnumTransactionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionStatus[] | ListEnumTransactionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionStatus[] | ListEnumTransactionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionStatusFilter<$PrismaModel> | $Enums.TransactionStatus
+  }
+
+  export type NestedEnumTransactionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionType | EnumTransactionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionTypeWithAggregatesFilter<$PrismaModel> | $Enums.TransactionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTransactionTypeFilter<$PrismaModel>
+    _max?: NestedEnumTransactionTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTransactionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransactionStatus | EnumTransactionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TransactionStatus[] | ListEnumTransactionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransactionStatus[] | ListEnumTransactionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransactionStatusWithAggregatesFilter<$PrismaModel> | $Enums.TransactionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTransactionStatusFilter<$PrismaModel>
+    _max?: NestedEnumTransactionStatusFilter<$PrismaModel>
+  }
+
   export type SessionCreateWithoutUserInput = {
     id: string
     expiresAt: Date | string
@@ -7018,6 +13841,120 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TaskCreateWithoutCreatorInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    taskDeveloper?: TaskDeveloperCreateNestedOneWithoutTaskInput
+    repository?: TaskRepositoryCreateNestedOneWithoutTaskInput
+    transactions?: BlockchainTransactionCreateNestedManyWithoutTaskInput
+  }
+
+  export type TaskUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    taskDeveloper?: TaskDeveloperUncheckedCreateNestedOneWithoutTaskInput
+    repository?: TaskRepositoryUncheckedCreateNestedOneWithoutTaskInput
+    transactions?: BlockchainTransactionUncheckedCreateNestedManyWithoutTaskInput
+  }
+
+  export type TaskCreateOrConnectWithoutCreatorInput = {
+    where: TaskWhereUniqueInput
+    create: XOR<TaskCreateWithoutCreatorInput, TaskUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type TaskCreateManyCreatorInputEnvelope = {
+    data: TaskCreateManyCreatorInput | TaskCreateManyCreatorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TaskDeveloperCreateWithoutDeveloperInput = {
+    id?: string
+    walletAddress: string
+    networkId?: string
+    appliedAt?: Date | string
+    acceptedAt?: Date | string | null
+    task: TaskCreateNestedOneWithoutTaskDeveloperInput
+  }
+
+  export type TaskDeveloperUncheckedCreateWithoutDeveloperInput = {
+    id?: string
+    taskId: string
+    walletAddress: string
+    networkId?: string
+    appliedAt?: Date | string
+    acceptedAt?: Date | string | null
+  }
+
+  export type TaskDeveloperCreateOrConnectWithoutDeveloperInput = {
+    where: TaskDeveloperWhereUniqueInput
+    create: XOR<TaskDeveloperCreateWithoutDeveloperInput, TaskDeveloperUncheckedCreateWithoutDeveloperInput>
+  }
+
+  export type TaskDeveloperCreateManyDeveloperInputEnvelope = {
+    data: TaskDeveloperCreateManyDeveloperInput | TaskDeveloperCreateManyDeveloperInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BlockchainTransactionCreateWithoutUserInput = {
+    id?: string
+    type: $Enums.TransactionType
+    status?: $Enums.TransactionStatus
+    txHash?: string | null
+    blockNumber?: number | null
+    gasUsed?: string | null
+    valueInWei: string
+    networkId?: string
+    errorMessage?: string | null
+    createdAt?: Date | string
+    confirmedAt?: Date | string | null
+    task: TaskCreateNestedOneWithoutTransactionsInput
+  }
+
+  export type BlockchainTransactionUncheckedCreateWithoutUserInput = {
+    id?: string
+    taskId: string
+    type: $Enums.TransactionType
+    status?: $Enums.TransactionStatus
+    txHash?: string | null
+    blockNumber?: number | null
+    gasUsed?: string | null
+    valueInWei: string
+    networkId?: string
+    errorMessage?: string | null
+    createdAt?: Date | string
+    confirmedAt?: Date | string | null
+  }
+
+  export type BlockchainTransactionCreateOrConnectWithoutUserInput = {
+    where: BlockchainTransactionWhereUniqueInput
+    create: XOR<BlockchainTransactionCreateWithoutUserInput, BlockchainTransactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type BlockchainTransactionCreateManyUserInputEnvelope = {
+    data: BlockchainTransactionCreateManyUserInput | BlockchainTransactionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SessionUpsertWithWhereUniqueWithoutUserInput = {
     where: SessionWhereUniqueInput
     update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
@@ -7083,6 +14020,105 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Account"> | Date | string
   }
 
+  export type TaskUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: TaskWhereUniqueInput
+    update: XOR<TaskUpdateWithoutCreatorInput, TaskUncheckedUpdateWithoutCreatorInput>
+    create: XOR<TaskCreateWithoutCreatorInput, TaskUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type TaskUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: TaskWhereUniqueInput
+    data: XOR<TaskUpdateWithoutCreatorInput, TaskUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type TaskUpdateManyWithWhereWithoutCreatorInput = {
+    where: TaskScalarWhereInput
+    data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type TaskScalarWhereInput = {
+    AND?: TaskScalarWhereInput | TaskScalarWhereInput[]
+    OR?: TaskScalarWhereInput[]
+    NOT?: TaskScalarWhereInput | TaskScalarWhereInput[]
+    id?: StringFilter<"Task"> | string
+    title?: StringFilter<"Task"> | string
+    description?: StringFilter<"Task"> | string
+    requirements?: StringNullableFilter<"Task"> | string | null
+    valueInWei?: StringFilter<"Task"> | string
+    deadline?: DateTimeFilter<"Task"> | Date | string
+    allowOverdue?: BoolFilter<"Task"> | boolean
+    status?: EnumTaskStatusFilter<"Task"> | $Enums.TaskStatus
+    contractTaskId?: StringNullableFilter<"Task"> | string | null
+    creatorId?: StringFilter<"Task"> | string
+    createdAt?: DateTimeFilter<"Task"> | Date | string
+    updatedAt?: DateTimeFilter<"Task"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
+  }
+
+  export type TaskDeveloperUpsertWithWhereUniqueWithoutDeveloperInput = {
+    where: TaskDeveloperWhereUniqueInput
+    update: XOR<TaskDeveloperUpdateWithoutDeveloperInput, TaskDeveloperUncheckedUpdateWithoutDeveloperInput>
+    create: XOR<TaskDeveloperCreateWithoutDeveloperInput, TaskDeveloperUncheckedCreateWithoutDeveloperInput>
+  }
+
+  export type TaskDeveloperUpdateWithWhereUniqueWithoutDeveloperInput = {
+    where: TaskDeveloperWhereUniqueInput
+    data: XOR<TaskDeveloperUpdateWithoutDeveloperInput, TaskDeveloperUncheckedUpdateWithoutDeveloperInput>
+  }
+
+  export type TaskDeveloperUpdateManyWithWhereWithoutDeveloperInput = {
+    where: TaskDeveloperScalarWhereInput
+    data: XOR<TaskDeveloperUpdateManyMutationInput, TaskDeveloperUncheckedUpdateManyWithoutDeveloperInput>
+  }
+
+  export type TaskDeveloperScalarWhereInput = {
+    AND?: TaskDeveloperScalarWhereInput | TaskDeveloperScalarWhereInput[]
+    OR?: TaskDeveloperScalarWhereInput[]
+    NOT?: TaskDeveloperScalarWhereInput | TaskDeveloperScalarWhereInput[]
+    id?: StringFilter<"TaskDeveloper"> | string
+    taskId?: StringFilter<"TaskDeveloper"> | string
+    developerId?: StringFilter<"TaskDeveloper"> | string
+    walletAddress?: StringFilter<"TaskDeveloper"> | string
+    networkId?: StringFilter<"TaskDeveloper"> | string
+    appliedAt?: DateTimeFilter<"TaskDeveloper"> | Date | string
+    acceptedAt?: DateTimeNullableFilter<"TaskDeveloper"> | Date | string | null
+  }
+
+  export type BlockchainTransactionUpsertWithWhereUniqueWithoutUserInput = {
+    where: BlockchainTransactionWhereUniqueInput
+    update: XOR<BlockchainTransactionUpdateWithoutUserInput, BlockchainTransactionUncheckedUpdateWithoutUserInput>
+    create: XOR<BlockchainTransactionCreateWithoutUserInput, BlockchainTransactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type BlockchainTransactionUpdateWithWhereUniqueWithoutUserInput = {
+    where: BlockchainTransactionWhereUniqueInput
+    data: XOR<BlockchainTransactionUpdateWithoutUserInput, BlockchainTransactionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type BlockchainTransactionUpdateManyWithWhereWithoutUserInput = {
+    where: BlockchainTransactionScalarWhereInput
+    data: XOR<BlockchainTransactionUpdateManyMutationInput, BlockchainTransactionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type BlockchainTransactionScalarWhereInput = {
+    AND?: BlockchainTransactionScalarWhereInput | BlockchainTransactionScalarWhereInput[]
+    OR?: BlockchainTransactionScalarWhereInput[]
+    NOT?: BlockchainTransactionScalarWhereInput | BlockchainTransactionScalarWhereInput[]
+    id?: StringFilter<"BlockchainTransaction"> | string
+    taskId?: StringFilter<"BlockchainTransaction"> | string
+    userId?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    type?: EnumTransactionTypeFilter<"BlockchainTransaction"> | $Enums.TransactionType
+    status?: EnumTransactionStatusFilter<"BlockchainTransaction"> | $Enums.TransactionStatus
+    txHash?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    blockNumber?: IntNullableFilter<"BlockchainTransaction"> | number | null
+    gasUsed?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    valueInWei?: StringFilter<"BlockchainTransaction"> | string
+    networkId?: StringFilter<"BlockchainTransaction"> | string
+    errorMessage?: StringNullableFilter<"BlockchainTransaction"> | string | null
+    createdAt?: DateTimeFilter<"BlockchainTransaction"> | Date | string
+    confirmedAt?: DateTimeNullableFilter<"BlockchainTransaction"> | Date | string | null
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id: string
     name: string
@@ -7093,6 +14129,9 @@ export namespace Prisma {
     updatedAt: Date | string
     role?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatorInput
+    taskDevelopers?: TaskDeveloperCreateNestedManyWithoutDeveloperInput
+    transactions?: BlockchainTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -7105,6 +14144,9 @@ export namespace Prisma {
     updatedAt: Date | string
     role?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatorInput
+    taskDevelopers?: TaskDeveloperUncheckedCreateNestedManyWithoutDeveloperInput
+    transactions?: BlockchainTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -7133,6 +14175,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatorNestedInput
+    taskDevelopers?: TaskDeveloperUpdateManyWithoutDeveloperNestedInput
+    transactions?: BlockchainTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -7145,6 +14190,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatorNestedInput
+    taskDevelopers?: TaskDeveloperUncheckedUpdateManyWithoutDeveloperNestedInput
+    transactions?: BlockchainTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -7157,6 +14205,9 @@ export namespace Prisma {
     updatedAt: Date | string
     role?: string | null
     sessions?: SessionCreateNestedManyWithoutUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatorInput
+    taskDevelopers?: TaskDeveloperCreateNestedManyWithoutDeveloperInput
+    transactions?: BlockchainTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -7169,6 +14220,9 @@ export namespace Prisma {
     updatedAt: Date | string
     role?: string | null
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatorInput
+    taskDevelopers?: TaskDeveloperUncheckedCreateNestedManyWithoutDeveloperInput
+    transactions?: BlockchainTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -7197,6 +14251,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatorNestedInput
+    taskDevelopers?: TaskDeveloperUpdateManyWithoutDeveloperNestedInput
+    transactions?: BlockchainTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -7209,6 +14266,665 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatorNestedInput
+    taskDevelopers?: TaskDeveloperUncheckedUpdateManyWithoutDeveloperNestedInput
+    transactions?: BlockchainTransactionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutCreatedTasksInput = {
+    id: string
+    name: string
+    email: string
+    emailVerified: boolean
+    image?: string | null
+    createdAt: Date | string
+    updatedAt: Date | string
+    role?: string | null
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    taskDevelopers?: TaskDeveloperCreateNestedManyWithoutDeveloperInput
+    transactions?: BlockchainTransactionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCreatedTasksInput = {
+    id: string
+    name: string
+    email: string
+    emailVerified: boolean
+    image?: string | null
+    createdAt: Date | string
+    updatedAt: Date | string
+    role?: string | null
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    taskDevelopers?: TaskDeveloperUncheckedCreateNestedManyWithoutDeveloperInput
+    transactions?: BlockchainTransactionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCreatedTasksInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCreatedTasksInput, UserUncheckedCreateWithoutCreatedTasksInput>
+  }
+
+  export type TaskDeveloperCreateWithoutTaskInput = {
+    id?: string
+    walletAddress: string
+    networkId?: string
+    appliedAt?: Date | string
+    acceptedAt?: Date | string | null
+    developer: UserCreateNestedOneWithoutTaskDevelopersInput
+  }
+
+  export type TaskDeveloperUncheckedCreateWithoutTaskInput = {
+    id?: string
+    developerId: string
+    walletAddress: string
+    networkId?: string
+    appliedAt?: Date | string
+    acceptedAt?: Date | string | null
+  }
+
+  export type TaskDeveloperCreateOrConnectWithoutTaskInput = {
+    where: TaskDeveloperWhereUniqueInput
+    create: XOR<TaskDeveloperCreateWithoutTaskInput, TaskDeveloperUncheckedCreateWithoutTaskInput>
+  }
+
+  export type TaskRepositoryCreateWithoutTaskInput = {
+    id?: string
+    repositoryName: string
+    repositoryUrl: string
+    githubRepoId?: number | null
+    isActive?: boolean
+    createdAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type TaskRepositoryUncheckedCreateWithoutTaskInput = {
+    id?: string
+    repositoryName: string
+    repositoryUrl: string
+    githubRepoId?: number | null
+    isActive?: boolean
+    createdAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type TaskRepositoryCreateOrConnectWithoutTaskInput = {
+    where: TaskRepositoryWhereUniqueInput
+    create: XOR<TaskRepositoryCreateWithoutTaskInput, TaskRepositoryUncheckedCreateWithoutTaskInput>
+  }
+
+  export type BlockchainTransactionCreateWithoutTaskInput = {
+    id?: string
+    type: $Enums.TransactionType
+    status?: $Enums.TransactionStatus
+    txHash?: string | null
+    blockNumber?: number | null
+    gasUsed?: string | null
+    valueInWei: string
+    networkId?: string
+    errorMessage?: string | null
+    createdAt?: Date | string
+    confirmedAt?: Date | string | null
+    user?: UserCreateNestedOneWithoutTransactionsInput
+  }
+
+  export type BlockchainTransactionUncheckedCreateWithoutTaskInput = {
+    id?: string
+    userId?: string | null
+    type: $Enums.TransactionType
+    status?: $Enums.TransactionStatus
+    txHash?: string | null
+    blockNumber?: number | null
+    gasUsed?: string | null
+    valueInWei: string
+    networkId?: string
+    errorMessage?: string | null
+    createdAt?: Date | string
+    confirmedAt?: Date | string | null
+  }
+
+  export type BlockchainTransactionCreateOrConnectWithoutTaskInput = {
+    where: BlockchainTransactionWhereUniqueInput
+    create: XOR<BlockchainTransactionCreateWithoutTaskInput, BlockchainTransactionUncheckedCreateWithoutTaskInput>
+  }
+
+  export type BlockchainTransactionCreateManyTaskInputEnvelope = {
+    data: BlockchainTransactionCreateManyTaskInput | BlockchainTransactionCreateManyTaskInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutCreatedTasksInput = {
+    update: XOR<UserUpdateWithoutCreatedTasksInput, UserUncheckedUpdateWithoutCreatedTasksInput>
+    create: XOR<UserCreateWithoutCreatedTasksInput, UserUncheckedCreateWithoutCreatedTasksInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCreatedTasksInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCreatedTasksInput, UserUncheckedUpdateWithoutCreatedTasksInput>
+  }
+
+  export type UserUpdateWithoutCreatedTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    taskDevelopers?: TaskDeveloperUpdateManyWithoutDeveloperNestedInput
+    transactions?: BlockchainTransactionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCreatedTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    taskDevelopers?: TaskDeveloperUncheckedUpdateManyWithoutDeveloperNestedInput
+    transactions?: BlockchainTransactionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type TaskDeveloperUpsertWithoutTaskInput = {
+    update: XOR<TaskDeveloperUpdateWithoutTaskInput, TaskDeveloperUncheckedUpdateWithoutTaskInput>
+    create: XOR<TaskDeveloperCreateWithoutTaskInput, TaskDeveloperUncheckedCreateWithoutTaskInput>
+    where?: TaskDeveloperWhereInput
+  }
+
+  export type TaskDeveloperUpdateToOneWithWhereWithoutTaskInput = {
+    where?: TaskDeveloperWhereInput
+    data: XOR<TaskDeveloperUpdateWithoutTaskInput, TaskDeveloperUncheckedUpdateWithoutTaskInput>
+  }
+
+  export type TaskDeveloperUpdateWithoutTaskInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    walletAddress?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    developer?: UserUpdateOneRequiredWithoutTaskDevelopersNestedInput
+  }
+
+  export type TaskDeveloperUncheckedUpdateWithoutTaskInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    developerId?: StringFieldUpdateOperationsInput | string
+    walletAddress?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TaskRepositoryUpsertWithoutTaskInput = {
+    update: XOR<TaskRepositoryUpdateWithoutTaskInput, TaskRepositoryUncheckedUpdateWithoutTaskInput>
+    create: XOR<TaskRepositoryCreateWithoutTaskInput, TaskRepositoryUncheckedCreateWithoutTaskInput>
+    where?: TaskRepositoryWhereInput
+  }
+
+  export type TaskRepositoryUpdateToOneWithWhereWithoutTaskInput = {
+    where?: TaskRepositoryWhereInput
+    data: XOR<TaskRepositoryUpdateWithoutTaskInput, TaskRepositoryUncheckedUpdateWithoutTaskInput>
+  }
+
+  export type TaskRepositoryUpdateWithoutTaskInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    repositoryName?: StringFieldUpdateOperationsInput | string
+    repositoryUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoId?: NullableIntFieldUpdateOperationsInput | number | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TaskRepositoryUncheckedUpdateWithoutTaskInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    repositoryName?: StringFieldUpdateOperationsInput | string
+    repositoryUrl?: StringFieldUpdateOperationsInput | string
+    githubRepoId?: NullableIntFieldUpdateOperationsInput | number | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BlockchainTransactionUpsertWithWhereUniqueWithoutTaskInput = {
+    where: BlockchainTransactionWhereUniqueInput
+    update: XOR<BlockchainTransactionUpdateWithoutTaskInput, BlockchainTransactionUncheckedUpdateWithoutTaskInput>
+    create: XOR<BlockchainTransactionCreateWithoutTaskInput, BlockchainTransactionUncheckedCreateWithoutTaskInput>
+  }
+
+  export type BlockchainTransactionUpdateWithWhereUniqueWithoutTaskInput = {
+    where: BlockchainTransactionWhereUniqueInput
+    data: XOR<BlockchainTransactionUpdateWithoutTaskInput, BlockchainTransactionUncheckedUpdateWithoutTaskInput>
+  }
+
+  export type BlockchainTransactionUpdateManyWithWhereWithoutTaskInput = {
+    where: BlockchainTransactionScalarWhereInput
+    data: XOR<BlockchainTransactionUpdateManyMutationInput, BlockchainTransactionUncheckedUpdateManyWithoutTaskInput>
+  }
+
+  export type TaskCreateWithoutTaskDeveloperInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    creator: UserCreateNestedOneWithoutCreatedTasksInput
+    repository?: TaskRepositoryCreateNestedOneWithoutTaskInput
+    transactions?: BlockchainTransactionCreateNestedManyWithoutTaskInput
+  }
+
+  export type TaskUncheckedCreateWithoutTaskDeveloperInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    creatorId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    repository?: TaskRepositoryUncheckedCreateNestedOneWithoutTaskInput
+    transactions?: BlockchainTransactionUncheckedCreateNestedManyWithoutTaskInput
+  }
+
+  export type TaskCreateOrConnectWithoutTaskDeveloperInput = {
+    where: TaskWhereUniqueInput
+    create: XOR<TaskCreateWithoutTaskDeveloperInput, TaskUncheckedCreateWithoutTaskDeveloperInput>
+  }
+
+  export type UserCreateWithoutTaskDevelopersInput = {
+    id: string
+    name: string
+    email: string
+    emailVerified: boolean
+    image?: string | null
+    createdAt: Date | string
+    updatedAt: Date | string
+    role?: string | null
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatorInput
+    transactions?: BlockchainTransactionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutTaskDevelopersInput = {
+    id: string
+    name: string
+    email: string
+    emailVerified: boolean
+    image?: string | null
+    createdAt: Date | string
+    updatedAt: Date | string
+    role?: string | null
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatorInput
+    transactions?: BlockchainTransactionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutTaskDevelopersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTaskDevelopersInput, UserUncheckedCreateWithoutTaskDevelopersInput>
+  }
+
+  export type TaskUpsertWithoutTaskDeveloperInput = {
+    update: XOR<TaskUpdateWithoutTaskDeveloperInput, TaskUncheckedUpdateWithoutTaskDeveloperInput>
+    create: XOR<TaskCreateWithoutTaskDeveloperInput, TaskUncheckedCreateWithoutTaskDeveloperInput>
+    where?: TaskWhereInput
+  }
+
+  export type TaskUpdateToOneWithWhereWithoutTaskDeveloperInput = {
+    where?: TaskWhereInput
+    data: XOR<TaskUpdateWithoutTaskDeveloperInput, TaskUncheckedUpdateWithoutTaskDeveloperInput>
+  }
+
+  export type TaskUpdateWithoutTaskDeveloperInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    creator?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
+    repository?: TaskRepositoryUpdateOneWithoutTaskNestedInput
+    transactions?: BlockchainTransactionUpdateManyWithoutTaskNestedInput
+  }
+
+  export type TaskUncheckedUpdateWithoutTaskDeveloperInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    repository?: TaskRepositoryUncheckedUpdateOneWithoutTaskNestedInput
+    transactions?: BlockchainTransactionUncheckedUpdateManyWithoutTaskNestedInput
+  }
+
+  export type UserUpsertWithoutTaskDevelopersInput = {
+    update: XOR<UserUpdateWithoutTaskDevelopersInput, UserUncheckedUpdateWithoutTaskDevelopersInput>
+    create: XOR<UserCreateWithoutTaskDevelopersInput, UserUncheckedCreateWithoutTaskDevelopersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTaskDevelopersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTaskDevelopersInput, UserUncheckedUpdateWithoutTaskDevelopersInput>
+  }
+
+  export type UserUpdateWithoutTaskDevelopersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatorNestedInput
+    transactions?: BlockchainTransactionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTaskDevelopersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatorNestedInput
+    transactions?: BlockchainTransactionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type TaskCreateWithoutRepositoryInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    creator: UserCreateNestedOneWithoutCreatedTasksInput
+    taskDeveloper?: TaskDeveloperCreateNestedOneWithoutTaskInput
+    transactions?: BlockchainTransactionCreateNestedManyWithoutTaskInput
+  }
+
+  export type TaskUncheckedCreateWithoutRepositoryInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    creatorId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    taskDeveloper?: TaskDeveloperUncheckedCreateNestedOneWithoutTaskInput
+    transactions?: BlockchainTransactionUncheckedCreateNestedManyWithoutTaskInput
+  }
+
+  export type TaskCreateOrConnectWithoutRepositoryInput = {
+    where: TaskWhereUniqueInput
+    create: XOR<TaskCreateWithoutRepositoryInput, TaskUncheckedCreateWithoutRepositoryInput>
+  }
+
+  export type TaskUpsertWithoutRepositoryInput = {
+    update: XOR<TaskUpdateWithoutRepositoryInput, TaskUncheckedUpdateWithoutRepositoryInput>
+    create: XOR<TaskCreateWithoutRepositoryInput, TaskUncheckedCreateWithoutRepositoryInput>
+    where?: TaskWhereInput
+  }
+
+  export type TaskUpdateToOneWithWhereWithoutRepositoryInput = {
+    where?: TaskWhereInput
+    data: XOR<TaskUpdateWithoutRepositoryInput, TaskUncheckedUpdateWithoutRepositoryInput>
+  }
+
+  export type TaskUpdateWithoutRepositoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    creator?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
+    taskDeveloper?: TaskDeveloperUpdateOneWithoutTaskNestedInput
+    transactions?: BlockchainTransactionUpdateManyWithoutTaskNestedInput
+  }
+
+  export type TaskUncheckedUpdateWithoutRepositoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taskDeveloper?: TaskDeveloperUncheckedUpdateOneWithoutTaskNestedInput
+    transactions?: BlockchainTransactionUncheckedUpdateManyWithoutTaskNestedInput
+  }
+
+  export type TaskCreateWithoutTransactionsInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    creator: UserCreateNestedOneWithoutCreatedTasksInput
+    taskDeveloper?: TaskDeveloperCreateNestedOneWithoutTaskInput
+    repository?: TaskRepositoryCreateNestedOneWithoutTaskInput
+  }
+
+  export type TaskUncheckedCreateWithoutTransactionsInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    creatorId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    taskDeveloper?: TaskDeveloperUncheckedCreateNestedOneWithoutTaskInput
+    repository?: TaskRepositoryUncheckedCreateNestedOneWithoutTaskInput
+  }
+
+  export type TaskCreateOrConnectWithoutTransactionsInput = {
+    where: TaskWhereUniqueInput
+    create: XOR<TaskCreateWithoutTransactionsInput, TaskUncheckedCreateWithoutTransactionsInput>
+  }
+
+  export type UserCreateWithoutTransactionsInput = {
+    id: string
+    name: string
+    email: string
+    emailVerified: boolean
+    image?: string | null
+    createdAt: Date | string
+    updatedAt: Date | string
+    role?: string | null
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatorInput
+    taskDevelopers?: TaskDeveloperCreateNestedManyWithoutDeveloperInput
+  }
+
+  export type UserUncheckedCreateWithoutTransactionsInput = {
+    id: string
+    name: string
+    email: string
+    emailVerified: boolean
+    image?: string | null
+    createdAt: Date | string
+    updatedAt: Date | string
+    role?: string | null
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatorInput
+    taskDevelopers?: TaskDeveloperUncheckedCreateNestedManyWithoutDeveloperInput
+  }
+
+  export type UserCreateOrConnectWithoutTransactionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
+  }
+
+  export type TaskUpsertWithoutTransactionsInput = {
+    update: XOR<TaskUpdateWithoutTransactionsInput, TaskUncheckedUpdateWithoutTransactionsInput>
+    create: XOR<TaskCreateWithoutTransactionsInput, TaskUncheckedCreateWithoutTransactionsInput>
+    where?: TaskWhereInput
+  }
+
+  export type TaskUpdateToOneWithWhereWithoutTransactionsInput = {
+    where?: TaskWhereInput
+    data: XOR<TaskUpdateWithoutTransactionsInput, TaskUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type TaskUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    creator?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
+    taskDeveloper?: TaskDeveloperUpdateOneWithoutTaskNestedInput
+    repository?: TaskRepositoryUpdateOneWithoutTaskNestedInput
+  }
+
+  export type TaskUncheckedUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taskDeveloper?: TaskDeveloperUncheckedUpdateOneWithoutTaskNestedInput
+    repository?: TaskRepositoryUncheckedUpdateOneWithoutTaskNestedInput
+  }
+
+  export type UserUpsertWithoutTransactionsInput = {
+    update: XOR<UserUpdateWithoutTransactionsInput, UserUncheckedUpdateWithoutTransactionsInput>
+    create: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTransactionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTransactionsInput, UserUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type UserUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatorNestedInput
+    taskDevelopers?: TaskDeveloperUpdateManyWithoutDeveloperNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatorNestedInput
+    taskDevelopers?: TaskDeveloperUncheckedUpdateManyWithoutDeveloperNestedInput
   }
 
   export type SessionCreateManyUserInput = {
@@ -7234,6 +14950,45 @@ export namespace Prisma {
     password?: string | null
     createdAt: Date | string
     updatedAt: Date | string
+  }
+
+  export type TaskCreateManyCreatorInput = {
+    id?: string
+    title: string
+    description: string
+    requirements?: string | null
+    valueInWei: string
+    deadline: Date | string
+    allowOverdue?: boolean
+    status?: $Enums.TaskStatus
+    contractTaskId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type TaskDeveloperCreateManyDeveloperInput = {
+    id?: string
+    taskId: string
+    walletAddress: string
+    networkId?: string
+    appliedAt?: Date | string
+    acceptedAt?: Date | string | null
+  }
+
+  export type BlockchainTransactionCreateManyUserInput = {
+    id?: string
+    taskId: string
+    type: $Enums.TransactionType
+    status?: $Enums.TransactionStatus
+    txHash?: string | null
+    blockNumber?: number | null
+    gasUsed?: string | null
+    valueInWei: string
+    networkId?: string
+    errorMessage?: string | null
+    createdAt?: Date | string
+    confirmedAt?: Date | string | null
   }
 
   export type SessionUpdateWithoutUserInput = {
@@ -7309,6 +15064,189 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taskDeveloper?: TaskDeveloperUpdateOneWithoutTaskNestedInput
+    repository?: TaskRepositoryUpdateOneWithoutTaskNestedInput
+    transactions?: BlockchainTransactionUpdateManyWithoutTaskNestedInput
+  }
+
+  export type TaskUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    taskDeveloper?: TaskDeveloperUncheckedUpdateOneWithoutTaskNestedInput
+    repository?: TaskRepositoryUncheckedUpdateOneWithoutTaskNestedInput
+    transactions?: BlockchainTransactionUncheckedUpdateManyWithoutTaskNestedInput
+  }
+
+  export type TaskUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    deadline?: DateTimeFieldUpdateOperationsInput | Date | string
+    allowOverdue?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumTaskStatusFieldUpdateOperationsInput | $Enums.TaskStatus
+    contractTaskId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TaskDeveloperUpdateWithoutDeveloperInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    walletAddress?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    task?: TaskUpdateOneRequiredWithoutTaskDeveloperNestedInput
+  }
+
+  export type TaskDeveloperUncheckedUpdateWithoutDeveloperInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: StringFieldUpdateOperationsInput | string
+    walletAddress?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TaskDeveloperUncheckedUpdateManyWithoutDeveloperInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: StringFieldUpdateOperationsInput | string
+    walletAddress?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    appliedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    acceptedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BlockchainTransactionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
+    blockNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    gasUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    task?: TaskUpdateOneRequiredWithoutTransactionsNestedInput
+  }
+
+  export type BlockchainTransactionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
+    blockNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    gasUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BlockchainTransactionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskId?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
+    blockNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    gasUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BlockchainTransactionCreateManyTaskInput = {
+    id?: string
+    userId?: string | null
+    type: $Enums.TransactionType
+    status?: $Enums.TransactionStatus
+    txHash?: string | null
+    blockNumber?: number | null
+    gasUsed?: string | null
+    valueInWei: string
+    networkId?: string
+    errorMessage?: string | null
+    createdAt?: Date | string
+    confirmedAt?: Date | string | null
+  }
+
+  export type BlockchainTransactionUpdateWithoutTaskInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
+    blockNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    gasUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    user?: UserUpdateOneWithoutTransactionsNestedInput
+  }
+
+  export type BlockchainTransactionUncheckedUpdateWithoutTaskInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
+    blockNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    gasUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BlockchainTransactionUncheckedUpdateManyWithoutTaskInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTransactionTypeFieldUpdateOperationsInput | $Enums.TransactionType
+    status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
+    txHash?: NullableStringFieldUpdateOperationsInput | string | null
+    blockNumber?: NullableIntFieldUpdateOperationsInput | number | null
+    gasUsed?: NullableStringFieldUpdateOperationsInput | string | null
+    valueInWei?: StringFieldUpdateOperationsInput | string
+    networkId?: StringFieldUpdateOperationsInput | string
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    confirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
 

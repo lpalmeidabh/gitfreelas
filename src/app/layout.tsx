@@ -1,11 +1,13 @@
 import '@/app/globals.css'
 import { primFont } from '@/fonts'
+import { Web3Provider } from '@/lib/web3/providers'
+import { Toaster } from '@/components/ui/sonner'
 import type { Metadata } from 'next'
 import { connection } from 'next/server'
 
 export const metadata: Metadata = {
   title: 'git-freelas',
-  description: 'GitFreelas',
+  description: 'GitFreelas - Freelancers em Crypto',
 }
 
 async function UTSSR() {
@@ -19,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      className={`${primFont.className} scroll-smooth  antialiased`}
+      className={`${primFont.className} scroll-smooth antialiased`}
       lang="pt"
       suppressHydrationWarning
     >
@@ -29,7 +31,12 @@ export default function RootLayout({
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         />
       </head>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <Web3Provider>
+          {children}
+          <Toaster />
+        </Web3Provider>
+      </body>
     </html>
   )
 }

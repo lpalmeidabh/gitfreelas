@@ -1,346 +1,226 @@
-// import { LucideProps } from 'lucide-react'
-// import { ForwardRefExoticComponent, RefAttributes } from 'react'
+// Adicionar no src/types.ts
 
-// export const REC_PER_PAGE = 10
+import {
+  TaskStatus,
+  TransactionType,
+  TransactionStatus,
+} from '@/lib/generated/prisma/client'
 
-// export const INVITE_STATUS: Record<string, { status: string; color: string }> =
-//   {
-//     pending: { status: 'Pendente', color: 'bg-yellow-100 text-yellow-600' },
-//     accepted: { status: 'Aceito', color: ' bg-green-100 text-green-700 ' },
-//     revoked: { status: 'Revogado', color: 'bg-red-100 text-red-600' },
-//   }
+// ===== TASK TYPES =====
 
-// export const USER_ROLES = ['admin', 'community-manager', 'editor', 'student']
-// export type STREAMING_STATUS = 'idle' | 'processing' | 'streaming'
+export type Task = {
+  id: string
+  title: string
+  description: string
+  requirements?: string
+  valueInWei: string
+  deadline: Date
+  allowOverdue: boolean
+  status: TaskStatus
+  contractTaskId?: string
+  creatorId: string
+  createdAt: Date
+  updatedAt: Date
+  deletedAt?: Date
+}
 
-// export type UploadthingEndpoints =
-//   | 'uploader'
-//   | 'thumbUploader'
-//   | 'siteContentAssetsUploader'
+export type TaskWithRelations = Task & {
+  creator: {
+    id: string
+    name: string
+    email: string
+    image?: string
+  }
+  taskDeveloper?: {
+    id: string
+    developerId: string
+    walletAddress: string
+    appliedAt: Date
+    acceptedAt?: Date
+    developer: {
+      id: string
+      name: string
+      email: string
+      image?: string
+    }
+  }
+  repository?: {
+    id: string
+    repositoryName: string
+    repositoryUrl: string
+    isActive: boolean
+    createdAt: Date
+  }
+  transactions: BlockchainTransaction[]
+}
 
-// export type SupabaseStorageEndpoints =
-//   | 'uploader'
-//   | 'thumbUploader'
-//   | 'siteContentAssetsUploader'
+export type TaskDeveloper = {
+  id: string
+  taskId: string
+  developerId: string
+  walletAddress: string
+  networkId: string
+  appliedAt: Date
+  acceptedAt?: Date
+}
 
-// export const SUBSCRIPTION_STATUS: Record<
-//   string,
-//   { label: string; color: string }
-// > = {
-//   active: { label: 'Ativa', color: 'text-green-600' },
-//   past_due: { label: 'Atrasada', color: 'text-red-600' },
-//   canceled: { label: 'Cancelada', color: 'text-neutral-600' },
-//   trialing: { label: 'Em teste', color: 'text-blue-600' },
-//   pending: { label: 'Pendente', color: 'text-yellow-600' },
-// }
-// export const PAYMENT_STATUS: Record<string, { label: string; color: string }> =
-//   {
-//     succeeded: { label: 'Confirmado', color: 'text-green-600' },
-//     failed: { label: 'Falhou', color: 'text-red-600' },
-//     pending: { label: 'Pendente', color: 'text-yellow-600' },
-//   }
+export type TaskRepository = {
+  id: string
+  taskId: string
+  repositoryName: string
+  repositoryUrl: string
+  githubRepoId?: number
+  isActive: boolean
+  createdAt: Date
+  deletedAt?: Date
+}
 
-// export type PageParams = Promise<{
-//   [key: string]: string | string[] | undefined
-// }>
+export type BlockchainTransaction = {
+  id: string
+  taskId: string
+  userId?: string
+  type: TransactionType
+  status: TransactionStatus
+  txHash?: string
+  blockNumber?: number
+  gasUsed?: string
+  valueInWei: string
+  networkId: string
+  errorMessage?: string
+  createdAt: Date
+  confirmedAt?: Date
+}
 
-// export type BannerParams = {
-//   className: string
-//   textColor: string
-//   icon: ForwardRefExoticComponent<
-//     Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
-//   >
-//   iconClassName: string
-// }
+// ===== FORM TYPES =====
 
-// export type User = {
-//   id: string
-//   email: string
-//   firstName: string
-//   lastName: string
-//   role: string
-//   imageUrl?: string
-//   status?: boolean
-//   createdAt?: Date
-// }
+export type CreateTaskData = {
+  title: string
+  description: string
+  requirements?: string
+  valueInEther: string // Para o formulário em Ether
+  deadline: Date
+  allowOverdue: boolean
+}
 
-// export type Community = {
-//   id: string
-//   name: string
-//   slug: string
-//   members: { email: string }[]
-//   _count: { course: number }
-// }
+export type CreateTaskErrors = {
+  title?: string
+  description?: string
+  requirements?: string
+  valueInEther?: string
+  deadline?: string
+  allowOverdue?: string
+}
 
-// export type CommunitySetup = {
-//   id: string
-//   name: string
-//   content: string
-//   contactInfo: string
-//   imageKey: string
-//   imageUrl: string
-// }
+export type ApplyTaskData = {
+  taskId: string
+  walletAddress: string
+  acceptTerms: boolean
+}
 
-// export type Invitation = {
-//   id: string
-//   email: string
-//   name: string
-//   status: 'pending' | 'accepted' | 'revoked'
-//   communityId?: string
-//   createdAt: Date
-// }
+// ===== API RESPONSE TYPES =====
 
-// export type Course = {
-//   id: string
-//   title: string
-//   description: string
-//   plainSyllabus: string
-//   mdSyllabus: string
-//   imageKey: string
-//   imageUrl: string
-//   slug: string
-//   tags: string[]
-//   status: string
-//   createdAt: Date
-// }
+export type TaskListResponse = {
+  tasks: TaskWithRelations[]
+  total: number
+  page: number
+  limit: number
+}
 
-// export type Lesson = {
-//   id: string
-//   courseId: string
-//   title: string
-//   slug: string
-//   tags?: string[]
-//   sectionTag?: string
-//   plainContent?: string
-//   mdContent: string
-//   status?: string
-//   createdAt?: Date
-// }
+export type TaskDetailsResponse = TaskWithRelations
 
-// export type LessonAsset = {
-//   lessonId: string
-//   title: string
-//   fileKey: string
-//   fileName: string
-//   fileType: string
-// }
+// ===== FILTER/QUERY TYPES =====
 
-// export type VideoAsset = {
-//   id: string
-//   lessonId: string
-//   uploadId: string
-//   assetId: string | null
-//   playbackId: string | null
-//   status: string
-//   aspectRatio: string | '16:9'
-// }
+export type TaskFilters = {
+  status?: TaskStatus[]
+  minValue?: string // em Wei
+  maxValue?: string // em Wei
+  deadline?: {
+    from?: Date
+    to?: Date
+  }
+  creatorId?: string
+  search?: string
+}
 
-// export type LessonRating = {
-//   rating: number
-// }
-// export type StudentProgress = {
-//   lastSeen: number
-//   completed: boolean
-// }
+export type TaskSortOptions =
+  | 'newest'
+  | 'oldest'
+  | 'highest_value'
+  | 'lowest_value'
+  | 'deadline_soon'
 
-// export type ActionMenuItem = {
-//   label: string
-//   url: string
-//   icon: ForwardRefExoticComponent<
-//     Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
-//   >
-// }
+// ===== COMPONENT PROPS TYPES =====
 
-// export type InvitationListItem = {
-//   id: string
-//   invitationId: string
-//   email: string
-//   role?: 'admin' | 'community-manager' | 'editor' | 'student'
-//   status?: 'pending' | 'accepted' | 'revoked'
-//   communityId?: string
-//   createdAt: Date
-// }
+export type TaskCardProps = {
+  task: TaskWithRelations
+  showActions?: boolean
+  variant?: 'default' | 'compact'
+}
 
-// export type UserListItem = {
-//   id: string
-//   email: string
-//   firstName: string
-//   lastName: string
-//   role: 'admin' | 'community-manager' | 'editor' | 'student'
-//   status: boolean
-//   createdAt: Date
-// }
-// export type ListItem = {
-//   id: string
-//   title: string
-//   titleUrl: string
-//   sectionTag?: string
-//   description?: string
-//   imageUrl?: string
-//   status?: string
-//   actions?: ActionMenuItem[]
-// }
+export type TaskListProps = {
+  filters?: TaskFilters
+  sort?: TaskSortOptions
+  limit?: number
+  showPagination?: boolean
+}
 
-// export type LessonSlugProgressItem = {
-//   id: string
-//   title: string
-//   slug: string
-//   sectionTag: string
-//   videoAsset: {
-//     duration: number | 0
-//   }
-//   studentProgress: {
-//     completed: boolean | false
-//     lastSeen: number
-//   }
-// }
+// ===== UTILITY TYPES =====
 
-// export type LessonsByCourse = {
-//   id: string
-//   title: string
-//   slug: string
-//   lessons: LessonSlugProgressItem[]
-// }
+export type TaskStatusLabel = {
+  [K in TaskStatus]: {
+    label: string
+    color: string
+    icon: string
+  }
+}
 
-// export type Subscription = {
-//   id: string
-//   planName: string
-//   planAmount: number
-//   subInterval: string
-//   subscriptionStatus: string
-//   paymentStatus: string
-//   currentPeriodEnd?: Date
-// }
+export type TransactionTypeLabel = {
+  [K in TransactionType]: {
+    label: string
+    color: string
+  }
+}
 
-// export type CourseDashListItem = Pick<
-//   Course,
-//   'id' | 'title' | 'imageUrl' | 'status'
-// >
+// ===== CONSTANTS =====
 
-// export type CourseLite = Pick<Course, 'id' | 'title'>
-// export type CourseSlug = Pick<Course, 'id' | 'slug'>
-// export type LessonLite = Pick<Lesson, 'id' | 'title' | 'sectionTag'>
-// export type LessonLinkListItem = Pick<Lesson, 'id' | 'title' | 'slug'>
-// export type VideoPlayerItem = {
-//   courseSlug: CourseSlug
-//   lessonId: string
-//   lessonTitle: string
-//   lessonPosition: number
-//   playbackId: string
-//   assetId: string
-//   aspectRatio: string
-// }
+export const TASK_STATUS_LABELS: TaskStatusLabel = {
+  OPEN: { label: 'Aberta', color: 'text-blue-600', icon: 'circle' },
+  APPLIED: { label: 'Aplicada', color: 'text-yellow-600', icon: 'clock' },
+  IN_PROGRESS: {
+    label: 'Em Andamento',
+    color: 'text-orange-600',
+    icon: 'play',
+  },
+  PENDING_APPROVAL: {
+    label: 'Aguardando Aprovação',
+    color: 'text-purple-600',
+    icon: 'pause',
+  },
+  COMPLETED: { label: 'Concluída', color: 'text-green-600', icon: 'check' },
+  CANCELLED: { label: 'Cancelada', color: 'text-gray-600', icon: 'x' },
+  OVERDUE: { label: 'Vencida', color: 'text-red-600', icon: 'alert-triangle' },
+  REFUNDED: { label: 'Reembolsada', color: 'text-indigo-600', icon: 'undo' },
+}
 
-// export type CourseListItem = Pick<
-//   Course,
-//   'id' | 'title' | 'description' | 'imageUrl' | 'slug'
-// >
+export const TRANSACTION_TYPE_LABELS: TransactionTypeLabel = {
+  DEPOSIT: { label: 'Depósito', color: 'text-green-600' },
+  RELEASE: { label: 'Liberação', color: 'text-blue-600' },
+  REFUND: { label: 'Reembolso', color: 'text-orange-600' },
+  PLATFORM_FEE: { label: 'Taxa da Plataforma', color: 'text-purple-600' },
+}
 
-// export type CardLiteItem = {
-//   id: string
-//   title: string
-//   description?: string
-//   showPlayIcon?: boolean
-//   showDescription?: boolean
-//   imageUrl: string
-//   slug: string
-// }
+// ===== VALIDATION SCHEMAS (para uso com zod) =====
 
-// export type SiteContent = {
-//   id?: string
-//   contentKey: string
-//   plainData: string
-//   data: string
-//   extraInstructions?: string
-//   deletedAssetKeys?: string[]
-//   assetKeys?: string[]
-// }
+export const CREATE_TASK_SCHEMA = {
+  title: { min: 3, max: 100 },
+  description: { min: 10, max: 2000 },
+  requirements: { max: 1000 },
+  valueInEther: { min: 0.001, max: 100 },
+  deadline: { minDaysFromNow: 1, maxDaysFromNow: 365 },
+}
 
-// export type TutorHistoryEntry = {
-//   question: string
-//   answer: string
-//   lesson?: {
-//     course: string
-//     lesson: string
-//     lessonTitle: string
-//   }
-// }
-
-// /* Tanstack Form tests */
-
-// // export const siteContentFormOpts = formOptions({
-// //   defaultValues: {
-// //     id: '',
-// //     contentKey: '',
-// //     plainData: '',
-// //     data: '',
-// //     extraInstructions: '',
-// //     assetKeys: [],
-// //   } as SiteContent,
-// // })
-
-// /* Action Parameters */
-
-// export type GetNextLessonParams = {
-//   userId: string
-//   course: CourseSlug
-//   pos: number
-//   unseen: boolean
-// }
-
-// /* Site Content */
-
-// export type PricingCardType = {
-//   priceId: string
-//   price: number
-//   title: string
-//   badgeText: string
-//   recurrence: string
-//   description: string
-//   features: string[]
-// }
-
-// export type CarouselType = {
-//   imageKey: string
-//   text: string
-//   url: string
-// }
-
-// export type InfoCardType = {
-//   title: string
-//   details: string
-// }
-
-// export const containerVariants = {
-//   hidden: { opacity: 0, y: 50 },
-//   visible: {
-//     opacity: 1,
-//     y: 0,
-//     transition: {
-//       duration: 0.5,
-//       staggerChildren: 0.2,
-//     },
-//   },
-// }
-// export const itemVariants = {
-//   hidden: { opacity: 0, y: 20 },
-//   visible: { opacity: 1, y: 0 },
-// }
-
-// export type HeroType = {
-//   imageKey: string
-//   text: string
-//   subText: string
-//   url: string
-// }
-
-// export type FAQType = {
-//   question: string
-//   answer: string
-// }
-
-// export type TestimonialType = {
-//   name: string
-//   role: string
-//   text: string
-// }
+export const PAGINATION_DEFAULTS = {
+  page: 1,
+  limit: 10,
+  maxLimit: 50,
+}

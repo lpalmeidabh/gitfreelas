@@ -1,7 +1,10 @@
 onlyBuiltDependencies:
   - '@prisma/engines'
   - better-sqlite3
+  - bufferutil
+  - keccak
   - prisma
   - sharp
+  - utf-8-validate
 ignoredBuiltDependencies:
   - '@prisma/client'

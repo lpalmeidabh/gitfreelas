@@ -43,3 +43,30 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# Foundry artifacts
+contracts/cache/
+contracts/out/
+contracts/broadcast/
+
+# Foundry dependencies (muito pesadas para commit)
+contracts/lib/
+
+# Environment variables dos contratos
+contracts/.env
+contracts/.env.local
+
+# Logs de gas e coverage
+contracts/lcov.info
+contracts/.gas-snapshot
+
+# Artifacts de deploy específicos
+contracts/deployments/
+contracts/deployed_addresses_*.json
+
+# Cache do Solidity
+contracts/.solcache
+
+# Backup files
+*.backup
+package.json.backup

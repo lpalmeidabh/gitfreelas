@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/lib/generated/prisma/client"
@@ -15,6 +12,7 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+// ===== BETTER AUTH MODELS =====
 model User {
   id            String    @id
   name          String
@@ -26,6 +24,11 @@ model User {
   role          String?
   sessions      Session[]
   accounts      Account[]
+
+  // GitFreelas relationships
+  createdTasks   Task[]                  @relation("TaskCreator")
+  taskDevelopers TaskDeveloper[]
+  transactions   BlockchainTransaction[]
 
   @@unique([email])
   @@map("user")
@@ -74,4 +77,155 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+// ===== GITFREELAS MODELS =====
+
+enum TaskStatus {
+  OPEN // Tarefa criada, aguardando desenvolvedor
+  APPLIED // Desenvolvedor se aplicou, repo sendo criado
+  IN_PROGRESS // Desenvolvedor trabalhando
+  PENDING_APPROVAL // PR criado, aguardando aprovação do cliente
+  COMPLETED // Tarefa finalizada e paga
+  CANCELLED // Cancelada pelo cliente (antes de aplicação)
+  OVERDUE // Prazo vencido
+  REFUNDED // Valores devolvidos
+
+  @@map("task_status")
+}
+
+enum TransactionType {
+  DEPOSIT // Cliente deposita valor inicial
+  RELEASE // Pagamento liberado para desenvolvedor
+  REFUND // Devolução para cliente
+  PLATFORM_FEE // Taxa da plataforma
+
+  @@map("transaction_type")
+}
+
+enum TransactionStatus {
+  PENDING // Transação enviada, aguardando confirmação
+  CONFIRMED // Confirmada na blockchain
+  FAILED // Falhou na execução
+  CANCELLED // Cancelada antes de ser enviada
+
+  @@map("transaction_status")
+}
+
+model Task {
+  id String @id @default(cuid())
+
+  // Dados básicos
+  title        String
+  description  String
+  requirements String? // Requisitos técnicos específicos
+
+  // Valores e prazos
+  valueInWei   String // Valor em Wei (BigInt como string)
+  deadline     DateTime // Data limite de entrega
+  allowOverdue Boolean  @default(false) // Permite 3 dias extras com desconto
+
+  // Metadados
+  status         TaskStatus @default(OPEN)
+  contractTaskId String? // ID da tarefa no contrato inteligente
+
+  // Relacionamentos
+  creatorId String
+  creator   User   @relation("TaskCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  taskDeveloper TaskDeveloper?
+  repository    TaskRepository?
+  transactions  BlockchainTransaction[]
+
+  // Timestamps
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // Soft delete
+
+  @@index([status])
+  @@index([deadline])
+  @@index([creatorId])
+  @@map("task")
+}
+
+model TaskDeveloper {
+  id String @id @default(cuid())
+
+  // Relacionamentos
+  taskId String @unique
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  developerId String
+  developer   User   @relation(fields: [developerId], references: [id], onDelete: Cascade)
+
+  // Dados da carteira do desenvolvedor
+  walletAddress String // Endereço da carteira EVM
+  networkId     String @default("11155111") // Sepolia testnet
+
+  // Metadados
+  appliedAt  DateTime  @default(now())
+  acceptedAt DateTime?
+
+  @@index([developerId])
+  @@index([walletAddress])
+  @@map("task_developer")
+}
+
+model TaskRepository {
+  id String @id @default(cuid())
+
+  // Relacionamento
+  taskId String @unique
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  // Dados do repositório GitHub
+  repositoryName String
+  repositoryUrl  String
+  githubRepoId   Int? // ID do repo no GitHub
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Timestamps
+  createdAt DateTime  @default(now())
+  deletedAt DateTime? // Quando repo for deletado
+
+  @@index([repositoryName])
+  @@map("task_repository")
+}
+
+model BlockchainTransaction {
+  id String @id @default(cuid())
+
+  // Relacionamentos
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  userId String? // Usuário que iniciou a transação
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Dados da transação
+  type   TransactionType
+  status TransactionStatus @default(PENDING)
+
+  txHash      String? // Hash da transação na blockchain
+  blockNumber Int? // Número do bloco
+  gasUsed     String? // Gas utilizado (BigInt como string)
+
+  // Valores
+  valueInWei String // Valor em Wei (BigInt como string)
+  networkId  String @default("11155111") // Sepolia testnet
+
+  // Metadados
+  errorMessage String? // Mensagem de erro se falhou
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  confirmedAt DateTime? // Quando foi confirmada na blockchain
+
+  @@index([taskId])
+  @@index([txHash])
+  @@index([status])
+  @@index([type])
+  @@map("blockchain_transaction")
 }
