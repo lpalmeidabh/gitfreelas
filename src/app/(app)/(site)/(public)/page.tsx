@@ -36,17 +36,17 @@ export default function HomePage() {
       <section className="py-20 px-4">
         <div className="container mx-auto text-center max-w-4xl">
           <Badge variant="outline" className="mb-6">
-            🚀 Plataforma em desenvolvimento - TCC
+            Trabalho de conclusão do Legal HackBuilders
           </Badge>
 
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-            Freelancers em Crypto
+            GitFreelas
           </h1>
 
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             A primeira plataforma de freelancers que conecta clientes e
-            desenvolvedores com <strong>pagamentos em cripto</strong> e{' '}
-            <strong>repositórios automáticos</strong>.
+            desenvolvedores com <strong>pagamentos em cripto</strong> para maior
+            <strong> segurança e transparência</strong>.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
