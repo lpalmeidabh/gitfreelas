@@ -11,66 +11,72 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
 } from '@/components/ui/sidebar'
 import {
-  Camera,
-  ChartBar,
-  Circle,
-  FileCode,
-  Folder,
-  HelpCircle,
   LayoutDashboard,
-  LifeBuoyIcon,
   Search,
+  Plus,
+  FileText,
+  User,
   Settings,
-  Users,
-  FilePenLine,
+  HelpCircle,
+  Circle,
+  ChevronRight,
+  GitBranch,
 } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 
-const data = {
-  navMain: [
+const navigationData = {
+  main: [
     {
       title: 'Dashboard',
-      url: '#',
+      url: '/dashboard',
       icon: LayoutDashboard,
     },
     {
-      title: 'Lifecycle',
-      url: '#',
-      icon: LifeBuoyIcon,
-    },
-    {
-      title: 'Analytics',
-      url: '#',
-      icon: ChartBar,
-    },
-    {
-      title: 'Projects',
-      url: '#',
-      icon: Folder,
-    },
-    {
-      title: 'Team',
-      url: '#',
-      icon: Users,
+      title: 'Tarefas',
+      icon: FileText,
+      items: [
+        {
+          title: 'Explorar Tarefas',
+          url: '/tasks',
+          icon: Search,
+        },
+        {
+          title: 'Criar Tarefa',
+          url: '/tasks/create',
+          icon: Plus,
+        },
+        {
+          title: 'Minhas Tarefas',
+          url: '/tasks?tab=my-tasks',
+          icon: User,
+        },
+      ],
     },
   ],
-
-  navSecondary: [
+  secondary: [
     {
-      title: 'Settings',
-      url: '#',
+      title: 'Configurações',
+      url: '/settings',
       icon: Settings,
     },
     {
-      title: 'Get Help',
-      url: '#',
+      title: 'Ajuda',
+      url: '/help',
       icon: HelpCircle,
-    },
-    {
-      title: 'Search',
-      url: '#',
-      icon: Search,
     },
   ],
 }
@@ -86,6 +92,8 @@ export function AppSidebar({
   user,
   ...props
 }: React.ComponentProps<typeof Sidebar> & AppSidebarProps) {
+  const pathname = usePathname()
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -95,15 +103,110 @@ export function AppSidebar({
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
-                <Circle className="!size-5" />
-                <span className="text-base font-semibold">git.freelas</span>
-              </a>
+              <Link href="/dashboard">
+                <Circle className="!size-5 text-primary" />
+                <span className="text-base font-semibold">GitFreelas</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent></SidebarContent>
+
+      <SidebarContent>
+        {/* Navegação Principal */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Principal</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigationData.main.map((item) => {
+                if (item.items) {
+                  return (
+                    <Collapsible key={item.title} asChild defaultOpen>
+                      <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton className="w-full">
+                            <item.icon />
+                            <span>{item.title}</span>
+                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <SidebarMenuSub>
+                            {item.items.map((subItem) => (
+                              <SidebarMenuSubItem key={subItem.title}>
+                                <SidebarMenuSubButton
+                                  asChild
+                                  isActive={pathname === subItem.url}
+                                >
+                                  <Link href={subItem.url}>
+                                    <subItem.icon />
+                                    <span>{subItem.title}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            ))}
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
+                  )
+                } else {
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={pathname === item.url}
+                      >
+                        <Link href={item.url}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                }
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Links de Desenvolvimento/Debug */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Debug & Testes</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/test-github">
+                    <GitBranch />
+                    <span>Teste GitHub API</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Navegação Secundária */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Outros</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigationData.secondary.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
       <SidebarFooter>
         <NavUser user={user} />
       </SidebarFooter>

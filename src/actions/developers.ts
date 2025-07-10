@@ -6,6 +6,7 @@ import { headers } from 'next/headers'
 import { TaskStatus } from '@/lib/generated/prisma/client'
 import { revalidatePath } from 'next/cache'
 import { isValidAddress } from '@/lib/web3/config'
+import { createRepositoryForTask } from '@/actions/repositories'
 
 // ===== HELPER FUNCTIONS =====
 
@@ -141,7 +142,12 @@ export async function acceptDeveloper(taskId: string) {
         deletedAt: null,
       },
       include: {
-        taskDeveloper: true,
+        taskDeveloper: {
+          include: {
+            developer: true,
+          },
+        },
+        creator: true,
       },
     })
 
@@ -173,11 +179,33 @@ export async function acceptDeveloper(taskId: string) {
       return { taskDeveloper: updatedTaskDeveloper, task: updatedTask }
     })
 
+    // 🚀 NOVO: Criar repositório automaticamente
+    console.log('Criando repositório para a tarefa aceita...')
+
+    const repositoryResult = await createRepositoryForTask(taskId)
+
+    if (repositoryResult.success) {
+      console.log(
+        '✅ Repositório criado com sucesso:',
+        repositoryResult.repository?.repositoryName,
+      )
+    } else {
+      console.error('❌ Erro ao criar repositório:', repositoryResult.error)
+      // Não falha a operação principal, repositório pode ser criado depois
+    }
+
     revalidatePath('/tasks')
     revalidatePath('/dashboard')
     revalidatePath(`/tasks/${taskId}`)
 
-    return { success: true, data: result }
+    return {
+      success: true,
+      data: result,
+      repository: repositoryResult.success ? repositoryResult.repository : null,
+      message: repositoryResult.success
+        ? 'Desenvolvedor aceito e repositório criado com sucesso!'
+        : 'Desenvolvedor aceito! Repositório será criado em breve.',
+    }
   } catch (error) {
     console.error('Erro ao aceitar desenvolvedor:', error)
     return {
