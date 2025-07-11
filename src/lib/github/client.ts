@@ -9,6 +9,7 @@ const GITHUB_CONFIG = {
   webhookSecret: process.env.GITHUB_WEBHOOK_SECRET!,
 } as const
 
+console.log('GITHUB_CONFIG:', GITHUB_CONFIG)
 // Validar configurações essenciais
 if (
   !GITHUB_CONFIG.appId ||
@@ -59,7 +60,7 @@ export async function testGitHubConnection(): Promise<boolean> {
  * Configurações exportadas (para outros módulos)
  */
 export const githubConfig = {
-  owner: 'gitfreelas', // Nome da organização/usuário
+  owner: 'gitfreelas-org', // Era 'gitfreelas'
   webhookSecret: GITHUB_CONFIG.webhookSecret,
 } as const
 

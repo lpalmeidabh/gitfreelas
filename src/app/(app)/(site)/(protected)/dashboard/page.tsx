@@ -10,7 +10,7 @@ export default async function Page() {
   })
 
   if (!session) {
-    redirect('/login')
+    redirect('/')
   }
 
   const user = session.user

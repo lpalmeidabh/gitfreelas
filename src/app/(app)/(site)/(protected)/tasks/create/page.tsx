@@ -26,7 +26,7 @@ export default async function CreateTaskPage() {
   })
 
   if (!session) {
-    redirect('/login')
+    redirect('/')
   }
 
   return (

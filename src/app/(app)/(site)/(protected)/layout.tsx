@@ -16,7 +16,7 @@ export default async function ProtectedLayout({
   })
 
   if (!session) {
-    redirect('/login')
+    redirect('/')
   }
 
   const user = session.user

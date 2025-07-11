@@ -77,8 +77,9 @@ export async function createTaskRepository(
     const client = await getGitHubClient()
     const repositoryName = generateRepositoryName(data.taskId)
 
-    // Criar o repositório
-    const { data: repo } = await client.rest.repos.createForAuthenticatedUser({
+    // Criar o repositório na organização
+    const { data: repo } = await client.rest.repos.createInOrg({
+      org: githubConfig.owner, // 'gitfreelas-org'
       name: repositoryName,
       description: `[GitFreelas] ${data.title}`,
       private: false, // Público para facilitar o desenvolvimento
@@ -95,13 +96,21 @@ export async function createTaskRepository(
     const readmeContent = generateReadmeContent(data)
 
     try {
+      // Primeiro, pegar o SHA do README existente
+      const { data: existingReadme } = await client.rest.repos.getContent({
+        owner: githubConfig.owner,
+        repo: repositoryName,
+        path: 'README.md',
+      })
+
+      // Atualizar o README existente
       await client.rest.repos.createOrUpdateFileContents({
         owner: githubConfig.owner,
         repo: repositoryName,
         path: 'README.md',
         message: 'docs: add task description and instructions',
         content: Buffer.from(readmeContent).toString('base64'),
-        sha: undefined, // Para sobrescrever o README inicial
+        sha: Array.isArray(existingReadme) ? undefined : existingReadme.sha,
       })
     } catch (readmeError) {
       console.warn(

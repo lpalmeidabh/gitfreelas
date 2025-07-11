@@ -70,7 +70,7 @@ export default async function TaskDetailsPage({
   })
 
   if (!session) {
-    redirect('/login')
+    redirect('/')
   }
 
   // Buscar dados da tarefa

@@ -41,7 +41,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
   })
 
   if (!session) {
-    redirect('/login')
+    redirect('/')
   }
 
   const currentTab = searchParams.tab || 'available'
