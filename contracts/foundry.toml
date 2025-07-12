@@ -1,0 +1,117 @@
+[profile.default]
+# Solidity version
+solc = "0.8.27"
+
+# Source directory
+src = "src"
+
+# Test directory
+test = "test"
+
+# Script directory
+script = "script"
+
+# Output directory
+out = "out"
+
+# Library directory
+libs = ["lib"]
+
+# Optimizer settings
+optimizer = true
+optimizer_runs = 200
+
+# Gas limit for tests
+gas_limit = 9223372036854775807
+
+# Gas price for tests (1 gwei)
+gas_price = 1000000000
+
+# Verbosity level
+verbosity = 2
+
+# EVM version (latest)
+evm_version = "cancun"
+
+# Auto detect remappings
+auto_detect_remappings = true
+
+# Remappings for imports
+remappings = [
+    "forge-std/=lib/forge-std/src/",
+    "openzeppelin/=lib/openzeppelin-contracts/",
+    "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/"
+]
+
+# Ffi (foreign function interface) - disabled for security
+ffi = false
+
+# Cache settings
+cache = true
+cache_path = "cache"
+force = false
+
+# Test settings
+[profile.default.fuzz]
+runs = 256
+max_test_rejects = 65536
+seed = '0x3e8'
+dictionary_weight = 40
+include_storage = true
+include_push_bytes = true
+
+# Coverage settings
+[profile.default.coverage]
+bytecode_hash = "none"
+cbor_metadata = false
+
+# CI profile (faster, less thorough)
+[profile.ci]
+fuzz = { runs = 10 }
+invariant = { runs = 5, depth = 5, fail_on_revert = false }
+
+# Local development profile
+[profile.dev]
+optimizer = false
+verbosity = 3
+
+# Production profile (maximum optimization)
+[profile.production]
+optimizer = true
+optimizer_runs = 1000
+via_ir = true
+
+# Network configurations
+[rpc_endpoints]
+mainnet = "https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}"
+sepolia = "https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}"
+localhost = "http://127.0.0.1:8545"
+
+[etherscan]
+mainnet = { key = "${ETHERSCAN_API_KEY}" }
+sepolia = { key = "${ETHERSCAN_API_KEY}" }
+
+# Formatting settings
+[fmt]
+line_length = 100
+tab_width = 4
+bracket_spacing = true
+int_types = "long"
+multiline_func_header = "attributes_first"
+quote_style = "double"
+number_underscore = "thousands"
+hex_underscore = "remove"
+single_line_statement_blocks = "preserve"
+override_spacing = true
+wrap_comments = true
+ignore = ["src/test/**/*.sol"]
+
+# Documentation settings
+[doc]
+out = "docs"
+title = "GitFreelas Smart Contracts"
+book = "book.toml"
+homepage = "https://github.com/your-username/gitfreelas"
+repository = "https://github.com/your-username/gitfreelas"
+ignore = ["src/test/**/*.sol"]
