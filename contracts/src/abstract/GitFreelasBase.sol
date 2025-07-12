@@ -170,11 +170,12 @@ abstract contract GitFreelasBase is
 
         Task storage task = _tasks[internalTaskId];
 
-        // Only calculate penalty if task is overdue and allows overdue
-        if (!task.allowOverdue || task.status != TaskStatus.OVERDUE) {
+        // Only calculate penalty if task allows overdue and is past deadline
+        if (!task.allowOverdue || block.timestamp <= task.deadline) {
             return 0;
         }
 
+        // Calculate overdue time
         uint256 overdueTime = block.timestamp - task.deadline;
         uint256 overdueDays = (overdueTime / 1 days) + 1; // +1 to count partial days
 
@@ -252,8 +253,9 @@ abstract contract GitFreelasBase is
         Task storage task = _tasks[internalTaskId];
 
         // Task is expired if:
-        // 1. It's in ACTIVE status and deadline + overdue period has passed (if overdue allowed)
-        // 2. It's in OVERDUE status and overdue period has ended
+        // 1. It's in ACTIVE status and deadline has passed (if no overdue allowed)
+        // 2. It's in ACTIVE status and deadline + overdue period has passed (if overdue allowed)
+        // 3. It's in OVERDUE status and overdue period has ended
         if (task.status == TaskStatus.ACTIVE) {
             if (task.allowOverdue) {
                 return block.timestamp > task.deadline + OVERDUE_PERIOD;

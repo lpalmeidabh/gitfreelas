@@ -61,6 +61,7 @@ contract GitFreelas is GitFreelasBase {
      * @param taskId External task ID from frontend database
      * @param deadline Task deadline timestamp
      * @param allowOverdue Whether to allow 3 extra days with penalty
+     * @notice msg.value should be taskValue + 3% platform fee
      */
     function createTask(
         string calldata taskId,
@@ -73,24 +74,31 @@ contract GitFreelas is GitFreelasBase {
         nonReentrant
         whenNotPaused
         validDeadline(deadline)
-        validTaskValue(msg.value)
     {
-        // Calculate expected total deposit
-        uint256 expectedDeposit = calculateTotalDeposit(msg.value);
+        // Para evitar problemas de precisão com divisão, vamos trabalhar com msg.value diretamente
+        // Verificar se msg.value é suficiente para pelo menos o valor mínimo + taxa
+        uint256 minimumTotalDeposit = calculateTotalDeposit(MINIMUM_TASK_VALUE);
+        if (msg.value < minimumTotalDeposit) revert InvalidTaskValue();
 
-        // For simplicity, we'll consider msg.value as the total deposit
-        // and calculate taskValue from it
+        // Calcular taskValue a partir do valor total depositado
+        // msg.value = taskValue + (taskValue * 3 / 100) = taskValue * 103 / 100
+        // taskValue = msg.value * 100 / 103
         uint256 taskValue = (msg.value * 100) / (100 + PLATFORM_FEE_PERCENTAGE);
-        uint256 actualTotalDeposit = calculateTotalDeposit(taskValue);
 
-        // Ensure the deposit is sufficient
-        if (msg.value < actualTotalDeposit) revert InsufficientDeposit();
+        // Verificar se o taskValue calculado ainda atende ao mínimo
+        if (taskValue < MINIMUM_TASK_VALUE) revert InvalidTaskValue();
 
-        // Create the task
+        // Calcular o depósito exato necessário para esse taskValue
+        uint256 exactTotalDeposit = calculateTotalDeposit(taskValue);
+
+        // Verificar se temos valor suficiente
+        if (msg.value < exactTotalDeposit) revert InsufficientDeposit();
+
+        // Criar a tarefa
         _createTask(taskId, deadline, allowOverdue, taskValue);
 
-        // Refund any excess payment
-        uint256 excess = msg.value - actualTotalDeposit;
+        // Refund qualquer excesso
+        uint256 excess = msg.value - exactTotalDeposit;
         if (excess > 0) {
             (bool success, ) = payable(msg.sender).call{value: excess}('');
             if (!success) revert PaymentFailed();
@@ -171,16 +179,12 @@ contract GitFreelas is GitFreelasBase {
     function cancelTask(
         string calldata taskId,
         string calldata reason
-    )
-        external
-        override
-        nonReentrant
-        whenNotPaused
-        onlyTaskClient(taskId)
-        taskHasStatus(taskId, TaskStatus.DEPOSITED)
-    {
+    ) external override nonReentrant whenNotPaused onlyTaskClient(taskId) {
         uint256 internalId = _taskIdToIndex[taskId];
         Task storage task = _tasks[internalId];
+
+        // Task must be in DEPOSITED status (no developer applied)
+        if (task.status != TaskStatus.DEPOSITED) revert TaskNotDeposited();
 
         // Ensure no developer has applied
         if (task.developer != address(0)) revert TaskAlreadyHasDeveloper();
