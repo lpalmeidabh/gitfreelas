@@ -10,9 +10,16 @@ import {
   TaskWithRelations,
   TaskListResponse,
 } from '@/types'
-import { TaskStatus } from '@/lib/generated/prisma/client'
+import {
+  TaskStatus,
+  TransactionStatus,
+  TransactionType,
+} from '@/lib/generated/prisma/client'
 import { etherToWei } from '@/lib/web3/config'
 import { revalidatePath } from 'next/cache'
+import { createTaskFormSchema } from '@/lib/schemas/task'
+import { redirect } from 'next/navigation'
+import z from 'zod'
 
 // ===== HELPER FUNCTIONS =====
 
@@ -88,22 +95,39 @@ function buildTaskOrderBy(sort?: TaskSortOptions) {
 
 // ===== TASK ACTIONS =====
 
-export async function createTask(data: CreateTaskData) {
+export async function createTask(prevState: any, formData: FormData) {
   try {
+    // Converter FormData para objeto
+    const rawData = {
+      title: formData.get('title') as string,
+      description: formData.get('description') as string,
+      requirements: (formData.get('requirements') as string) || undefined,
+      valueInEther: formData.get('valueInEther') as string,
+      deadline: formData.get('deadline') as string,
+      allowOverdue: formData.get('allowOverdue') as string,
+      contractTxHash: (formData.get('contractTxHash') as string) || undefined,
+      walletAddress: (formData.get('walletAddress') as string) || undefined,
+    }
+
+    // Validar dados
+    const validatedData = createTaskFormSchema.parse(rawData)
+
+    // Verificar autenticação
     const user = await getCurrentUser()
 
-    // Converter Ether para Wei
-    const valueInWei = etherToWei(data.valueInEther)
+    // Converter para Wei
+    const valueInWei = etherToWei(validatedData.valueInEther)
 
-    // Criar a tarefa
+    // Criar task no banco
     const task = await prisma.task.create({
       data: {
-        title: data.title,
-        description: data.description,
-        requirements: data.requirements,
+        title: validatedData.title,
+        description: validatedData.description,
+        requirements: validatedData.requirements,
         valueInWei,
-        deadline: data.deadline,
-        allowOverdue: data.allowOverdue,
+        deadline: validatedData.deadline,
+        allowOverdue: validatedData.allowOverdue,
+        contractTaskId: validatedData.contractTxHash,
         creatorId: user.id,
         status: TaskStatus.OPEN,
       },
@@ -119,16 +143,43 @@ export async function createTask(data: CreateTaskData) {
       },
     })
 
+    // Registrar transação blockchain (se houver)
+    if (validatedData.contractTxHash) {
+      await prisma.blockchainTransaction.create({
+        data: {
+          taskId: task.id,
+          userId: user.id,
+          type: TransactionType.DEPOSIT,
+          status: TransactionStatus.CONFIRMED,
+          txHash: validatedData.contractTxHash,
+          valueInWei,
+          networkId: '11155111',
+        },
+      })
+    }
+
+    // Revalidar cache
     revalidatePath('/tasks')
     revalidatePath('/dashboard')
 
-    return { success: true, task }
+    // Sucesso - redirecionar
+    redirect(`/tasks/${task.id}`)
   } catch (error) {
-    console.error('Erro ao criar tarefa:', error)
+    console.error('Erro na createTask:', error)
+
+    if (error instanceof z.ZodError) {
+      return {
+        errors: error.flatten().fieldErrors,
+        message: 'Dados inválidos. Corrija os erros.',
+        success: false,
+      }
+    }
+
     return {
-      success: false,
-      error:
+      errors: {},
+      message:
         error instanceof Error ? error.message : 'Erro interno do servidor',
+      success: false,
     }
   }
 }
