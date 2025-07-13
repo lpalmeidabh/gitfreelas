@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useWallet } from '@/hooks/use-wallet'
+import { useWallet } from '@/hooks/useWallet'
 import { Wallet, AlertTriangle, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 

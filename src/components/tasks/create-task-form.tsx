@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/card'
 import { CalendarIcon, Wallet, AlertCircle, Clock } from 'lucide-react'
 import { ConnectWallet } from '@/components/web3/connect-wallet'
-import { useWallet } from '@/hooks/use-wallet'
+import { useWallet } from '@/hooks/useWallet'
 import { createTask } from '@/actions/tasks'
 import { CreateTaskData, CreateTaskErrors } from '@/types'
 import { toast } from 'sonner'

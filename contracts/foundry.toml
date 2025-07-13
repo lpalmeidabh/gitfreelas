@@ -36,6 +36,12 @@ evm_version = "cancun"
 # Auto detect remappings
 auto_detect_remappings = true
 
+# Permitir escrita de arquivos em diretórios específicos
+fs_permissions = [
+    { access = "read-write", path = "./deployments" },
+    { access = "read-write", path = "./broadcasts" }
+]
+
 # Remappings for imports
 remappings = [
     "forge-std/=lib/forge-std/src/",

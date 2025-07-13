@@ -22,7 +22,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { ConnectWallet } from '@/components/web3/connect-wallet'
-import { useWallet } from '@/hooks/use-wallet'
+import { useWallet } from '@/hooks/useWallet'
 import { applyToTask } from '@/actions/developers'
 import { TaskWithRelations } from '@/types'
 import { weiToEther } from '@/lib/web3/config'

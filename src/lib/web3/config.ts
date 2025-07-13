@@ -1,6 +1,17 @@
+// src/lib/web3/config.ts
 import { http, createConfig } from 'wagmi'
 import { sepolia, localhost } from 'wagmi/chains'
 import { metaMask } from 'wagmi/connectors'
+import { GitFreelasABI } from './abis/GitFreelas'
+
+// Pegar variáveis do .env
+const contractAddress = process.env.NEXT_PUBLIC_GITFREELAS_CONTRACT_ADDRESS
+const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
+
+// Validação básica
+if (!contractAddress) {
+  console.warn('⚠️ NEXT_PUBLIC_GITFREELAS_CONTRACT_ADDRESS não configurado')
+}
 
 // Configuração das redes
 export const config = createConfig({
@@ -15,7 +26,12 @@ export const config = createConfig({
     }),
   ],
   transports: {
-    [sepolia.id]: http(), // RPC público da Sepolia
+    // Usar Alchemy se disponível, senão RPC público
+    [sepolia.id]: http(
+      alchemyKey
+        ? `https://eth-sepolia.g.alchemy.com/v2/${alchemyKey}`
+        : undefined,
+    ),
     [localhost.id]: http(), // Para desenvolvimento local com Foundry
   },
 })
@@ -28,11 +44,12 @@ export const APP_CONFIG = {
   // Rede padrão
   defaultChain: sepolia,
 
-  // Endereços dos contratos (será preenchido quando deploy for feito)
+  // Endereços dos contratos (agora vem do .env)
   contracts: {
     gitFreelas: {
-      address: '0x0000000000000000000000000000000000000000' as `0x${string}`,
-      abi: [], // ABI será importada quando o contrato estiver pronto
+      address: (contractAddress ||
+        '0x0000000000000000000000000000000000000000') as `0x${string}`,
+      abi: GitFreelasABI, // Agora importa a ABI real
     },
   },
 
@@ -43,6 +60,8 @@ export const APP_CONFIG = {
     overdueDays: 3, // 3 dias extras permitidos
   },
 } as const
+
+// MANTENDO suas funções úteis existentes:
 
 // Função helper para converter Wei para Ether
 export const weiToEther = (wei: string): string => {
@@ -60,4 +79,9 @@ export const etherToWei = (ether: string): string => {
 // Função para validar endereço Ethereum
 export const isValidAddress = (address: string): boolean => {
   return /^0x[a-fA-F0-9]{40}$/.test(address)
+}
+
+// NOVA: Helper para usar o contrato GitFreelas facilmente
+export const useGitFreelasContract = () => {
+  return APP_CONFIG.contracts.gitFreelas
 }
