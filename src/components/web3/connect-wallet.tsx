@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useWallet } from '@/hooks/useWallet'
@@ -36,6 +37,29 @@ export function ConnectWallet({
     formatAddress,
     formatBalance,
   } = useWallet()
+
+  // Fix hydration mismatch - wait for client hydration
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Render placeholder during SSR to match initial client state
+  if (!isMounted) {
+    return (
+      <Button
+        disabled
+        variant={variant}
+        size={size}
+        className={cn('gap-2', className)}
+      >
+        <Wallet className="h-4 w-4" />
+        Conectar Carteira
+        {required && <span className="text-red-500">*</span>}
+      </Button>
+    )
+  }
 
   // Se não está conectado
   if (!isConnected) {

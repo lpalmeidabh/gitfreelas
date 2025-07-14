@@ -258,12 +258,6 @@ export function TaskCard({
             </Button>
           </Link>
 
-          {canApply && (
-            <Link href={`/tasks/${task.id}?action=apply`} className="flex-1">
-              <Button className="w-full">Aplicar</Button>
-            </Link>
-          )}
-
           {isOwner && task.status === 'APPLIED' && (
             <Link href={`/tasks/${task.id}?action=review`} className="flex-1">
               <Button variant="secondary" className="w-full">

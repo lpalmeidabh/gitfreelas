@@ -1,7 +1,8 @@
 import { getTaskById } from '@/actions/tasks'
 import { ApplyTaskButton } from '@/components/tasks/apply-task-button'
-import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -9,44 +10,40 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Separator } from '@/components/ui/separator'
 import { auth } from '@/lib/auth'
-import { headers } from 'next/headers'
-import { redirect, notFound } from 'next/navigation'
-import { TASK_STATUS_LABELS, TRANSACTION_TYPE_LABELS } from '@/types'
+import { cn } from '@/lib/utils'
 import { weiToEther } from '@/lib/web3/config'
-import {
-  ArrowLeft,
-  Calendar,
-  Wallet,
-  User,
-  Clock,
-  GitBranch,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  ExternalLink,
-  Copy,
-  Shield,
-  Activity,
-} from 'lucide-react'
-import Link from 'next/link'
+import { TASK_STATUS_LABELS, TRANSACTION_TYPE_LABELS } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { cn } from '@/lib/utils'
+import {
+  Activity,
+  AlertTriangle,
+  ArrowLeft,
+  Calendar,
+  ExternalLink,
+  FileEdit,
+  GitBranch,
+  Settings,
+  Wallet,
+  XCircle,
+} from 'lucide-react'
+import { headers } from 'next/headers'
+import Link from 'next/link'
+import { notFound, redirect } from 'next/navigation'
 
 interface TaskDetailsPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
-  searchParams: {
+  }>
+  searchParams: Promise<{
     action?: string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: TaskDetailsPageProps) {
-  const task = await getTaskById(params.id)
+  const resolvedParams = await params
+  const task = await getTaskById(resolvedParams.id)
 
   if (!task) {
     return {
@@ -64,7 +61,9 @@ export default async function TaskDetailsPage({
   params,
   searchParams,
 }: TaskDetailsPageProps) {
-  // Verificar autenticação
+  const resolvedParams = await params
+  const resolvedSearchParams = await searchParams
+
   const session = await auth.api.getSession({
     headers: await headers(),
   })
@@ -73,8 +72,7 @@ export default async function TaskDetailsPage({
     redirect('/')
   }
 
-  // Buscar dados da tarefa
-  const task = await getTaskById(params.id)
+  const task = await getTaskById(resolvedParams.id)
 
   if (!task) {
     notFound()
@@ -82,10 +80,14 @@ export default async function TaskDetailsPage({
 
   const currentUserId = session.user.id
   const isOwner = currentUserId === task.creatorId
-  const isDeveloper = currentUserId === task.taskDeveloper?.developerId
+  const isDeveloper =
+    currentUserId === task.taskDeveloper?.developerId &&
+    task.status === 'IN_PROGRESS'
+  const hasApplied =
+    currentUserId === task.taskDeveloper?.developerId &&
+    task.status === 'APPLIED'
   const canApply = task.status === 'OPEN' && !isOwner && !task.taskDeveloper
 
-  // Calcular informações
   const valueInEth = weiToEther(task.valueInWei)
   const formattedValue = parseFloat(valueInEth).toFixed(4)
   const statusInfo = TASK_STATUS_LABELS[task.status]
@@ -108,7 +110,6 @@ export default async function TaskDetailsPage({
   return (
     <div className="min-h-screen bg-background">
       <div className="container max-w-5xl mx-auto py-8 px-4">
-        {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Link href="/tasks">
             <Button variant="ghost" size="sm">
@@ -119,111 +120,105 @@ export default async function TaskDetailsPage({
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Conteúdo Principal */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Título e Status */}
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Badge
-                  variant="outline"
-                  className={cn('text-sm', statusInfo.color)}
-                >
-                  {statusInfo.label}
-                </Badge>
-                {isUrgent && <Badge variant="destructive">Urgente</Badge>}
-                {isOverdue && <Badge variant="destructive">Vencida</Badge>}
-                {task.allowOverdue && (
-                  <Badge variant="secondary">+3 dias extras</Badge>
-                )}
-              </div>
-
-              <h1 className="text-3xl font-bold mb-3">{task.title}</h1>
-
-              <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  Criada{' '}
-                  {formatDistanceToNow(new Date(task.createdAt), {
-                    locale: ptBR,
-                  })}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Activity className="h-4 w-4" />
-                  Atualizada{' '}
-                  {formatDistanceToNow(new Date(task.updatedAt), {
-                    locale: ptBR,
-                  })}
-                </span>
-              </div>
-            </div>
-
-            {/* Descrição */}
             <Card>
               <CardHeader>
-                <CardTitle>Descrição da Tarefa</CardTitle>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge
+                        variant="outline"
+                        className={cn(statusInfo.color, 'border-current')}
+                      >
+                        {statusInfo.label}
+                      </Badge>
+                      {isUrgent && (
+                        <Badge variant="destructive" className="gap-1">
+                          <AlertTriangle className="h-3 w-3" />
+                          Urgente
+                        </Badge>
+                      )}
+                      {isOverdue && (
+                        <Badge variant="destructive" className="gap-1">
+                          <XCircle className="h-3 w-3" />
+                          Vencida
+                        </Badge>
+                      )}
+                    </div>
+                    <CardTitle className="text-2xl mb-2">
+                      {task.title}
+                    </CardTitle>
+                    <CardDescription className="text-base">
+                      {task.description}
+                    </CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
-                <p className="whitespace-pre-wrap leading-relaxed">
-                  {task.description}
-                </p>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileEdit className="h-5 w-5" />
+                  Detalhes da Tarefa
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {task.requirements && (
+                  <div>
+                    <h4 className="font-medium mb-2">Requisitos</h4>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {task.requirements}
+                    </p>
+                  </div>
+                )}
+
+                <div>
+                  <h4 className="font-medium mb-2">Cliente</h4>
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={task.creator.image || ''} />
+                      <AvatarFallback>
+                        {task.creator.name?.charAt(0).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-medium">{task.creator.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {task.creator.email}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {task.taskDeveloper && task.status === 'IN_PROGRESS' && (
+                  <div>
+                    <h4 className="font-medium mb-2">Desenvolvedor</h4>
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={task.taskDeveloper.developer.image || ''}
+                        />
+                        <AvatarFallback>
+                          {task.taskDeveloper.developer.name
+                            ?.charAt(0)
+                            .toUpperCase() || 'D'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm font-medium">
+                          {task.taskDeveloper.developer.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {task.taskDeveloper.developer.email}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            {/* Requisitos */}
-            {task.requirements && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Requisitos Técnicos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="whitespace-pre-wrap leading-relaxed">
-                    {task.requirements}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Repositório */}
-            {task.repository && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <GitBranch className="h-5 w-5" />
-                    Repositório
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between p-3 bg-muted rounded-md">
-                    <div>
-                      <p className="font-medium">
-                        {task.repository.repositoryName}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Criado{' '}
-                        {formatDistanceToNow(
-                          new Date(task.repository.createdAt),
-                          { locale: ptBR },
-                        )}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" variant="outline" asChild>
-                        <a
-                          href={task.repository.repositoryUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Abrir GitHub
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Histórico de Transações */}
             {task.transactions.length > 0 && (
               <Card>
                 <CardHeader>
@@ -234,44 +229,37 @@ export default async function TaskDetailsPage({
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {task.transactions.map((tx) => {
-                      const typeInfo = TRANSACTION_TYPE_LABELS[tx.type]
+                    {task.transactions.map((transaction) => {
+                      const typeInfo = TRANSACTION_TYPE_LABELS[transaction.type]
                       return (
                         <div
-                          key={tx.id}
-                          className="flex items-center justify-between p-3 border rounded-md"
+                          key={transaction.id}
+                          className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
                         >
                           <div className="flex items-center gap-3">
-                            <div
-                              className={cn(
-                                'w-2 h-2 rounded-full',
-                                typeInfo.color.replace('text-', 'bg-'),
-                              )}
-                            />
+                            <Badge variant="outline" className={typeInfo.color}>
+                              {typeInfo.label}
+                            </Badge>
                             <div>
-                              <p className="font-medium">{typeInfo.label}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {formatDistanceToNow(new Date(tx.createdAt), {
-                                  locale: ptBR,
-                                })}
+                              <p className="text-sm font-medium">
+                                {weiToEther(transaction.valueInWei)} ETH
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {formatDistanceToNow(
+                                  new Date(transaction.createdAt),
+                                  {
+                                    addSuffix: true,
+                                    locale: ptBR,
+                                  },
+                                )}
                               </p>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="font-medium">
-                              {weiToEther(tx.valueInWei)} ETH
-                            </p>
-                            {tx.txHash && (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-auto p-0 text-xs"
-                              >
-                                <Copy className="h-3 w-3 mr-1" />
-                                {tx.txHash.slice(0, 6)}...{tx.txHash.slice(-4)}
-                              </Button>
-                            )}
-                          </div>
+                          {transaction.txHash && (
+                            <Button variant="ghost" size="sm">
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
                       )
                     })}
@@ -281,272 +269,217 @@ export default async function TaskDetailsPage({
             )}
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-6">
-            {/* Valor e Ações */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Wallet className="h-5 w-5" />
+                  <Wallet className="h-5 w-5 text-green-600" />
                   Valor da Tarefa
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-center">
-                  <div className="text-3xl font-bold">{formattedValue} ETH</div>
-                  <div className="text-sm text-muted-foreground">
-                    ~$XXX USD {/* TODO: Integrar API de preços */}
+                  <div className="text-3xl font-bold text-green-600 mb-2">
+                    {formattedValue} ETH
                   </div>
+                  <p className="text-sm text-muted-foreground">
+                    ≈ ${(parseFloat(formattedValue) * 2000).toFixed(2)} USD
+                  </p>
                 </div>
 
-                <Separator />
-
-                {/* Ações baseadas no papel do usuário */}
                 {canApply && (
-                  <ApplyTaskButton
-                    task={task}
-                    currentUserId={currentUserId}
-                    className="w-full"
-                  />
-                )}
-
-                {isOwner && task.status === 'APPLIED' && task.taskDeveloper && (
-                  <div className="space-y-2">
-                    <Button className="w-full">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Aceitar Desenvolvedor
-                    </Button>
-                    <Button variant="outline" className="w-full">
-                      <XCircle className="h-4 w-4 mr-2" />
-                      Rejeitar
-                    </Button>
+                  <div className="pt-2">
+                    <ApplyTaskButton
+                      task={task}
+                      currentUserId={currentUserId}
+                      className="w-full"
+                    />
                   </div>
                 )}
 
-                {isOwner && task.status === 'PENDING_APPROVAL' && (
-                  <div className="space-y-2">
-                    <Button className="w-full">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Aprovar Entrega
-                    </Button>
-                    <Button variant="outline" className="w-full">
-                      <XCircle className="h-4 w-4 mr-2" />
-                      Solicitar Correções
-                    </Button>
-                  </div>
-                )}
-
-                {isDeveloper && task.status === 'IN_PROGRESS' && (
-                  <Button className="w-full">
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Submeter para Aprovação
-                  </Button>
-                )}
-
-                {isDeveloper && task.status === 'APPLIED' && (
-                  <Button variant="outline" className="w-full">
-                    <XCircle className="h-4 w-4 mr-2" />
-                    Cancelar Aplicação
-                  </Button>
-                )}
-
-                {!canApply && !isOwner && !isDeveloper && (
-                  <div className="text-center text-sm text-muted-foreground">
-                    {task.status === 'COMPLETED' && 'Tarefa concluída'}
-                    {task.status === 'CANCELLED' && 'Tarefa cancelada'}
-                    {task.status === 'OVERDUE' && 'Tarefa vencida'}
-                    {task.taskDeveloper &&
-                      task.status !== 'COMPLETED' &&
-                      task.status !== 'CANCELLED' &&
-                      task.status !== 'OVERDUE' &&
-                      'Tarefa já tem desenvolvedor'}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Prazo */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5" />
-                  Prazo de Entrega
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="text-center">
-                    <div className="font-medium">
-                      {new Date(task.deadline).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </div>
-                    <div
-                      className={cn(
-                        'text-sm',
-                        isUrgent
-                          ? 'text-red-600'
-                          : isOverdue
-                          ? 'text-red-600'
-                          : 'text-muted-foreground',
-                      )}
+                {isOwner && (
+                  <div className="pt-2 space-y-2">
+                    <Badge
+                      variant="secondary"
+                      className="w-full justify-center"
                     >
-                      {formatDeadline(task.deadline)}
-                    </div>
+                      Sua Tarefa
+                    </Badge>
+                    {task.status === 'APPLIED' && (
+                      <Button variant="outline" className="w-full">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Revisar Aplicações
+                      </Button>
+                    )}
                   </div>
+                )}
 
-                  {task.allowOverdue && (
-                    <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
-                      <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
-                        <AlertTriangle className="h-4 w-4" />
-                        <span className="text-sm font-medium">
-                          Prazo Flexível
-                        </span>
-                      </div>
-                      <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
-                        3 dias extras permitidos com desconto de 10% por dia
-                      </p>
-                    </div>
-                  )}
-                </div>
+                {isDeveloper && (
+                  <div className="pt-2 space-y-2">
+                    <Badge
+                      variant="secondary"
+                      className="w-full justify-center"
+                    >
+                      Você é o Desenvolvedor
+                    </Badge>
+                    <Button className="w-full">
+                      <GitBranch className="h-4 w-4 mr-2" />
+                      Submeter Trabalho
+                    </Button>
+                  </div>
+                )}
+
+                {hasApplied && (
+                  <div className="pt-2">
+                    <Badge variant="outline" className="w-full justify-center">
+                      Aplicação Enviada - Aguardando Aprovação
+                    </Badge>
+                  </div>
+                )}
+
+                {/* {!canApply && !isOwner && !isDeveloper && (
+                  <div className="pt-2">
+                    <Badge variant="outline" className="w-full justify-center">
+                      {task.taskDeveloper
+                        ? 'Já tem desenvolvedor'
+                        : 'Não disponível'}
+                    </Badge>
+                  </div>
+                )} */}
               </CardContent>
             </Card>
 
-            {/* Cliente */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Cliente
+                  <Calendar className="h-5 w-5 text-blue-600" />
+                  Prazo
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={task.creator.image} />
-                    <AvatarFallback>
-                      {task.creator.name.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <p className="font-medium">{task.creator.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {task.creator.email}
-                    </p>
+                <div className="text-center">
+                  <div
+                    className={cn(
+                      'text-2xl font-bold mb-2',
+                      isOverdue
+                        ? 'text-red-600'
+                        : isUrgent
+                        ? 'text-orange-600'
+                        : 'text-blue-600',
+                    )}
+                  >
+                    {Math.abs(daysUntilDeadline)} dias
                   </div>
-                  {isOwner && <Badge variant="secondary">Você</Badge>}
+                  <p className="text-sm text-muted-foreground">
+                    {isOverdue ? 'Venceu' : 'Restante'}:{' '}
+                    {formatDeadline(task.deadline)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Criada em{' '}
+                    {formatDistanceToNow(new Date(task.createdAt), {
+                      addSuffix: true,
+                      locale: ptBR,
+                    })}
+                  </p>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Desenvolvedor (se aplicado) */}
-            {task.taskDeveloper && (
+            {task.repository && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5" />
-                    Desenvolvedor
+                    <GitBranch className="h-5 w-5" />
+                    Repositório
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={task.taskDeveloper.developer.image} />
-                        <AvatarFallback>
-                          {task.taskDeveloper.developer.name
-                            .slice(0, 2)
-                            .toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <p className="font-medium">
-                          {task.taskDeveloper.developer.name}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {task.taskDeveloper.developer.email}
-                        </p>
-                      </div>
-                      {isDeveloper && <Badge variant="secondary">Você</Badge>}
-                    </div>
-
-                    <div className="text-xs text-muted-foreground space-y-1">
-                      <p>
-                        Aplicou-se{' '}
-                        {formatDistanceToNow(
-                          new Date(task.taskDeveloper.appliedAt),
-                          { locale: ptBR },
-                        )}
-                      </p>
-                      {task.taskDeveloper.acceptedAt && (
-                        <p>
-                          Aceito{' '}
-                          {formatDistanceToNow(
-                            new Date(task.taskDeveloper.acceptedAt),
-                            { locale: ptBR },
-                          )}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="p-2 bg-muted rounded-md">
-                      <p className="text-xs text-muted-foreground mb-1">
-                        Carteira:
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <code className="text-xs font-mono">
-                          {task.taskDeveloper.walletAddress.slice(0, 6)}...
-                          {task.taskDeveloper.walletAddress.slice(-4)}
-                        </code>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-auto p-0"
-                        >
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">
+                      {task.repository.repositoryName}
+                    </p>
+                    {task.repository.repositoryUrl && (
+                      <Button variant="outline" size="sm" className="w-full">
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Ver no GitHub
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
             )}
-
-            {/* Informações de Segurança */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  Segurança
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span>Valores protegidos por smart contract</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span>Pagamento automático após aprovação</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span>Repositório criado automaticamente</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span>Histórico transparente na blockchain</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
+
+        {resolvedSearchParams.action && (
+          <div className="mt-8">
+            {resolvedSearchParams.action === 'apply' && canApply && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Aplicar para Tarefa</CardTitle>
+                  <CardDescription>
+                    Complete sua aplicação para esta tarefa
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Formulário de aplicação em desenvolvimento...
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {resolvedSearchParams.action === 'review' &&
+              isOwner &&
+              task.taskDeveloper && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Revisar Aplicação</CardTitle>
+                    <CardDescription>
+                      Aceite ou rejeite a aplicação do desenvolvedor
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Interface de revisão em desenvolvimento...
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+
+            {resolvedSearchParams.action === 'submit' && isDeveloper && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Submeter Trabalho</CardTitle>
+                  <CardDescription>
+                    Envie seu trabalho concluído para aprovação
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Formulário de submissão em desenvolvimento...
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {resolvedSearchParams.action === 'approve' && isOwner && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Aprovar Entrega</CardTitle>
+                  <CardDescription>
+                    Revise e aprove o trabalho entregue pelo desenvolvedor
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Interface de aprovação em desenvolvimento...
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

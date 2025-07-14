@@ -122,9 +122,9 @@ export async function applyToTask(prevState: any, formData: FormData) {
       return { taskDeveloper, updatedTask }
     })
 
-    revalidatePath('/tasks')
-    revalidatePath('/dashboard')
-    revalidatePath(`/tasks/${taskId}`)
+    // revalidatePath('/tasks')
+    // revalidatePath('/dashboard')
+    // revalidatePath(`/tasks/${taskId}`)
 
     return { success: true, data: result }
   } catch (error) {

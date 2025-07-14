@@ -1,19 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -21,23 +9,37 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { ConnectWallet } from '@/components/web3/connect-wallet'
-import { useWallet } from '@/hooks/useWallet'
-import { useApplyToTask } from '@/hooks/tasks/useApplyToTask'
-import { TaskWithRelations } from '@/types'
-import { weiToEther } from '@/lib/web3/config'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
-  Wallet,
-  Clock,
-  AlertTriangle,
-  CheckCircle2,
-  FileText,
-  User,
-  Calendar,
-} from 'lucide-react'
-import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
+import { ConnectWallet } from '@/components/web3/connect-wallet'
+import { useApplyToTask } from '@/hooks/tasks/useApplyToTask'
+import { useWallet } from '@/hooks/useWallet'
 import { cn } from '@/lib/utils'
+import { weiToEther } from '@/lib/web3/config'
+import { TaskWithRelations } from '@/types'
+import {
+  AlertTriangle,
+  Calendar,
+  CheckCircle2,
+  Database,
+  Loader2,
+  PenTool,
+  User,
+  Wallet,
+  X,
+} from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 interface ApplyTaskButtonProps {
   task: TaskWithRelations
@@ -64,14 +66,17 @@ export function ApplyTaskButton({
   // Usar o hook useApplyToTask
   const {
     currentStep,
-    isApplying,
-    isSubmittingToDb,
+    isProcessing,
+    isSigning,
+    isSubmitting,
     hasError,
     errorMessage,
     state,
     applyToTask,
-    submitToDatabase,
+    handleClose,
     resetOnError,
+    canCloseModal,
+    isComplete,
   } = useApplyToTask()
 
   // Verificações de elegibilidade
@@ -91,36 +96,18 @@ export function ApplyTaskButton({
 
   const isUrgent = daysUntilDeadline <= 2 && daysUntilDeadline > 0
 
-  // Efeitos para gerenciar o fluxo
-  useEffect(() => {
-    if (currentStep === 'blockchain' && isApplying) {
-      toast.loading('Enviando aplicação para o contrato...', {
-        id: 'apply-loading',
-      })
+  // Bloquear fechamento do modal durante processamento
+  const handleOpenChange = (open: boolean) => {
+    // NUNCA permitir fechar exceto por botões específicos
+    if (!open) {
+      return // Impedir qualquer tentativa de fechar
     }
-  }, [currentStep, isApplying])
+    setIsOpen(open)
+  }
 
   useEffect(() => {
-    if (currentStep === 'database' && isSubmittingToDb) {
-      toast.loading('Salvando aplicação no banco...', { id: 'apply-loading' })
-    }
-  }, [currentStep, isSubmittingToDb])
-
-  useEffect(() => {
-    if (state.success) {
-      toast.dismiss('apply-loading')
-      toast.success('Aplicação enviada com sucesso!')
-      setIsOpen(false)
-      router.refresh()
-    }
-  }, [state.success, router])
-
-  useEffect(() => {
-    if (hasError) {
-      toast.dismiss('apply-loading')
-      toast.error(errorMessage || 'Erro ao aplicar para a tarefa')
-    }
-  }, [hasError, errorMessage])
+    console.log('TaskDetailsPage mounted')
+  }, [])
 
   // Handler para aplicar
   const handleApply = async () => {
@@ -135,15 +122,20 @@ export function ApplyTaskButton({
     }
 
     try {
-      // Iniciar processo de aplicação (Web3 + Server Action)
       await applyToTask(task.id)
     } catch (error) {
       console.error('Erro ao aplicar:', error)
-      toast.error('Erro inesperado ao aplicar')
     }
   }
 
-  // Se não pode aplicar, retorna botão desabilitado com motivo
+  // Handler para fechar e refresh
+  const handleCloseAndRefresh = () => {
+    setIsOpen(false)
+    setAcceptedTerms(false)
+    handleClose()
+  }
+
+  // Se não pode aplicar, retorna botão desabilitado
   if (!canApply) {
     let reason = ''
     if (isOwner) reason = 'Sua tarefa'
@@ -163,10 +155,393 @@ export function ApplyTaskButton({
     )
   }
 
-  const isProcessing = isApplying || isSubmittingToDb
+  // Renderizar conteúdo do modal baseado no step
+  const renderModalContent = () => {
+    // Step 1: Confirmação inicial
+    if (currentStep === 'confirm') {
+      return (
+        <>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              Aplicar para Tarefa
+            </DialogTitle>
+            <DialogDescription>
+              Revise os detalhes da tarefa antes de aplicar
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            {/* Resumo da Tarefa */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">{task.title}</CardTitle>
+                <CardDescription className="line-clamp-3">
+                  {task.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Valor */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Wallet className="h-4 w-4 text-green-600" />
+                    <span className="text-sm font-medium">Valor</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-green-600">
+                      {formattedValue} ETH
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      ≈ ${(parseFloat(formattedValue) * 2000).toFixed(2)} USD
+                    </div>
+                  </div>
+                </div>
+
+                {/* Prazo */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium">Prazo</span>
+                  </div>
+                  <div className="text-right">
+                    <div
+                      className={cn(
+                        'font-bold',
+                        isUrgent ? 'text-orange-600' : 'text-blue-600',
+                      )}
+                    >
+                      {daysUntilDeadline} dias
+                    </div>
+                    {isUrgent && (
+                      <div className="text-xs text-orange-600">Urgente!</div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Status da carteira */}
+            <Card className="bg-muted/50">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Wallet className="h-4 w-4" />
+                    <span className="text-sm font-medium">Carteira</span>
+                  </div>
+                  {isConnected ? (
+                    <Badge variant="secondary" className="gap-1">
+                      <CheckCircle2 className="h-3 w-3" />
+                      Conectada
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="gap-1">
+                      <AlertTriangle className="h-3 w-3" />
+                      Desconectada
+                    </Badge>
+                  )}
+                </div>
+                {isConnected && address && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {address.slice(0, 6)}...{address.slice(-4)}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Termos */}
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="terms"
+                checked={acceptedTerms}
+                onCheckedChange={(checked) =>
+                  setAcceptedTerms(checked === true)
+                }
+              />
+              <Label htmlFor="terms" className="text-sm leading-relaxed">
+                Aceito os termos e condições. Entendo que minha aplicação será
+                analisada pelo cliente e que apenas após aprovação poderei
+                iniciar o trabalho.
+              </Label>
+            </div>
+
+            {/* Conectar carteira ou aplicar */}
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setIsOpen(false)}
+                className="flex-1"
+              >
+                Cancelar
+              </Button>
+              {isConnected ? (
+                <Button
+                  onClick={handleApply}
+                  disabled={!acceptedTerms}
+                  className="flex-1"
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Aplicar para Tarefa
+                </Button>
+              ) : (
+                <div className="flex-1">
+                  <ConnectWallet className="w-full" />
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )
+    }
+
+    // Steps de processamento
+    if (currentStep === 'signing' || currentStep === 'submitting') {
+      return (
+        <>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              Processando Aplicação
+            </DialogTitle>
+            <DialogDescription>
+              Aguarde enquanto processamos sua aplicação...
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            {/* Progress bar */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Progresso</span>
+                <span>{getProgressPercentage()}%</span>
+              </div>
+              <Progress value={getProgressPercentage()} className="h-2" />
+            </div>
+
+            {/* Steps */}
+            <div className="space-y-4">
+              {/* Step 1: Assinatura */}
+              <div
+                className={cn(
+                  'flex items-center gap-3 p-3 rounded-lg border',
+                  currentStep === 'signing'
+                    ? 'bg-blue-50 border-blue-200'
+                    : getStepStatus('signing') === 'completed'
+                    ? 'bg-green-50 border-green-200'
+                    : 'bg-muted/50',
+                )}
+              >
+                <div
+                  className={cn(
+                    'flex items-center justify-center w-8 h-8 rounded-full',
+                    currentStep === 'signing'
+                      ? 'bg-blue-600 text-white'
+                      : getStepStatus('signing') === 'completed'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-muted text-muted-foreground',
+                  )}
+                >
+                  {currentStep === 'signing' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : getStepStatus('signing') === 'completed' ? (
+                    <CheckCircle2 className="h-4 w-4" />
+                  ) : (
+                    <PenTool className="h-4 w-4" />
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium text-sm">Assinatura da Carteira</p>
+                  <p className="text-xs text-muted-foreground">
+                    {currentStep === 'signing'
+                      ? 'Aguardando assinatura...'
+                      : getStepStatus('signing') === 'completed'
+                      ? 'Assinatura confirmada'
+                      : 'Verificar identidade da carteira'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 2: Banco de dados */}
+              <div
+                className={cn(
+                  'flex items-center gap-3 p-3 rounded-lg border',
+                  currentStep === 'submitting'
+                    ? 'bg-blue-50 border-blue-200'
+                    : getStepStatus('submitting') === 'completed'
+                    ? 'bg-green-50 border-green-200'
+                    : 'bg-muted/50',
+                )}
+              >
+                <div
+                  className={cn(
+                    'flex items-center justify-center w-8 h-8 rounded-full',
+                    currentStep === 'submitting'
+                      ? 'bg-blue-600 text-white'
+                      : getStepStatus('submitting') === 'completed'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-muted text-muted-foreground',
+                  )}
+                >
+                  {currentStep === 'submitting' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : getStepStatus('submitting') === 'completed' ? (
+                    <CheckCircle2 className="h-4 w-4" />
+                  ) : (
+                    <Database className="h-4 w-4" />
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium text-sm">Salvando Aplicação</p>
+                  <p className="text-xs text-muted-foreground">
+                    {currentStep === 'submitting'
+                      ? 'Salvando no banco de dados...'
+                      : getStepStatus('submitting') === 'completed'
+                      ? 'Aplicação salva com sucesso'
+                      : 'Registrar aplicação no sistema'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )
+    }
+
+    // Step de sucesso
+    if (currentStep === 'success') {
+      return (
+        <>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-green-600" />
+              Aplicação Concluída
+            </DialogTitle>
+            <DialogDescription>
+              Sua aplicação foi enviada com sucesso!
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            <Card className="bg-green-50 border-green-200">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <CheckCircle2 className="h-16 w-16 text-green-600 mx-auto" />
+                  <div>
+                    <h3 className="font-medium text-green-900 text-lg">
+                      Aplicação Enviada com Sucesso!
+                    </h3>
+                    <p className="text-sm text-green-700 mt-2">
+                      Sua aplicação foi registrada com sucesso. O cliente
+                      receberá uma notificação e você será informado sobre a
+                      decisão.
+                    </p>
+                  </div>
+
+                  <div className="bg-green-100 p-3 rounded-lg">
+                    <p className="text-xs text-green-800">
+                      <strong>Próximos passos:</strong>
+                      <br />
+                      • Aguarde a análise do cliente
+                      <br />
+                      • Você receberá uma notificação com a decisão
+                      <br />• Se aprovado, poderá iniciar o trabalho
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Button onClick={handleCloseAndRefresh} className="w-full">
+              Entendi
+            </Button>
+          </div>
+        </>
+      )
+    }
+
+    // Step de erro
+    if (currentStep === 'error') {
+      return (
+        <>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <X className="h-5 w-5 text-red-600" />
+              Erro na Aplicação
+            </DialogTitle>
+            <DialogDescription>
+              Ocorreu um erro ao processar sua aplicação
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            <Card className="bg-red-50 border-red-200">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <AlertTriangle className="h-16 w-16 text-red-600 mx-auto" />
+                  <div>
+                    <h3 className="font-medium text-red-900 text-lg">
+                      Erro ao Enviar Aplicação
+                    </h3>
+                    <p className="text-sm text-red-700 mt-2">
+                      {errorMessage ||
+                        'Ocorreu um erro inesperado. Tente novamente.'}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setIsOpen(false)}
+                className="flex-1"
+              >
+                Fechar
+              </Button>
+              <Button
+                onClick={() => {
+                  resetOnError()
+                  setAcceptedTerms(false)
+                }}
+                className="flex-1"
+              >
+                Tentar Novamente
+              </Button>
+            </div>
+          </div>
+        </>
+      )
+    }
+  }
+
+  // Helper functions
+  const getProgressPercentage = () => {
+    switch (currentStep) {
+      case 'confirm':
+        return 0
+      case 'signing':
+        return 50
+      case 'submitting':
+        return 85
+      case 'success':
+        return 100
+      default:
+        return 0
+    }
+  }
+
+  const getStepStatus = (step: string) => {
+    const steps = ['signing', 'submitting']
+    const currentIndex = steps.indexOf(currentStep)
+    const stepIndex = steps.indexOf(step)
+
+    if (stepIndex < currentIndex) return 'completed'
+    if (stepIndex === currentIndex) return 'current'
+    return 'pending'
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant={variant} size={size} className={cn(className)}>
           <User className="h-4 w-4 mr-2" />
@@ -174,180 +549,13 @@ export function ApplyTaskButton({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Aplicar para Tarefa
-          </DialogTitle>
-          <DialogDescription>
-            Revise os detalhes da tarefa e conecte sua carteira para aplicar
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-6">
-          {/* Resumo da Tarefa */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">{task.title}</CardTitle>
-              <CardDescription className="line-clamp-3">
-                {task.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Valor */}
-              <div className="flex items-center justify-between p-3 bg-muted rounded-md">
-                <div className="flex items-center gap-2">
-                  <Wallet className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Valor da Tarefa</span>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-lg">{formattedValue} ETH</div>
-                  <div className="text-xs text-muted-foreground">
-                    ~$XXX USD {/* TODO: Integrar cotação */}
-                  </div>
-                </div>
-              </div>
-
-              {/* Deadline */}
-              <div className="flex items-center justify-between p-3 bg-muted rounded-md">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Prazo de Entrega</span>
-                </div>
-                <div className="text-right">
-                  <div className="font-medium">
-                    {task.deadline.toLocaleDateString('pt-BR')}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {daysUntilDeadline} dia{daysUntilDeadline !== 1 ? 's' : ''}{' '}
-                    restante
-                    {daysUntilDeadline !== 1 ? 's' : ''}
-                  </div>
-                </div>
-              </div>
-
-              {/* Overdue */}
-              {task.allowOverdue && (
-                <div className="flex items-center gap-2 p-3 border border-orange-200 bg-orange-50 rounded-md">
-                  <Clock className="h-4 w-4 text-orange-600" />
-                  <div className="text-sm">
-                    <span className="font-medium text-orange-800">
-                      Prazo extra disponível:
-                    </span>
-                    <span className="text-orange-700 ml-1">
-                      3 dias adicionais (10% desconto por dia)
-                    </span>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Conectar Carteira */}
-          {!isConnected && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Conectar Carteira</CardTitle>
-                <CardDescription>
-                  Necessário para registrar sua aplicação no contrato
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ConnectWallet />
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Termos */}
-          {isConnected && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Termos e Condições</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-start gap-3">
-                  <Checkbox
-                    id="terms"
-                    checked={acceptedTerms}
-                    onCheckedChange={(checked) => setAcceptedTerms(!!checked)}
-                  />
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="terms"
-                      className="text-sm font-medium leading-relaxed cursor-pointer"
-                    >
-                      Eu aceito os termos e condições desta tarefa
-                    </Label>
-                    <div className="text-xs text-muted-foreground space-y-1">
-                      <p>
-                        • Comprometo-me a entregar a tarefa dentro do prazo
-                        estabelecido
-                      </p>
-                      <p>
-                        • Entendo que o repositório será criado automaticamente
-                      </p>
-                      <p>
-                        • O pagamento será liberado apenas após aprovação do
-                        cliente
-                      </p>
-                      <p>• Posso ter apenas uma tarefa ativa por vez</p>
-                      {task.allowOverdue && (
-                        <p>
-                          • Se usar prazo extra, aceito o desconto de 10% por
-                          dia de atraso
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Avisos */}
-          {isUrgent && (
-            <div className="flex items-center gap-2 p-3 border border-red-200 bg-red-50 rounded-md">
-              <AlertTriangle className="h-4 w-4 text-red-600" />
-              <div className="text-sm">
-                <span className="font-medium text-red-800">
-                  Tarefa urgente:
-                </span>
-                <span className="text-red-700 ml-1">
-                  Prazo de entrega em {daysUntilDeadline} dia
-                  {daysUntilDeadline !== 1 ? 's' : ''}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <DialogFooter className="gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setIsOpen(false)}
-            disabled={isProcessing}
-          >
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleApply}
-            disabled={!isConnected || !acceptedTerms || isProcessing}
-            className="min-w-[120px]"
-          >
-            {isProcessing ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                {currentStep === 'blockchain' ? 'Enviando...' : 'Salvando...'}
-              </>
-            ) : (
-              <>
-                <CheckCircle2 className="h-4 w-4 mr-2" />
-                Aplicar Agora
-              </>
-            )}
-          </Button>
-        </DialogFooter>
+      <DialogContent
+        className="max-w-2xl max-h-[90vh] overflow-y-auto"
+        onEscapeKeyDown={(e) => e.preventDefault()} // SEMPRE impedir ESC
+        onPointerDownOutside={(e) => e.preventDefault()} // SEMPRE impedir click fora
+        onInteractOutside={(e) => e.preventDefault()} // ADICIONAR esta linha também
+      >
+        {renderModalContent()}
       </DialogContent>
     </Dialog>
   )

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useAccount, useBalance, useChainId } from 'wagmi'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -18,6 +19,33 @@ export function WalletStatusCard() {
   })
 
   const isCorrectNetwork = chainId === APP_CONFIG.defaultChain.id
+
+  // Fix hydration mismatch - wait for client hydration
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Render consistent placeholder during SSR
+  if (!isMounted) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center space-y-4">
+            <Wallet className="h-12 w-12 mx-auto text-muted-foreground" />
+            <div>
+              <h3 className="font-semibold">Wallet não conectada</h3>
+              <p className="text-sm text-muted-foreground">
+                Conecte sua wallet para interagir com o GitFreelas
+              </p>
+            </div>
+            <div className="h-9 w-32 mx-auto bg-muted animate-pulse rounded-md" />
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   if (!isConnected) {
     return (
@@ -81,37 +109,25 @@ export function WalletStatusCard() {
                 </Badge>
               )}
             </div>
-          </div>
 
-          {/* Balance */}
-          {balance && (
-            <div className="pt-2 border-t">
+            {balance && (
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Saldo:</span>
-                <span className="font-semibold">
-                  {parseFloat(balance.formatted).toFixed(4)} {balance.symbol}
-                </span>
+                <Badge variant="outline">
+                  {parseFloat(balance.formatted).toFixed(4)} ETH
+                </Badge>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Address */}
-          <div className="pt-2 border-t">
-            <div className="text-xs text-muted-foreground">Endereço:</div>
-            <div className="font-mono text-xs break-all">{address}</div>
+            {address && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Endereço:</span>
+                <Badge variant="outline" className="font-mono text-xs">
+                  {address.slice(0, 6)}...{address.slice(-4)}
+                </Badge>
+              </div>
+            )}
           </div>
-
-          {/* Contract Address */}
-          {isContractConfigured && (
-            <div className="pt-2 border-t">
-              <div className="text-xs text-muted-foreground">
-                Contrato GitFreelas:
-              </div>
-              <div className="font-mono text-xs break-all">
-                {contractAddress}
-              </div>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>

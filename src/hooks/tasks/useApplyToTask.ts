@@ -1,21 +1,23 @@
 'use client'
 
-import { useState, useActionState, useTransition } from 'react'
-import {
-  useAccount,
-  useWriteContract,
-  useWaitForTransactionReceipt,
-} from 'wagmi'
+import { useState, useActionState, useTransition, useEffect } from 'react'
+import { useAccount, useSignMessage } from 'wagmi'
 import { applyToTask as applyToTaskAction } from '@/actions/developers'
-import { APP_CONFIG } from '@/lib/web3/config'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
-export type ApplyStep = 'confirm' | 'blockchain' | 'database' | 'success'
+export type ApplyStep =
+  | 'confirm'
+  | 'signing'
+  | 'submitting'
+  | 'success'
+  | 'error'
 
 export function useApplyToTask() {
+  const router = useRouter()
   const { address, isConnected } = useAccount()
 
-  // Server action com useTransition
+  // Server action
   const [state, formAction, isPending] = useActionState(applyToTaskAction, {
     success: false,
     error: '',
@@ -23,68 +25,86 @@ export function useApplyToTask() {
 
   const [isTransitioning, startTransition] = useTransition()
 
-  // Web3 contract interaction
+  // Signature (sem gas)
   const {
-    writeContract,
-    data: hash,
-    isPending: isContractPending,
-    error: contractError,
-  } = useWriteContract()
-  const contract = APP_CONFIG.contracts.gitFreelas
-
-  // Transaction confirmation
-  const { isLoading: isConfirming, isSuccess: isContractSuccess } =
-    useWaitForTransactionReceipt({
-      hash,
-    })
+    signMessage,
+    data: signature,
+    isPending: isSigning,
+    error: signError,
+  } = useSignMessage()
 
   // Local states
   const [currentStep, setCurrentStep] = useState<ApplyStep>('confirm')
+  const [currentTaskId, setCurrentTaskId] = useState<string>('')
   const [isProcessing, setIsProcessing] = useState(false)
 
-  // Apply to contract first
-  const applyToContract = async (taskId: string) => {
+  // Auto-transition: Signature confirmed → Database save
+  useEffect(() => {
+    if (signature && currentTaskId && address && currentStep === 'signing') {
+      submitToDatabase(currentTaskId, address, signature)
+    }
+  }, [signature, currentTaskId, address, currentStep])
+
+  // Auto-transition: Database saved → Success (SEM FECHAR)
+  useEffect(() => {
+    if (state.success && currentStep === 'submitting') {
+      setCurrentStep('success')
+      setIsProcessing(false)
+      // REMOVIDO: Qualquer lógica de fechamento automático
+    }
+  }, [state.success, currentStep])
+
+  // Handle errors
+  useEffect(() => {
+    if (signError && currentStep === 'signing') {
+      setCurrentStep('error')
+      setIsProcessing(false)
+    }
+  }, [signError, currentStep])
+
+  useEffect(() => {
+    if (state.error && currentStep === 'submitting') {
+      setCurrentStep('error')
+      setIsProcessing(false)
+    }
+  }, [state.error, currentStep])
+
+  // Sign message first (no gas)
+  const signApplication = async (taskId: string) => {
     try {
       setIsProcessing(true)
-      setCurrentStep('blockchain')
+      setCurrentStep('signing')
+      setCurrentTaskId(taskId)
 
-      toast.loading('Enviando aplicação para o contrato...')
+      const message = `Aplicar para tarefa ${taskId}\nEndereço: ${address}\nTimestamp: ${Date.now()}`
 
-      writeContract({
-        address: contract.address,
-        abi: contract.abi,
-        functionName: 'applyToTask',
-        args: [taskId],
-      })
+      signMessage({ message })
     } catch (error) {
-      console.error('Erro ao aplicar no contrato:', error)
-      toast.error('Erro ao processar transação')
+      console.error('Erro ao assinar:', error)
       resetOnError()
       throw error
     }
   }
 
-  // Submit to database after contract confirmation
+  // Submit to database after signature
   const submitToDatabase = (
     taskId: string,
     walletAddress: string,
-    txHash: string,
+    messageSignature: string,
   ) => {
-    setCurrentStep('database')
-    toast.loading('Salvando aplicação no banco de dados...')
+    setCurrentStep('submitting')
 
-    // Call server action using FormData approach
     const formData = new FormData()
     formData.append('taskId', taskId)
     formData.append('walletAddress', walletAddress)
-    formData.append('contractTxHash', txHash)
+    formData.append('signature', messageSignature)
 
     startTransition(() => {
       formAction(formData)
     })
   }
 
-  // Combined apply function (Web3 + Server Action)
+  // Main apply function
   const applyToTask = async (taskId: string) => {
     if (!isConnected || !address) {
       toast.error('Conecte sua carteira para aplicar')
@@ -92,22 +112,28 @@ export function useApplyToTask() {
     }
 
     try {
-      await applyToContract(taskId)
+      await signApplication(taskId)
     } catch (error) {
       console.error('Erro na aplicação:', error)
     }
   }
 
-  // Navigation helpers
+  // Close modal and refresh - só chama quando usuário clica "Entendi"
+  const handleClose = () => {
+    router.refresh()
+  }
+
+  // Reset helpers
   const resetOnError = () => {
     setCurrentStep('confirm')
     setIsProcessing(false)
-    toast.dismiss()
+    setCurrentTaskId('')
   }
 
   const resetToInitial = () => {
     setCurrentStep('confirm')
     setIsProcessing(false)
+    setCurrentTaskId('')
   }
 
   return {
@@ -119,12 +145,10 @@ export function useApplyToTask() {
     state,
     isPending: isPending || isTransitioning,
 
-    // Web3 states
-    isContractPending,
-    isConfirming,
-    isContractSuccess,
-    contractError,
-    contractTx: hash,
+    // Signature states
+    isSigning,
+    signature,
+    signError,
 
     // Connection state
     isConnected,
@@ -132,14 +156,21 @@ export function useApplyToTask() {
 
     // Actions
     applyToTask,
-    submitToDatabase,
+    handleClose,
     resetOnError,
     resetToInitial,
 
     // Computed states
-    isApplying: isContractPending || isConfirming,
-    isSubmittingToDb: isPending || isTransitioning,
-    hasError: !!(contractError || state.error),
-    errorMessage: contractError?.message || state.error,
+    isSubmitting: isPending || isTransitioning,
+    hasError: !!(signError || state.error),
+    errorMessage: signError?.message || state.error,
+    isComplete: currentStep === 'success',
+
+    // Prevent modal close when processing
+    canCloseModal:
+      !isProcessing &&
+      (currentStep === 'confirm' ||
+        currentStep === 'success' ||
+        currentStep === 'error'),
   }
 }
