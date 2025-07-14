@@ -163,7 +163,7 @@ export async function createTask(prevState: any, formData: FormData) {
     revalidatePath('/dashboard')
 
     // Sucesso - redirecionar
-    redirect(`/tasks/${task.id}`)
+    redirect('/tasks?tab=my-tasks')
   } catch (error) {
     console.error('Erro na createTask:', error)
 

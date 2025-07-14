@@ -1,3 +1,4 @@
+// src/components/tasks/listing/task-list.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -211,7 +212,6 @@ export function TaskList({
           minValue ||
           maxValue) && (
           <Button variant="outline" onClick={handleClearFilters}>
-            <X className="h-4 w-4 mr-2" />
             Limpar Filtros
           </Button>
         )}
@@ -223,7 +223,7 @@ export function TaskList({
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold">{title}</h1>
+        <h2 className="text-2xl font-bold mb-2">{title}</h2>
         <p className="text-muted-foreground">{description}</p>
       </div>
 
@@ -235,24 +235,27 @@ export function TaskList({
               <Filter className="h-5 w-5" />
               Filtros
             </CardTitle>
+            <CardDescription>
+              Refine sua busca para encontrar as tarefas ideais
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Busca */}
-            <div className="space-y-2">
-              <Label htmlFor="search">Buscar</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="search"
-                  placeholder="Buscar por título ou descrição..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-
+          <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Busca */}
+              <div className="space-y-2">
+                <Label htmlFor="search">Buscar</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="search"
+                    placeholder="Título, descrição..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
               {/* Status */}
               <div className="space-y-2">
                 <Label>Status</Label>
@@ -261,15 +264,18 @@ export function TaskList({
                     <Badge
                       key={status.value}
                       variant={
-                        selectedStatuses.includes(status.value)
+                        selectedStatuses.includes(status.value as TaskStatus)
                           ? 'default'
                           : 'outline'
                       }
                       className={cn(
                         'cursor-pointer transition-colors',
-                        selectedStatuses.includes(status.value) && status.color,
+                        selectedStatuses.includes(status.value as TaskStatus) &&
+                          status.color,
                       )}
-                      onClick={() => handleStatusToggle(status.value)}
+                      onClick={() =>
+                        handleStatusToggle(status.value as TaskStatus)
+                      }
                     >
                       {status.label}
                     </Badge>
@@ -313,27 +319,16 @@ export function TaskList({
                   />
                 </div>
               </div>
-
-              {/* Valor Máximo */}
-              <div className="space-y-2">
-                <Label htmlFor="maxValue">Valor Máx. (ETH)</Label>
-                <div className="relative">
-                  <Wallet className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="maxValue"
-                    type="number"
-                    step="0.001"
-                    placeholder="100"
-                    value={maxValue}
-                    onChange={(e) => setMaxValue(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
             </div>
+          </CardContent>
+        </Card>
+      )}
 
-            {/* Ações dos filtros */}
-            <div className="flex items-center justify-between pt-2">
+      {/* Filtros ativos */}
+      {(searchTerm || selectedStatuses.length > 1 || minValue || maxValue) && (
+        <Card className="bg-muted/50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
               <div className="text-sm text-muted-foreground">
                 {data.total} tarefa{data.total !== 1 ? 's' : ''} encontrada
                 {data.total !== 1 ? 's' : ''}

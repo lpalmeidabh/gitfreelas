@@ -20,8 +20,14 @@ export const config = createConfig({
     metaMask({
       dappMetadata: {
         name: 'GitFreelas',
-        url: 'https://gitfreelas.com',
-        iconUrl: '/logo.png',
+        url:
+          typeof window !== 'undefined'
+            ? window.location.origin
+            : 'https://gitfreelas.vercel.app',
+        iconUrl:
+          typeof window !== 'undefined'
+            ? `${window.location.origin}/favicon.ico`
+            : 'https://gitfreelas.vercel.app/favicon.ico',
       },
     }),
   ],

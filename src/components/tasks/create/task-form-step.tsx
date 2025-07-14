@@ -21,9 +21,10 @@ import {
   FormMessage,
   Form,
 } from '@/components/ui/form'
-import { Wallet, AlertCircle, Clock } from 'lucide-react'
+import { Wallet, AlertCircle, Clock, Info } from 'lucide-react'
 import { WalletConnectButton } from '@/components/web3/wallet-connect-button'
 import { CreateTaskInput } from '@/lib/schemas/task'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 
 interface TaskFormStepProps {
   form: UseFormReturn<CreateTaskInput>
@@ -32,10 +33,10 @@ interface TaskFormStepProps {
     platformFeeEth: string
     totalDepositEth: string
   }
-  errors?: Record<string, string[] | undefined> | undefined // ✅ Tipo correto do Zod
+  errors?: Record<string, string[] | undefined> | undefined
   isConnected: boolean
   isSubmitting: boolean
-  onSubmit: () => void
+  onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void> // ✅ Tipo correto do RHF
 }
 
 export function TaskFormStep({
@@ -66,10 +67,12 @@ export function TaskFormStep({
                 <Label>Carteira</Label>
                 <WalletConnectButton />
                 {!isConnected && (
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" />
-                    Conecte sua carteira para depositar o valor da tarefa
-                  </p>
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Conecte sua carteira para depositar o valor da tarefa
+                    </AlertDescription>
+                  </Alert>
                 )}
               </div>
 
@@ -89,6 +92,11 @@ export function TaskFormStep({
                       />
                     </FormControl>
                     <FormMessage />
+                    {errors?.title && (
+                      <p className="text-sm text-red-500">
+                        {errors.title.join(', ')}
+                      </p>
+                    )}
                     <p className="text-xs text-muted-foreground">
                       {field.value?.length || 0}/100 caracteres
                     </p>
@@ -113,6 +121,11 @@ export function TaskFormStep({
                       />
                     </FormControl>
                     <FormMessage />
+                    {errors?.description && (
+                      <p className="text-sm text-red-500">
+                        {errors.description.join(', ')}
+                      </p>
+                    )}
                     <p className="text-xs text-muted-foreground">
                       {field.value?.length || 0}/2000 caracteres
                     </p>
@@ -129,12 +142,17 @@ export function TaskFormStep({
                     <FormLabel>Requisitos Técnicos</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Tecnologias específicas, frameworks, etc..."
+                        placeholder="Ex: React, TypeScript, Tailwind CSS, responsivo..."
                         rows={3}
                         {...field}
                       />
                     </FormControl>
                     <FormMessage />
+                    {errors?.requirements && (
+                      <p className="text-sm text-red-500">
+                        {errors.requirements.join(', ')}
+                      </p>
+                    )}
                     <p className="text-xs text-muted-foreground">
                       {field.value?.length || 0}/1000 caracteres
                     </p>
@@ -149,34 +167,42 @@ export function TaskFormStep({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Valor da Tarefa (ETH){' '}
-                      <span className="text-red-500">*</span>
+                      Valor em ETH <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        step="0.001"
-                        placeholder="Mínimo: 0.001 ETH"
+                        step="0.0001"
+                        min="0.0001"
+                        placeholder="0.1"
                         {...field}
                       />
                     </FormControl>
                     <FormMessage />
+                    {errors?.valueInEther && (
+                      <p className="text-sm text-red-500">
+                        {errors.valueInEther.join(', ')}
+                      </p>
+                    )}
 
-                    {/* Preview de custos */}
-                    {field.value && !isNaN(parseFloat(field.value)) && (
-                      <div className="p-3 bg-muted rounded-lg text-sm">
-                        <div className="flex justify-between items-center mb-1">
+                    {/* Cálculo de custos em tempo real */}
+                    {costs.taskValueEth && (
+                      <div className="mt-2 p-3 bg-muted rounded-lg space-y-1 text-sm">
+                        <div className="flex justify-between">
                           <span>Valor da tarefa:</span>
-                          <span>{costs.taskValueEth} ETH</span>
+                          <span className="font-mono">
+                            {costs.taskValueEth} ETH
+                          </span>
                         </div>
-                        <div className="flex justify-between items-center mb-1">
+                        <div className="flex justify-between text-muted-foreground">
                           <span>Taxa da plataforma (3%):</span>
-                          <span>{costs.platformFeeEth} ETH</span>
+                          <span className="font-mono">
+                            +{costs.platformFeeEth} ETH
+                          </span>
                         </div>
-                        <hr className="my-2" />
-                        <div className="flex justify-between items-center font-medium">
+                        <div className="flex justify-between font-medium border-t pt-1">
                           <span>Total a depositar:</span>
-                          <span className="text-green-600">
+                          <span className="font-mono">
                             {costs.totalDepositEth} ETH
                           </span>
                         </div>
@@ -186,30 +212,37 @@ export function TaskFormStep({
                 )}
               />
 
-              {/* Prazo */}
+              {/* Deadline */}
               <FormField
                 control={form.control}
                 name="deadline"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Prazo de Entrega <span className="text-red-500">*</span>
+                      Data Limite <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
                         type="datetime-local"
-                        {...field}
-                        value={
-                          field.value
-                            ? field.value.toISOString().slice(0, 16)
-                            : ''
-                        }
+                        min={new Date(Date.now() + 24 * 60 * 60 * 1000)
+                          .toISOString()
+                          .slice(0, 16)}
+                        value={field.value?.toISOString().slice(0, 16) || ''}
                         onChange={(e) =>
                           field.onChange(new Date(e.target.value))
                         }
                       />
                     </FormControl>
                     <FormMessage />
+                    {errors?.deadline && (
+                      <p className="text-sm text-red-500">
+                        {errors.deadline.join(', ')}
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      Mínimo: 24 horas a partir de agora
+                    </p>
                   </FormItem>
                 )}
               />
@@ -219,68 +252,45 @@ export function TaskFormStep({
                 control={form.control}
                 name="allowOverdue"
                 render={({ field }) => (
-                  <FormItem className="flex items-start space-x-3 p-3 border rounded-md">
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                     <FormControl>
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <div className="space-y-1">
-                      <FormLabel className="font-medium flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        Permitir prazo extra
-                      </FormLabel>
-                      <p className="text-sm text-muted-foreground">
-                        Permite 3 dias extras após o vencimento, com desconto de
-                        10% por dia de atraso
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Permitir prazo extra (3 dias)</FormLabel>
+                      <p className="text-xs text-muted-foreground">
+                        Desenvolvedor terá 3 dias extras após o prazo, com
+                        desconto de 10% do valor por dia
                       </p>
                     </div>
                   </FormItem>
                 )}
               />
 
-              {/* Erros da server action */}
-              {errors && Object.keys(errors).length > 0 && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm font-medium text-red-800 mb-2">
-                    Corrija os seguintes erros:
-                  </p>
-                  <ul className="text-sm text-red-700 space-y-1">
-                    {Object.entries(errors).map(
-                      ([field, messages]) =>
-                        messages && ( // ✅ Verificar se messages existe
-                          <li key={field}>
-                            <strong>{field}:</strong> {messages.join(', ')}
-                          </li>
-                        ),
-                    )}
-                  </ul>
-                </div>
-              )}
+              {/* Botão de submit */}
+              <div className="space-y-4">
+                {/* Informação importante */}
+                <Alert>
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    Ao continuar, você irá criar a tarefa no blockchain e
+                    depositar o valor. Esta ação é irreversível até que a tarefa
+                    seja concluída ou cancelada.
+                  </AlertDescription>
+                </Alert>
 
-              {/* Botão Submit */}
-              <Button
-                type="submit"
-                disabled={!isConnected || isSubmitting}
-                className="w-full"
-                size="lg"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Processando...
-                  </>
-                ) : (
-                  'Revisar e Criar Tarefa'
-                )}
-              </Button>
-
-              {!isConnected && (
-                <p className="text-center text-sm text-muted-foreground">
-                  Conecte sua carteira para continuar
-                </p>
-              )}
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={!isConnected || isSubmitting}
+                  size="lg"
+                >
+                  {isSubmitting ? 'Processando...' : 'Revisar e Criar Tarefa'}
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>

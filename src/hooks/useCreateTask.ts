@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useActionState } from 'react'
+import { useState, useActionState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createTaskSchema, CreateTaskInput } from '@/lib/schemas/task'
@@ -14,12 +14,15 @@ type FormStep = 'form' | 'confirm' | 'blockchain' | 'database'
 export function useCreateTask() {
   const { address, isConnected } = useAccount()
 
-  // Server action state
+  // Server action state com useTransition
   const [state, formAction, isPending] = useActionState(createTask, {
     errors: {},
     message: '',
     success: false,
   })
+
+  // Usar useTransition para chamar formAction corretamente
+  const [isTransitioning, startTransition] = useTransition()
 
   // React Hook Form
   const form = useForm<CreateTaskInput>({
@@ -48,6 +51,7 @@ export function useCreateTask() {
   const [isProcessing, setIsProcessing] = useState(false)
 
   // Função para criar task no contrato
+  // Função para criar task no contrato
   const createTaskContract = async (data: CreateTaskInput) => {
     try {
       setIsProcessing(true)
@@ -55,11 +59,12 @@ export function useCreateTask() {
 
       toast.loading('Enviando transação para o contrato...')
 
+      // ✅ Simplesmente calcular o timestamp como number
       const deadlineTimestamp = Math.floor(data.deadline.getTime() / 1000)
 
       await createTaskOnContract(
         `temp-${Date.now()}`,
-        BigInt(deadlineTimestamp),
+        deadlineTimestamp, // ✅ Passar como number - função se encarrega da conversão
         data.allowOverdue,
         data.valueInEther,
       )
@@ -88,7 +93,10 @@ export function useCreateTask() {
     formData.append('contractTxHash', txHash)
     if (address) formData.append('walletAddress', address)
 
-    formAction(formData)
+    // ✅ Usar startTransition para chamar formAction
+    startTransition(() => {
+      formAction(formData)
+    })
   }
 
   // Funções de navegação
@@ -113,7 +121,7 @@ export function useCreateTask() {
 
     // Server action state
     state,
-    isPending,
+    isPending: isPending || isTransitioning, // ✅ Combinar ambos os pendings
 
     // Web3 state
     isCreating,
