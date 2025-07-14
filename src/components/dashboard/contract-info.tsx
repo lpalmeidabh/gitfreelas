@@ -17,7 +17,7 @@ import {
   Activity,
   FileText,
 } from 'lucide-react'
-import { useGitFreelasRead } from '@/hooks/useGitFreelas'
+import { useGitFreelasRead } from '@/hooks/web3/useContractRead'
 import { APP_CONFIG } from '@/lib/web3/config'
 import { toast } from 'sonner'
 import { useChainId } from 'wagmi'

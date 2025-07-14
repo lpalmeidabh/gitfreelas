@@ -15,7 +15,7 @@ import {
   Calendar,
   Zap,
 } from 'lucide-react'
-import { useGitFreelasRead } from '@/hooks/useGitFreelas'
+import { useGitFreelasRead } from '@/hooks/web3/useContractRead'
 
 export function AdminOverview() {
   const { platformFee, taskCount, isContractConfigured, contractAddress } =

@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Wallet, CheckCircle, AlertTriangle } from 'lucide-react'
 import { APP_CONFIG } from '@/lib/web3/config'
-import { useGitFreelasRead } from '@/hooks/useGitFreelas'
+import { useGitFreelasRead } from '@/hooks/web3/useContractRead'
 import { WalletConnectButton } from './wallet-connect-button'
 
 export function WalletStatusCard() {

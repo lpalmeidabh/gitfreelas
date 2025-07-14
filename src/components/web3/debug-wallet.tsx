@@ -4,7 +4,7 @@ import { useAccount, useBalance, useChainId } from 'wagmi'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { APP_CONFIG } from '@/lib/web3/config'
-import { useGitFreelasRead } from '@/hooks/useGitFreelas'
+import { useGitFreelasRead } from '@/hooks/web3/useContractRead'
 
 export function DebugWallet() {
   const { address, isConnected } = useAccount()

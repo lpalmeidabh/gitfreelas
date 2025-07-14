@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/card'
 import { ConnectWallet } from '@/components/web3/connect-wallet'
 import { useWallet } from '@/hooks/useWallet'
-import { applyToTask } from '@/actions/developers'
+import { useApplyToTask } from '@/hooks/tasks/useApplyToTask'
 import { TaskWithRelations } from '@/types'
 import { weiToEther } from '@/lib/web3/config'
 import {
@@ -60,7 +60,19 @@ export function ApplyTaskButton({
   const { isConnected, address } = useWallet()
   const [isOpen, setIsOpen] = useState(false)
   const [acceptedTerms, setAcceptedTerms] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Usar o hook useApplyToTask
+  const {
+    currentStep,
+    isApplying,
+    isSubmittingToDb,
+    hasError,
+    errorMessage,
+    state,
+    applyToTask,
+    submitToDatabase,
+    resetOnError,
+  } = useApplyToTask()
 
   // Verificações de elegibilidade
   const isOwner = currentUserId === task.creatorId
@@ -79,6 +91,38 @@ export function ApplyTaskButton({
 
   const isUrgent = daysUntilDeadline <= 2 && daysUntilDeadline > 0
 
+  // Efeitos para gerenciar o fluxo
+  useEffect(() => {
+    if (currentStep === 'blockchain' && isApplying) {
+      toast.loading('Enviando aplicação para o contrato...', {
+        id: 'apply-loading',
+      })
+    }
+  }, [currentStep, isApplying])
+
+  useEffect(() => {
+    if (currentStep === 'database' && isSubmittingToDb) {
+      toast.loading('Salvando aplicação no banco...', { id: 'apply-loading' })
+    }
+  }, [currentStep, isSubmittingToDb])
+
+  useEffect(() => {
+    if (state.success) {
+      toast.dismiss('apply-loading')
+      toast.success('Aplicação enviada com sucesso!')
+      setIsOpen(false)
+      router.refresh()
+    }
+  }, [state.success, router])
+
+  useEffect(() => {
+    if (hasError) {
+      toast.dismiss('apply-loading')
+      toast.error(errorMessage || 'Erro ao aplicar para a tarefa')
+    }
+  }, [hasError, errorMessage])
+
+  // Handler para aplicar
   const handleApply = async () => {
     if (!isConnected || !address) {
       toast.error('Conecte sua carteira para aplicar')
@@ -90,23 +134,12 @@ export function ApplyTaskButton({
       return
     }
 
-    setIsSubmitting(true)
-
     try {
-      const result = await applyToTask(task.id, address)
-
-      if (result.success) {
-        toast.success('Aplicação enviada com sucesso!')
-        setIsOpen(false)
-        router.refresh() // Atualizar a página
-      } else {
-        toast.error(result.error || 'Erro ao aplicar para a tarefa')
-      }
+      // Iniciar processo de aplicação (Web3 + Server Action)
+      await applyToTask(task.id)
     } catch (error) {
       console.error('Erro ao aplicar:', error)
       toast.error('Erro inesperado ao aplicar')
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
@@ -129,6 +162,8 @@ export function ApplyTaskButton({
       </Button>
     )
   }
+
+  const isProcessing = isApplying || isSubmittingToDb
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -169,12 +204,12 @@ export function ApplyTaskButton({
                 <div className="text-right">
                   <div className="font-bold text-lg">{formattedValue} ETH</div>
                   <div className="text-xs text-muted-foreground">
-                    ~$XXX USD {/* TODO: Integrar API de preços */}
+                    ~$XXX USD {/* TODO: Integrar cotação */}
                   </div>
                 </div>
               </div>
 
-              {/* Prazo */}
+              {/* Deadline */}
               <div className="flex items-center justify-between p-3 bg-muted rounded-md">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -182,83 +217,56 @@ export function ApplyTaskButton({
                 </div>
                 <div className="text-right">
                   <div className="font-medium">
-                    {new Date(task.deadline).toLocaleDateString('pt-BR', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                    {task.deadline.toLocaleDateString('pt-BR')}
                   </div>
-                  <div
-                    className={cn(
-                      'text-xs',
-                      isUrgent ? 'text-red-600' : 'text-muted-foreground',
-                    )}
-                  >
-                    {daysUntilDeadline > 0
-                      ? `${daysUntilDeadline} dia${
-                          daysUntilDeadline !== 1 ? 's' : ''
-                        } restante${daysUntilDeadline !== 1 ? 's' : ''}`
-                      : 'Prazo vencido'}
+                  <div className="text-xs text-muted-foreground">
+                    {daysUntilDeadline} dia{daysUntilDeadline !== 1 ? 's' : ''}{' '}
+                    restante
+                    {daysUntilDeadline !== 1 ? 's' : ''}
                   </div>
                 </div>
               </div>
 
-              {/* Overdue permitido */}
+              {/* Overdue */}
               {task.allowOverdue && (
-                <div className="flex items-center gap-2 p-3 border border-yellow-200 bg-yellow-50 rounded-md">
-                  <Clock className="h-4 w-4 text-yellow-600" />
+                <div className="flex items-center gap-2 p-3 border border-orange-200 bg-orange-50 rounded-md">
+                  <Clock className="h-4 w-4 text-orange-600" />
                   <div className="text-sm">
-                    <span className="font-medium text-yellow-800">
-                      Prazo flexível:
+                    <span className="font-medium text-orange-800">
+                      Prazo extra disponível:
                     </span>
-                    <span className="text-yellow-700 ml-1">
-                      3 dias extras permitidos com desconto de 10% por dia
+                    <span className="text-orange-700 ml-1">
+                      3 dias adicionais (10% desconto por dia)
                     </span>
                   </div>
-                </div>
-              )}
-
-              {/* Requisitos */}
-              {task.requirements && (
-                <div className="space-y-2">
-                  <Label className="font-medium">Requisitos Técnicos:</Label>
-                  <p className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
-                    {task.requirements}
-                  </p>
                 </div>
               )}
             </CardContent>
           </Card>
 
           {/* Conectar Carteira */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Wallet className="h-4 w-4" />
-                Carteira
-              </CardTitle>
-              <CardDescription>
-                Conecte sua carteira para receber o pagamento quando a tarefa
-                for concluída
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ConnectWallet
-                variant="outline"
-                showBalance={true}
-                showNetwork={true}
-                required={true}
-              />
-            </CardContent>
-          </Card>
+          {!isConnected && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Conectar Carteira</CardTitle>
+                <CardDescription>
+                  Necessário para registrar sua aplicação no contrato
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ConnectWallet />
+              </CardContent>
+            </Card>
+          )}
 
-          {/* Termos e Condições */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
+          {/* Termos */}
+          {isConnected && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Termos e Condições</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-start gap-3">
                   <Checkbox
                     id="terms"
                     checked={acceptedTerms}
@@ -293,9 +301,9 @@ export function ApplyTaskButton({
                     </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Avisos */}
           {isUrgent && (
@@ -318,19 +326,19 @@ export function ApplyTaskButton({
           <Button
             variant="outline"
             onClick={() => setIsOpen(false)}
-            disabled={isSubmitting}
+            disabled={isProcessing}
           >
             Cancelar
           </Button>
           <Button
             onClick={handleApply}
-            disabled={!isConnected || !acceptedTerms || isSubmitting}
+            disabled={!isConnected || !acceptedTerms || isProcessing}
             className="min-w-[120px]"
           >
-            {isSubmitting ? (
+            {isProcessing ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                Aplicando...
+                {currentStep === 'blockchain' ? 'Enviando...' : 'Salvando...'}
               </>
             ) : (
               <>

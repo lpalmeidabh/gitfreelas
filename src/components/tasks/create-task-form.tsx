@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useCreateTask } from '@/hooks/useCreateTask'
+import { useCreateTask } from '@/hooks/tasks/useCreateTask'
+import { useTaskCalculations } from '@/hooks/web3/useTaskCalculations'
 import { NetworkGuard } from '@/components/web3/network-guard'
 import { TaskFormStep } from './create/task-form-step'
 import { TaskConfirmationStep } from './create/task-confirmation-step'
 import { TaskProgressStep } from './create/task-progress-step'
-import { useTaskCalculations } from '@/hooks/useGitFreelas'
 import { toast } from 'sonner'
 
 export function CreateTaskForm() {

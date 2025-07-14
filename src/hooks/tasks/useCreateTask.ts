@@ -2,11 +2,16 @@
 
 import { useState, useActionState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
+import {
+  useAccount,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
+import { parseEther } from 'viem'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createTaskSchema, CreateTaskInput } from '@/lib/schemas/task'
 import { createTask } from '@/actions/tasks'
-import { useGitFreelas } from './useGitFreelas'
-import { useAccount } from 'wagmi'
+import { APP_CONFIG } from '@/lib/web3/config'
 import { toast } from 'sonner'
 
 type FormStep = 'form' | 'confirm' | 'blockchain' | 'database'
@@ -14,15 +19,29 @@ type FormStep = 'form' | 'confirm' | 'blockchain' | 'database'
 export function useCreateTask() {
   const { address, isConnected } = useAccount()
 
-  // Server action state com useTransition
+  // Server action state
   const [state, formAction, isPending] = useActionState(createTask, {
     errors: {},
     message: '',
     success: false,
   })
 
-  // Usar useTransition para chamar formAction corretamente
   const [isTransitioning, startTransition] = useTransition()
+
+  // Web3 contract interaction
+  const {
+    writeContract,
+    data: hash,
+    isPending: isContractPending,
+    error: contractError,
+  } = useWriteContract()
+  const contract = APP_CONFIG.contracts.gitFreelas
+
+  // Transaction confirmation
+  const { isLoading: isConfirming, isSuccess: isContractSuccess } =
+    useWaitForTransactionReceipt({
+      hash,
+    })
 
   // React Hook Form
   const form = useForm<CreateTaskInput>({
@@ -37,20 +56,10 @@ export function useCreateTask() {
     },
   })
 
-  // Web3 integration
-  const {
-    createTask: createTaskOnContract,
-    isCreating,
-    createSuccess,
-    createError,
-    createTx,
-  } = useGitFreelas()
-
   // Estados locais
   const [currentStep, setCurrentStep] = useState<FormStep>('form')
   const [isProcessing, setIsProcessing] = useState(false)
 
-  // Função para criar task no contrato
   // Função para criar task no contrato
   const createTaskContract = async (data: CreateTaskInput) => {
     try {
@@ -59,15 +68,22 @@ export function useCreateTask() {
 
       toast.loading('Enviando transação para o contrato...')
 
-      // ✅ Simplesmente calcular o timestamp como number
       const deadlineTimestamp = Math.floor(data.deadline.getTime() / 1000)
+      const taskValue = parseEther(data.valueInEther)
+      const platformFee = (taskValue * BigInt(3)) / BigInt(100) // 3%
+      const totalValue = taskValue + platformFee
 
-      await createTaskOnContract(
-        `temp-${Date.now()}`,
-        deadlineTimestamp, // ✅ Passar como number - função se encarrega da conversão
-        data.allowOverdue,
-        data.valueInEther,
-      )
+      writeContract({
+        address: contract.address,
+        abi: contract.abi,
+        functionName: 'createTask',
+        args: [
+          `temp-${Date.now()}`,
+          BigInt(deadlineTimestamp),
+          data.allowOverdue,
+        ],
+        value: totalValue,
+      })
     } catch (error) {
       console.error('Erro ao criar task no contrato:', error)
       toast.error('Erro ao processar transação')
@@ -83,7 +99,6 @@ export function useCreateTask() {
     toast.loading('Salvando task no banco de dados...')
 
     const formData = new FormData()
-
     formData.append('title', data.title)
     formData.append('description', data.description)
     if (data.requirements) formData.append('requirements', data.requirements)
@@ -93,7 +108,6 @@ export function useCreateTask() {
     formData.append('contractTxHash', txHash)
     if (address) formData.append('walletAddress', address)
 
-    // ✅ Usar startTransition para chamar formAction
     startTransition(() => {
       formAction(formData)
     })
@@ -121,13 +135,13 @@ export function useCreateTask() {
 
     // Server action state
     state,
-    isPending: isPending || isTransitioning, // ✅ Combinar ambos os pendings
+    isPending: isPending || isTransitioning,
 
     // Web3 state
-    isCreating,
-    createSuccess,
-    createError,
-    createTx,
+    isCreating: isContractPending || isConfirming,
+    createSuccess: isContractSuccess,
+    createError: contractError,
+    createTx: hash,
     isConnected,
     address,
 

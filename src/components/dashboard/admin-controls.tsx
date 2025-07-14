@@ -26,7 +26,7 @@ import {
   CheckCircle,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { useGitFreelasRead } from '@/hooks/useGitFreelas'
+import { useGitFreelasRead } from '@/hooks/web3/useContractRead'
 
 export function AdminControls() {
   const { isContractConfigured, contractAddress } = useGitFreelasRead()

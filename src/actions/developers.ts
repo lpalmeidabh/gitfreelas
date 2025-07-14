@@ -24,12 +24,20 @@ async function getCurrentUser() {
 
 // ===== DEVELOPER ACTIONS =====
 
-export async function applyToTask(taskId: string, walletAddress: string) {
+export async function applyToTask(prevState: any, formData: FormData) {
   try {
     const user = await getCurrentUser()
 
+    // Extrair dados do FormData
+    const taskId = formData.get('taskId') as string
+    const walletAddress = formData.get('walletAddress') as string
+
     // Validações
-    if (!isValidAddress(walletAddress)) {
+    if (!taskId) {
+      return { success: false, error: 'ID da tarefa é obrigatório' }
+    }
+
+    if (!walletAddress || !isValidAddress(walletAddress)) {
       return { success: false, error: 'Endereço de carteira inválido' }
     }
 
@@ -129,7 +137,7 @@ export async function applyToTask(taskId: string, walletAddress: string) {
   }
 }
 
-export async function acceptDeveloper(taskId: string) {
+export async function acceptDeveloper(prevState: any, taskId: string) {
   try {
     const user = await getCurrentUser()
 
@@ -179,9 +187,8 @@ export async function acceptDeveloper(taskId: string) {
       return { taskDeveloper: updatedTaskDeveloper, task: updatedTask }
     })
 
-    // 🚀 NOVO: Criar repositório automaticamente
+    // Criar repositório automaticamente
     console.log('Criando repositório para a tarefa aceita...')
-
     const repositoryResult = await createRepositoryForTask(taskId)
 
     if (repositoryResult.success) {
@@ -191,7 +198,6 @@ export async function acceptDeveloper(taskId: string) {
       )
     } else {
       console.error('❌ Erro ao criar repositório:', repositoryResult.error)
-      // Não falha a operação principal, repositório pode ser criado depois
     }
 
     revalidatePath('/tasks')
@@ -216,7 +222,7 @@ export async function acceptDeveloper(taskId: string) {
   }
 }
 
-export async function rejectDeveloper(taskId: string) {
+export async function rejectDeveloper(prevState: any, taskId: string) {
   try {
     const user = await getCurrentUser()
 
@@ -273,7 +279,7 @@ export async function rejectDeveloper(taskId: string) {
   }
 }
 
-export async function submitTaskForApproval(taskId: string) {
+export async function submitTaskForApproval(prevState: any, taskId: string) {
   try {
     const user = await getCurrentUser()
 
@@ -317,93 +323,7 @@ export async function submitTaskForApproval(taskId: string) {
   }
 }
 
-export async function approveTask(taskId: string) {
-  try {
-    const user = await getCurrentUser()
-
-    // Verificar se é o criador da tarefa
-    const task = await prisma.task.findFirst({
-      where: {
-        id: taskId,
-        creatorId: user.id,
-        status: TaskStatus.PENDING_APPROVAL,
-        deletedAt: null,
-      },
-    })
-
-    if (!task) {
-      return {
-        success: false,
-        error: 'Tarefa não encontrada ou sem permissão para aprovar',
-      }
-    }
-
-    // Atualizar status para completed
-    const updatedTask = await prisma.task.update({
-      where: { id: taskId },
-      data: { status: TaskStatus.COMPLETED },
-    })
-
-    revalidatePath('/tasks')
-    revalidatePath('/dashboard')
-    revalidatePath(`/tasks/${taskId}`)
-
-    return { success: true, task: updatedTask }
-  } catch (error) {
-    console.error('Erro ao aprovar tarefa:', error)
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : 'Erro interno do servidor',
-    }
-  }
-}
-
-export async function rejectTask(taskId: string, reason?: string) {
-  try {
-    const user = await getCurrentUser()
-
-    // Verificar se é o criador da tarefa
-    const task = await prisma.task.findFirst({
-      where: {
-        id: taskId,
-        creatorId: user.id,
-        status: TaskStatus.PENDING_APPROVAL,
-        deletedAt: null,
-      },
-    })
-
-    if (!task) {
-      return {
-        success: false,
-        error: 'Tarefa não encontrada ou sem permissão para rejeitar',
-      }
-    }
-
-    // Voltar status para IN_PROGRESS
-    const updatedTask = await prisma.task.update({
-      where: { id: taskId },
-      data: { status: TaskStatus.IN_PROGRESS },
-    })
-
-    // TODO: Salvar motivo da rejeição em uma tabela de comentários/logs
-
-    revalidatePath('/tasks')
-    revalidatePath('/dashboard')
-    revalidatePath(`/tasks/${taskId}`)
-
-    return { success: true, task: updatedTask }
-  } catch (error) {
-    console.error('Erro ao rejeitar tarefa:', error)
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : 'Erro interno do servidor',
-    }
-  }
-}
-
-export async function cancelTaskApplication(taskId: string) {
+export async function cancelTaskApplication(prevState: any, taskId: string) {
   try {
     const user = await getCurrentUser()
 
