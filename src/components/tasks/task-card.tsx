@@ -252,24 +252,23 @@ export function TaskCard({
 
       {showActions && (
         <CardFooter className="gap-2">
-          <Link href={`/tasks/${task.id}`} className="flex-1">
-            <Button variant="outline" className="w-full">
-              Ver Detalhes
-            </Button>
-          </Link>
-
-          {isOwner && task.status === 'APPLIED' && (
+          {/* Botão inteligente único */}
+          {isOwner && task.status === 'APPLIED' ? (
             <Link href={`/tasks/${task.id}?action=review`} className="flex-1">
-              <Button variant="secondary" className="w-full">
+              <Button variant="default" className="w-full">
                 Revisar Aplicação
               </Button>
             </Link>
-          )}
-
-          {isDeveloper && task.status === 'IN_PROGRESS' && (
+          ) : isDeveloper && task.status === 'IN_PROGRESS' ? (
             <Link href={`/tasks/${task.id}?action=submit`} className="flex-1">
-              <Button variant="secondary" className="w-full">
-                Submeter
+              <Button variant="default" className="w-full">
+                Submeter Trabalho
+              </Button>
+            </Link>
+          ) : (
+            <Link href={`/tasks/${task.id}`} className="flex-1">
+              <Button variant="outline" className="w-full">
+                Ver Detalhes
               </Button>
             </Link>
           )}

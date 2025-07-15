@@ -152,6 +152,7 @@ interface IGitFreelas {
     error NotTaskClient();
     error NotTaskDeveloper();
     error NotAuthorized();
+    error InvalidAddress();
 
     // Timing Errors
     error DeadlineNotReached();
@@ -272,12 +273,10 @@ interface IGitFreelas {
         bool allowOverdue
     ) external payable;
 
-    /**
-     * @dev Apply as developer to a task
-     * @param taskId External task ID
-     */
-    function applyToTask(string calldata taskId) external;
-
+    function acceptDeveloper(
+        string calldata taskId,
+        address developerAddress
+    ) external;
     /**
      * @dev Mark task as completed and release payment
      * @param taskId External task ID

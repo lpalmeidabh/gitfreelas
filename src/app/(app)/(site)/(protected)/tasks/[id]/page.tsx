@@ -1,4 +1,5 @@
 import { getTaskById } from '@/actions/tasks'
+import { TaskApplicationReview } from '@/components/tasks/application/task-application-review'
 import { ApplyTaskButton } from '@/components/tasks/apply-task-button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -431,21 +432,7 @@ export default async function TaskDetailsPage({
 
             {resolvedSearchParams.action === 'review' &&
               isOwner &&
-              task.taskDeveloper && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Revisar Aplicação</CardTitle>
-                    <CardDescription>
-                      Aceite ou rejeite a aplicação do desenvolvedor
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">
-                      Interface de revisão em desenvolvimento...
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
+              task.taskDeveloper && <TaskApplicationReview task={task} />}
 
             {resolvedSearchParams.action === 'submit' && isDeveloper && (
               <Card>

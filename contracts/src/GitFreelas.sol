@@ -106,30 +106,40 @@ contract GitFreelas is GitFreelasBase {
     }
 
     /**
-     * @dev Apply as developer to a task
+     * @dev Accept a developer for a task (called by client)
      * @param taskId External task ID
+     * @param developerAddress Address of the developer to accept
      */
-    function applyToTask(
-        string calldata taskId
-    )
-        external
-        override
-        nonReentrant
-        whenNotPaused
-        taskHasStatus(taskId, TaskStatus.DEPOSITED)
-        taskNotExpired(taskId)
-    {
+    function acceptDeveloper(
+        string calldata taskId,
+        address developerAddress
+    ) external override nonReentrant whenNotPaused onlyTaskClient(taskId) {
         uint256 internalId = _taskIdToIndex[taskId];
         Task storage task = _tasks[internalId];
 
-        // Ensure caller is not the client
-        if (msg.sender == task.client) revert NotAuthorized();
+        // Task must be in DEPOSITED status (no developer assigned yet)
+        if (task.status != TaskStatus.DEPOSITED) revert TaskNotDeposited();
 
-        // Ensure task doesn't already have a developer
+        // Ensure no developer has been assigned yet
         if (task.developer != address(0)) revert TaskAlreadyHasDeveloper();
 
-        // Apply developer to task
-        _applyToTask(taskId, msg.sender);
+        // Validate developer address
+        if (developerAddress == address(0)) revert InvalidAddress();
+
+        // Client cannot accept themselves
+        if (developerAddress == task.client) revert NotAuthorized();
+
+        // Accept the developer
+        task.developer = developerAddress;
+        task.status = TaskStatus.ACTIVE;
+
+        // Emit event
+        emit DeveloperApplied(
+            internalId,
+            taskId,
+            developerAddress,
+            task.client
+        );
     }
 
     /**
@@ -446,6 +456,6 @@ contract GitFreelas is GitFreelasBase {
      * @dev Fallback function
      */
     fallback() external payable {
-        revert('Function not found');
+        revert('Function does not exist');
     }
 }

@@ -72,12 +72,17 @@
   },
   {
     "type": "function",
-    "name": "applyToTask",
+    "name": "acceptDeveloper",
     "inputs": [
       {
         "name": "taskId",
         "type": "string",
         "internalType": "string"
+      },
+      {
+        "name": "developerAddress",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "outputs": [],
@@ -1221,6 +1226,11 @@
   {
     "type": "error",
     "name": "InsufficientDeposit",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidAddress",
     "inputs": []
   },
   {

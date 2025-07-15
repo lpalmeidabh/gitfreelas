@@ -11,7 +11,7 @@ import '../src/GitFreelas.sol';
  * @dev Script to verify deployed GitFreelas contract on Etherscan
  */
 contract Verify is Script {
-    function run() external {
+    function run() external view {
         // Get contract address from environment
         address contractAddress = vm.envAddress('CONTRACT_ADDRESS');
         address contractOwner = vm.envAddress('CONTRACT_OWNER');

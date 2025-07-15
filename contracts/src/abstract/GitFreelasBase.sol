@@ -325,18 +325,26 @@ abstract contract GitFreelasBase is
     }
 
     /**
-     * @dev Internal function to apply developer to task
+     * @dev Internal function to accept developer for task
      */
-    function _applyToTask(string calldata taskId, address developer) internal {
+    function _acceptDeveloper(
+        string calldata taskId,
+        address developerAddress
+    ) internal {
         uint256 internalId = _taskIdToIndex[taskId];
         Task storage task = _tasks[internalId];
 
-        // Update task
-        task.developer = developer;
+        // Assign developer and change status
+        task.developer = developerAddress;
         task.status = TaskStatus.ACTIVE;
 
         // Emit event
-        emit DeveloperApplied(internalId, taskId, developer, task.client);
+        emit DeveloperApplied(
+            internalId,
+            taskId,
+            developerAddress,
+            task.client
+        );
     }
 
     /**
