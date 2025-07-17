@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { TaskWithRelations } from '@/types'
-import { useApproveTask } from '@/hooks/tasks/useApproveTask'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -17,23 +17,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  CheckCircle2,
-  XCircle,
-  User as UserIcon,
-  Wallet,
-  Clock,
-  AlertTriangle,
-  Loader2,
-  ThumbsUp,
-  ThumbsDown,
-} from 'lucide-react'
+import { useApproveTask } from '@/hooks/tasks/useApproveTask'
+import { TaskWithRelations } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { toast } from 'sonner'
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Loader2,
+  ThumbsDown,
+  ThumbsUp,
+  User as UserIcon,
+  Wallet,
+  XCircle,
+} from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 interface TaskApplicationReviewProps {
   task: TaskWithRelations
