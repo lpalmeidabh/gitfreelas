@@ -15,7 +15,7 @@ export function CreateTaskForm() {
   const {
     form,
     currentStep,
-    isProcessing,
+
     state,
     isPending,
     isCreating,
@@ -23,7 +23,6 @@ export function CreateTaskForm() {
     createError,
     createTx,
     isConnected,
-    createTaskContract,
     submitToDatabase,
     goToConfirmStep,
     goBackToForm,
@@ -35,13 +34,14 @@ export function CreateTaskForm() {
   // Calcular custos em tempo real
   const costs = calculateTaskCosts(form.watch('valueInEther'))
 
-  useEffect(() => {
-    if (currentStep === 'success') {
-      setTimeout(() => {
-        toast.success('Tarefa criada com sucesso!')
-      }, 100)
-    }
-  }, [currentStep, router])
+  // REMOVER: useEffect que só mostra toast - agora será no TaskProgressStep
+  // useEffect(() => {
+  //   if (currentStep === 'success') {
+  //     setTimeout(() => {
+  //       toast.success('Tarefa criada com sucesso!')
+  //     }, 100)
+  //   }
+  // }, [currentStep, router])
 
   useEffect(() => {
     if (createError) {
@@ -73,17 +73,19 @@ export function CreateTaskForm() {
         formData={form.getValues()}
         costs={costs}
         platformFee={3}
-        isSubmitting={isProcessing}
+        isSubmitting={isPending}
         onBack={goBackToForm}
         onConfirm={onConfirm}
       />
     )
   }
 
+  // CORRIGIDO: Incluir 'success' aqui também!
   if (
     currentStep === 'database' ||
     currentStep === 'blockchain' ||
-    currentStep === 'database_tx'
+    currentStep === 'database_tx' ||
+    currentStep === 'success' // ← ADICIONAR ESTA LINHA
   ) {
     return (
       <TaskProgressStep
@@ -104,7 +106,7 @@ export function CreateTaskForm() {
         costs={costs}
         errors={state.errors}
         isConnected={isConnected}
-        isSubmitting={isProcessing}
+        isSubmitting={isPending}
         onSubmit={onSubmit}
       />
     </NetworkGuard>

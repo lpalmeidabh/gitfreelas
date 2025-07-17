@@ -24,7 +24,7 @@ type FormStep =
 export function useCreateTask() {
   const { address, isConnected } = useAccount()
 
-  // Server action para criar no banco
+  // Server actions
   const [createState, createAction, isCreatePending] = useActionState(
     createTask,
     {
@@ -35,13 +35,9 @@ export function useCreateTask() {
     },
   )
 
-  // Server action para atualizar hash
   const [updateState, updateAction, isUpdatePending] = useActionState(
     updateTaskWithContractHash,
-    {
-      success: false,
-      message: '',
-    },
+    { success: false, message: '' },
   )
 
   const [isTransitioning, startTransition] = useTransition()
@@ -53,15 +49,11 @@ export function useCreateTask() {
     isPending: isContractPending,
     error: contractError,
   } = useWriteContract()
-  const contract = APP_CONFIG.contracts.gitFreelas
 
-  // Transaction confirmation
   const { isLoading: isConfirming, isSuccess: isContractSuccess } =
-    useWaitForTransactionReceipt({
-      hash,
-    })
+    useWaitForTransactionReceipt({ hash })
 
-  // React Hook Form
+  // Form
   const form = useForm<CreateTaskInput>({
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
@@ -74,15 +66,12 @@ export function useCreateTask() {
     },
   })
 
-  // Estados locais
+  // Local state - apenas o essencial
   const [currentStep, setCurrentStep] = useState<FormStep>('form')
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [createdTaskId, setCreatedTaskId] = useState<string>('')
 
-  // Step 1: Criar no banco primeiro
+  // Actions
   const submitToDatabase = async (data: CreateTaskInput) => {
     try {
-      setIsProcessing(true)
       setCurrentStep('database')
 
       const formData = new FormData()
@@ -94,28 +83,25 @@ export function useCreateTask() {
       formData.append('allowOverdue', data.allowOverdue.toString())
       if (address) formData.append('walletAddress', address)
 
-      startTransition(() => {
-        createAction(formData)
-      })
+      startTransition(() => createAction(formData))
     } catch (error) {
       console.error('Erro ao criar task:', error)
       resetOnError()
     }
   }
 
-  // Step 2: Criar no contrato com ID do banco
   const createTaskContract = async (data: CreateTaskInput, taskId: string) => {
     try {
       setCurrentStep('blockchain')
 
       const deadlineTimestamp = Math.floor(data.deadline.getTime() / 1000)
       const taskValue = parseEther(data.valueInEther)
-      const platformFee = (taskValue * BigInt(3)) / BigInt(100) // 3%
+      const platformFee = (taskValue * BigInt(3)) / BigInt(100)
       const totalValue = taskValue + platformFee
 
       writeContract({
-        address: contract.address,
-        abi: contract.abi,
+        address: APP_CONFIG.contracts.gitFreelas.address,
+        abi: APP_CONFIG.contracts.gitFreelas.abi,
         functionName: 'createTask',
         args: [taskId, BigInt(deadlineTimestamp), data.allowOverdue],
         value: totalValue,
@@ -123,123 +109,82 @@ export function useCreateTask() {
     } catch (error) {
       console.error('Erro ao criar task no contrato:', error)
       resetOnError()
-      throw error
     }
   }
 
-  // Fluxo automático: Banco criado → Contrato
+  // Navigation helpers
+  const goToConfirmStep = () => setCurrentStep('confirm')
+  const goBackToForm = () => setCurrentStep('form')
+  const resetOnError = () => setCurrentStep('form')
+
+  // Computed states
+  const isPending = isCreatePending || isUpdatePending || isTransitioning
+  const isCreating = isContractPending || isConfirming
+  const taskId = createState.taskId
+
+  // Auto-flow: Database created → Contract
   useEffect(() => {
-    if (
-      createState.success &&
-      createState.taskId &&
-      currentStep === 'database'
-    ) {
-      console.log('✅ Task criada no banco, ID:', createState.taskId)
-      setCreatedTaskId(createState.taskId)
+    if (createState.success && taskId && currentStep === 'database') {
       const formData = form.getValues()
-      createTaskContract(formData, createState.taskId)
+      createTaskContract(formData, taskId)
     }
-  }, [createState.success, createState.taskId, currentStep])
+  }, [createState.success, taskId, currentStep])
 
-  // Fluxo automático: Contrato confirmado → Atualizar hash
+  // Auto-flow: Contract confirmed → Update hash
   useEffect(() => {
-    if (
-      isContractSuccess &&
-      hash &&
-      createdTaskId &&
-      currentStep === 'blockchain'
-    ) {
-      console.log('✅ Contrato confirmado, hash:', hash)
-
+    if (isContractSuccess && hash && taskId && currentStep === 'blockchain') {
       setCurrentStep('database_tx')
+
       const formData = new FormData()
-      formData.append('taskId', createdTaskId)
+      formData.append('taskId', taskId)
       formData.append('contractTxHash', hash)
 
-      startTransition(() => {
-        updateAction(formData)
-      })
+      startTransition(() => updateAction(formData))
     }
-  }, [isContractSuccess, hash, createdTaskId, currentStep])
+  }, [isContractSuccess, hash, taskId, currentStep])
 
-  // Sucesso final
+  // Auto-flow: Update success → Final success
   useEffect(() => {
     if (updateState.success && currentStep === 'database_tx') {
       setCurrentStep('success')
-      setIsProcessing(false)
     }
   }, [updateState.success, currentStep])
 
-  // Handle errors CORRIGIDO
+  // Error handling - consolidado
   useEffect(() => {
-    // Verificar erro no create
-    if (createState.message && !createState.success) {
-      console.error('Erro na criação da task:', createState.message)
+    const hasError =
+      (createState.message && !createState.success) ||
+      contractError ||
+      (updateState.message && !updateState.success)
+
+    if (hasError) {
+      console.error('Erro detectado:', {
+        createError: createState.message,
+        contractError: contractError?.message,
+        updateError: updateState.message,
+      })
       resetOnError()
-      return
     }
-
-    // Verificar erro no contrato
-    if (contractError) {
-      console.error('Erro no contrato:', contractError.message)
-      resetOnError()
-      return
-    }
-
-    // Verificar erro no update
-    if (updateState.message && !updateState.success) {
-      console.error('Erro na atualização:', updateState.message)
-      resetOnError()
-      return
-    }
-  }, [
-    createState.message,
-    createState.success,
-    contractError,
-    updateState.message,
-    updateState.success,
-  ])
-
-  // Funções de navegação
-  const goToConfirmStep = () => setCurrentStep('confirm')
-  const goBackToForm = () => {
-    setCurrentStep('form')
-    setIsProcessing(false)
-  }
-
-  const resetOnError = () => {
-    setCurrentStep('form')
-    setIsProcessing(false)
-    setCreatedTaskId('')
-  }
+  }, [createState, contractError, updateState])
 
   return {
-    // Form state
+    // Form & navigation
     form,
     currentStep,
-    isProcessing,
-
-    // Server action state
-    state: createState,
-    isPending: isCreatePending || isUpdatePending || isTransitioning,
-
-    // Web3 state
-
-    isCreating: isContractPending || isConfirming,
-    createSuccess: isContractSuccess,
-    createError: contractError,
-    createTx: hash,
-    isConnected,
-    address,
-
-    // Actions
-    createTaskContract,
-    submitToDatabase,
     goToConfirmStep,
     goBackToForm,
     resetOnError,
 
-    // Debug
-    createdTaskId,
+    // States
+    state: createState,
+    isPending,
+    isCreating,
+    createSuccess: isContractSuccess,
+    createError: contractError,
+    createTx: hash,
+    isConnected,
+
+    // Actions
+    submitToDatabase,
   }
 }

@@ -163,14 +163,12 @@ export async function updateTaskWithContractHash(
       },
     })
 
-    // Revalidar cache
-    revalidatePath('/tasks')
-    revalidatePath('/dashboard')
-
     console.log('✅ Task atualizada com hash:', contractTxHash)
 
-    // Redirecionar para tasks
-    redirect('/tasks?tab=my-tasks')
+    return {
+      success: true,
+      message: 'Tarefa criada com sucesso',
+    }
   } catch (error) {
     console.error('Erro ao atualizar task com hash:', error)
     return {
