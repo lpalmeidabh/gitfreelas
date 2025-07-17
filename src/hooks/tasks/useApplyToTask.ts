@@ -3,7 +3,7 @@
 import { useState, useActionState, useTransition, useEffect } from 'react'
 import { useAccount, useSignMessage } from 'wagmi'
 import { applyToTask as applyToTaskAction } from '@/actions/developers'
-import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 export type ApplyStep =
   | 'confirm'
@@ -13,7 +13,6 @@ export type ApplyStep =
   | 'error'
 
 export function useApplyToTask() {
-  const router = useRouter()
   const { address, isConnected } = useAccount()
 
   // Server action
@@ -24,150 +23,102 @@ export function useApplyToTask() {
 
   const [isTransitioning, startTransition] = useTransition()
 
-  // Signature (sem gas)
+  // Signature
   const {
     signMessage,
     data: signature,
     isPending: isSigning,
     error: signError,
+    reset: resetSignature,
   } = useSignMessage()
 
   // Local states
   const [currentStep, setCurrentStep] = useState<ApplyStep>('confirm')
   const [currentTaskId, setCurrentTaskId] = useState<string>('')
-  const [isProcessing, setIsProcessing] = useState(false)
 
   // Auto-transition: Signature confirmed → Database save
-  useEffect(() => {
-    if (signature && currentTaskId && address && currentStep === 'signing') {
-      submitToDatabase(currentTaskId, address, signature)
-    }
-  }, [signature, currentTaskId, address, currentStep])
+  useEffect(
+    function handleSignatureReceived() {
+      if (signature && currentTaskId && address && currentStep === 'signing') {
+        setCurrentStep('submitting')
 
-  // Auto-transition: Database saved → Success (MANTÉM O MODAL)
-  useEffect(() => {
-    if (state.success && currentStep === 'submitting') {
-      setCurrentStep('success') // ← MODAL DE SUCESSO
-      setIsProcessing(false)
-    }
-  }, [state.success, currentStep])
+        const formData = new FormData()
+        formData.append('taskId', currentTaskId)
+        formData.append('walletAddress', address)
+        formData.append('signature', signature)
 
-  // Handle errors
-  useEffect(() => {
-    if (signError && currentStep === 'signing') {
-      setCurrentStep('error')
-      setIsProcessing(false)
-    }
-  }, [signError, currentStep])
+        startTransition(function submitFormData() {
+          formAction(formData)
+        })
+      }
+    },
+    [
+      signature,
+      currentTaskId,
+      address,
+      currentStep,
+      formAction,
+      startTransition,
+    ],
+  )
 
-  useEffect(() => {
-    if (state.error && currentStep === 'submitting') {
-      setCurrentStep('error')
-      setIsProcessing(false)
-    }
-  }, [state.error, currentStep])
+  // Handle success/error after form submission
+  useEffect(
+    function handleFormResponse() {
+      if (state.success && currentStep === 'submitting') {
+        setCurrentStep('success')
+      }
 
-  // Sign message first (no gas)
-  const signApplication = async (taskId: string) => {
-    try {
-      setIsProcessing(true)
-      setCurrentStep('signing')
-      setCurrentTaskId(taskId)
-
-      const message = `Aplicar para tarefa ${taskId}\nEndereço: ${address}\nTimestamp: ${Date.now()}`
-
-      signMessage({ message })
-    } catch (error) {
-      console.error('Erro ao assinar:', error)
-      resetOnError()
-      throw error
-    }
-  }
-
-  // Submit to database after signature
-  const submitToDatabase = (
-    taskId: string,
-    walletAddress: string,
-    messageSignature: string,
-  ) => {
-    setCurrentStep('submitting')
-
-    const formData = new FormData()
-    formData.append('taskId', taskId)
-    formData.append('walletAddress', walletAddress)
-    formData.append('signature', messageSignature)
-
-    startTransition(() => {
-      formAction(formData)
-    })
-  }
+      if (state.error && currentStep === 'submitting') {
+        setCurrentStep('error')
+      }
+    },
+    [state.success, state.error, currentStep],
+  )
 
   // Main apply function
-  const applyToTask = async (taskId: string) => {
+  async function applyToTask(taskId: string) {
     if (!isConnected || !address) {
+      toast.error('Conecte sua carteira para aplicar')
       return
     }
 
     try {
-      await signApplication(taskId)
+      setCurrentTaskId(taskId)
+      setCurrentStep('signing')
+
+      const message = `Aplicar para tarefa ${taskId}\nEndereço: ${address}\nTimestamp: ${Date.now()}`
+
+      await signMessage({ message })
     } catch (error) {
       console.error('Erro na aplicação:', error)
+      setCurrentStep('error')
     }
   }
 
-  // Close modal and refresh - só chama quando usuário clica "Entendi"
-  const handleClose = () => {
-    router.refresh()
-  }
-
-  // Reset helpers
-  const resetOnError = () => {
+  // Reset function
+  function resetToInitial() {
     setCurrentStep('confirm')
-    setIsProcessing(false)
     setCurrentTaskId('')
-  }
-
-  const resetToInitial = () => {
-    setCurrentStep('confirm')
-    setIsProcessing(false)
-    setCurrentTaskId('')
+    resetSignature()
   }
 
   return {
     // States
     currentStep,
-    isProcessing,
+    currentTaskId,
 
-    // Server action state
-    state,
-    isPending: isPending || isTransitioning,
-
-    // Signature states
-    isSigning,
-    signature,
-    signError,
-
-    // Connection state
+    // Connection
     isConnected,
     address,
 
     // Actions
     applyToTask,
-    handleClose,
-    resetOnError,
     resetToInitial,
 
     // Computed states
-    isSubmitting: isPending || isTransitioning,
-    hasError: !!(signError || state.error),
+    isProcessing: currentStep === 'signing' || currentStep === 'submitting',
     errorMessage: signError?.message || state.error,
-    isComplete: currentStep === 'success',
-
-    // Prevent modal close when processing
-    canCloseModal:
-      !isProcessing &&
-      (currentStep === 'confirm' ||
-        currentStep === 'success' ||
-        currentStep === 'error'),
+    canCloseModal: currentStep === 'confirm' || currentStep === 'error',
   }
 }

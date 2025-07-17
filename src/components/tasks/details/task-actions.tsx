@@ -1,4 +1,4 @@
-import { ApplyTaskButton } from '@/components/tasks/apply-task-button'
+import { ApplyTaskButton } from '@/components/tasks/apply/apply-task-button'
 import { TaskApplicationReview } from '@/components/tasks/application/task-application-review'
 import {
   Card,
