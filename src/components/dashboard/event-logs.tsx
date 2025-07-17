@@ -81,7 +81,7 @@ export function EventLogs() {
       id: '3',
       timestamp: '2024-07-13T14:15:45Z',
       type: 'task',
-      event: 'DeveloperApplied',
+      event: 'DeveloperAccepted',
       description: 'Desenvolvedor se aplicou para task "Frontend React"',
       status: 'info',
       txHash: '0x742d35cc123ef45e8c19000f207e6b23cc1c3a2c',

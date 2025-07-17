@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, CheckCircle } from 'lucide-react'
 
 interface TaskProgressStepProps {
-  currentStep: 'blockchain' | 'database'
+  currentStep: 'database' | 'blockchain' | 'database_tx'
   isCreating: boolean
   createSuccess: boolean
   createTx?: string
@@ -22,6 +22,7 @@ export function TaskProgressStep({
   currentStep,
   isCreating,
   createSuccess,
+
   createTx,
   createError,
 }: TaskProgressStepProps) {
@@ -38,6 +39,27 @@ export function TaskProgressStep({
             <div className="flex items-center gap-3">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  currentStep === 'database' ? 'bg-blue-500' : 'bg-gray-300'
+                }`}
+              >
+                {currentStep === 'database' ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <span className="text-white text-sm">1</span>
+                )}
+              </div>
+              <div>
+                <div className="font-medium">Criando registro no Banco</div>
+                <div className="text-sm text-muted-foreground">
+                  {currentStep === 'database'
+                    ? 'Salvando dados...'
+                    : 'Aguardando'}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${
                   createSuccess
                     ? 'bg-green-500'
                     : isCreating
@@ -50,11 +72,11 @@ export function TaskProgressStep({
                 ) : isCreating ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <span className="text-white text-sm">1</span>
+                  <span className="text-white text-sm">2</span>
                 )}
               </div>
               <div>
-                <div className="font-medium">Transação no Contrato</div>
+                <div className="font-medium">Enviando para blockchain</div>
                 <div className="text-sm text-muted-foreground">
                   {createSuccess
                     ? 'Confirmada na blockchain'
@@ -68,19 +90,19 @@ export function TaskProgressStep({
             <div className="flex items-center gap-3">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  currentStep === 'database' ? 'bg-blue-500' : 'bg-gray-300'
+                  currentStep === 'database_tx' ? 'bg-blue-500' : 'bg-gray-300'
                 }`}
               >
-                {currentStep === 'database' ? (
+                {currentStep === 'database_tx' ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <span className="text-white text-sm">2</span>
+                  <span className="text-white text-sm">3</span>
                 )}
               </div>
               <div>
-                <div className="font-medium">Salvando no Banco</div>
+                <div className="font-medium">Atualizando TX no Banco</div>
                 <div className="text-sm text-muted-foreground">
-                  {currentStep === 'database'
+                  {currentStep === 'database_tx'
                     ? 'Salvando dados...'
                     : 'Aguardando'}
                 </div>

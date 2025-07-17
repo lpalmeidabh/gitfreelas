@@ -58,7 +58,7 @@ export function TaskConfirmationStep({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-sm font-medium">Valor da Task</Label>
+                <Label className="text-sm font-medium">Valor da Tarefa</Label>
                 <p className="text-lg font-bold">{costs.taskValueEth} ETH</p>
               </div>
               <div>

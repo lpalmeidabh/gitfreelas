@@ -117,6 +117,9 @@ contract GitFreelas is GitFreelasBase {
         uint256 internalId = _taskIdToIndex[taskId];
         Task storage task = _tasks[internalId];
 
+        // Task client must be the one calling this function
+        if (msg.sender != task.client) revert NotAuthorized();
+
         // Task must be in DEPOSITED status (no developer assigned yet)
         if (task.status != TaskStatus.DEPOSITED) revert TaskNotDeposited();
 
@@ -129,17 +132,8 @@ contract GitFreelas is GitFreelasBase {
         // Client cannot accept themselves
         if (developerAddress == task.client) revert NotAuthorized();
 
-        // Accept the developer
-        task.developer = developerAddress;
-        task.status = TaskStatus.ACTIVE;
-
-        // Emit event
-        emit DeveloperApplied(
-            internalId,
-            taskId,
-            developerAddress,
-            task.client
-        );
+        // Accept the developer - calls internal function
+        _acceptDeveloper(taskId, developerAddress);
     }
 
     /**

@@ -75,7 +75,7 @@ interface IGitFreelas {
     /**
      * @dev Emitted when a developer applies to a task
      */
-    event DeveloperApplied(
+    event DeveloperAccepted(
         uint256 indexed internalTaskId,
         string indexed taskId,
         address indexed developer,

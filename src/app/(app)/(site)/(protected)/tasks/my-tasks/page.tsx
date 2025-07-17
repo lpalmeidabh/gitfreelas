@@ -1,6 +1,6 @@
 // src/app/(app)/(site)/(protected)/tasks/page.tsx
 
-import { getTasks } from '@/actions/tasks'
+import { getMyTasks } from '@/actions/tasks'
 import { TaskList } from '@/components/tasks/listing/task-list'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
@@ -11,14 +11,7 @@ export const metadata = {
   description: 'Encontre tarefas de desenvolvimento e ganhe em cripto',
 }
 
-interface TasksPageProps {
-  searchParams: Promise<{
-    tab?: string
-    status?: string
-  }>
-}
-
-export default async function TasksPage({ searchParams }: TasksPageProps) {
+export default async function MyTasksPage() {
   const session = await auth.api.getSession({
     headers: await headers(),
   })
@@ -27,16 +20,27 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
     redirect('/')
   }
 
-  const params = await searchParams
+  const currentUserId = session.user.id
 
-  const availableTasksData = await getTasks()
+  const myTasksData = await getMyTasks()
 
   return (
     <div className="space-y-8 p-8">
       <TaskList
-        initialData={availableTasksData || undefined}
-        title="Tarefas Disponíveis"
-        description="Tarefas abertas aguardando desenvolvedores. Aplique-se agora!"
+        initialData={{
+          tasks: myTasksData?.createdTasks || [],
+        }}
+        title="Tarefas que Criei"
+        description="Gerencie suas tarefas criadas"
+      />
+
+      {/* Tarefas onde apliquei */}
+      <TaskList
+        initialData={{
+          tasks: myTasksData?.appliedTasks || [],
+        }}
+        title="Tarefas Onde Apliquei"
+        description="Acompanhe suas aplicações"
       />
     </div>
   )

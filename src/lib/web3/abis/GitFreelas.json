@@ -857,7 +857,7 @@
   },
   {
     "type": "event",
-    "name": "DeveloperApplied",
+    "name": "DeveloperAccepted",
     "inputs": [
       {
         "name": "internalTaskId",

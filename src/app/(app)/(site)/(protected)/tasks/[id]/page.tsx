@@ -83,7 +83,8 @@ export default async function TaskDetailsPage({
   const isOwner = currentUserId === task.creatorId
   const isDeveloper =
     currentUserId === task.taskDeveloper?.developerId &&
-    task.status === 'IN_PROGRESS'
+    (task.status === 'IN_PROGRESS' || task.status === 'OVERDUE')
+
   const hasApplied =
     currentUserId === task.taskDeveloper?.developerId &&
     task.status === 'APPLIED'
@@ -431,6 +432,7 @@ export default async function TaskDetailsPage({
             )}
 
             {resolvedSearchParams.action === 'review' &&
+              task.status === 'APPLIED' &&
               isOwner &&
               task.taskDeveloper && <TaskApplicationReview task={task} />}
 

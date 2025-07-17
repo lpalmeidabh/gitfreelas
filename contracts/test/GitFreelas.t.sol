@@ -45,7 +45,7 @@ contract GitFreelasTest is Test {
         bool allowOverdue
     );
 
-    event DeveloperApplied(
+    event DeveloperAccepted(
         uint256 indexed internalTaskId,
         string indexed taskId,
         address indexed developer,
@@ -245,7 +245,7 @@ contract GitFreelasTest is Test {
 
         // Expect event
         vm.expectEmit(true, true, true, true);
-        emit DeveloperApplied(1, TASK_ID, developer, client);
+        emit DeveloperAccepted(1, TASK_ID, developer, client);
 
         // Accept developer
         vm.prank(client);

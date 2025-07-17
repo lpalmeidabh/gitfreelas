@@ -37,6 +37,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
+import { WalletStatusCard } from '@/components/web3/wallet-status-card'
 
 const navigationData = {
   main: [
@@ -61,7 +62,7 @@ const navigationData = {
         },
         {
           title: 'Minhas Tarefas',
-          url: '/tasks?tab=my-tasks',
+          url: '/tasks/my-tasks',
           icon: User,
         },
       ],
@@ -204,6 +205,9 @@ export function AppSidebar({
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <WalletStatusCard />
         </SidebarGroup>
       </SidebarContent>
 

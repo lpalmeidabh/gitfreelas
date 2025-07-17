@@ -3,7 +3,6 @@
 import { useState, useActionState, useTransition, useEffect } from 'react'
 import { useAccount, useSignMessage } from 'wagmi'
 import { applyToTask as applyToTaskAction } from '@/actions/developers'
-import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
 export type ApplyStep =
@@ -45,12 +44,11 @@ export function useApplyToTask() {
     }
   }, [signature, currentTaskId, address, currentStep])
 
-  // Auto-transition: Database saved → Success (SEM FECHAR)
+  // Auto-transition: Database saved → Success (MANTÉM O MODAL)
   useEffect(() => {
     if (state.success && currentStep === 'submitting') {
-      setCurrentStep('success')
+      setCurrentStep('success') // ← MODAL DE SUCESSO
       setIsProcessing(false)
-      // REMOVIDO: Qualquer lógica de fechamento automático
     }
   }, [state.success, currentStep])
 
@@ -107,7 +105,6 @@ export function useApplyToTask() {
   // Main apply function
   const applyToTask = async (taskId: string) => {
     if (!isConnected || !address) {
-      toast.error('Conecte sua carteira para aplicar')
       return
     }
 

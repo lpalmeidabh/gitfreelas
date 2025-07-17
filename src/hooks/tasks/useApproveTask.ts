@@ -8,7 +8,6 @@ import {
 } from 'wagmi'
 import { acceptDeveloper, rejectDeveloper } from '@/actions/developers'
 import { APP_CONFIG } from '@/lib/web3/config'
-import { toast } from 'sonner'
 
 export type ApprovalAction = 'accept' | 'reject'
 export type ApprovalStep = 'confirm' | 'blockchain' | 'database' | 'success'
@@ -44,11 +43,24 @@ export function useApproveTask() {
   } = useWriteContract()
   const contract = APP_CONFIG.contracts.gitFreelas
 
-  // Transaction confirmation
-  const { isLoading: isConfirming, isSuccess: isContractSuccess } =
-    useWaitForTransactionReceipt({
-      hash,
-    })
+  // Transaction confirmation with enhanced configuration
+  const {
+    isLoading: isConfirming,
+    isSuccess: isContractSuccess,
+    isError: isReceiptError,
+    error: receiptError,
+    data: receipt,
+  } = useWaitForTransactionReceipt({
+    hash,
+    query: {
+      enabled: !!hash,
+      retry: 3,
+      retryDelay: 1000,
+      refetchInterval: 1000,
+    },
+    confirmations: 1,
+    timeout: 30000,
+  })
 
   // Local states
   const [currentStep, setCurrentStep] = useState<ApprovalStep>('confirm')
@@ -57,35 +69,6 @@ export function useApproveTask() {
   )
   const [pendingTaskId, setPendingTaskId] = useState<string>('')
 
-  const [isInitialized, setIsInitialized] = useState(false)
-
-  useEffect(() => {
-    if (!isInitialized) {
-      console.log('🚀 Hook initialized')
-      setIsInitialized(true)
-    }
-  }, [isInitialized])
-
-  useEffect(() => {
-    console.log('🔄 State Change:', {
-      currentAction,
-      currentStep,
-      pendingTaskId,
-      isContractPending,
-      isConfirming,
-      isContractSuccess,
-      hash,
-    })
-  }, [
-    currentAction,
-    currentStep,
-    pendingTaskId,
-    isContractPending,
-    isConfirming,
-    isContractSuccess,
-    hash,
-  ])
-
   // Auto-transition: Contract confirmed → Database save
   useEffect(() => {
     console.log('🔍 DEBUG Contract Success:', {
@@ -93,21 +76,25 @@ export function useApproveTask() {
       currentAction,
       pendingTaskId,
       hash,
+      receipt: receipt
+        ? {
+            status: receipt.status,
+            blockNumber: receipt.blockNumber,
+          }
+        : null,
     })
 
     if (isContractSuccess && currentAction === 'accept' && pendingTaskId) {
       console.log('✅ Contract success detected, calling server action...')
       setCurrentStep('database')
-      toast.dismiss()
-      toast.loading('Criando repositório e atualizando status...')
 
       startTransition(() => {
         acceptAction(pendingTaskId)
       })
     }
-  }, [isContractSuccess, currentAction, pendingTaskId, hash])
+  }, [isContractSuccess, currentAction, pendingTaskId, hash, receipt])
 
-  // Escutar mudanças nos estados das actions para gerenciar toasts
+  // Escutar mudanças nos estados das actions
   useEffect(() => {
     console.log('🔍 DEBUG Server Action:', {
       currentAction,
@@ -119,13 +106,9 @@ export function useApproveTask() {
     if (currentAction === 'accept') {
       if (acceptState.success && currentStep === 'database') {
         console.log('✅ Server action success!')
-        toast.dismiss()
-        toast.success('Desenvolvedor aceito com sucesso!')
         setCurrentStep('success')
       } else if (acceptState.error) {
         console.log('❌ Server action error:', acceptState.error)
-        toast.dismiss()
-        toast.error(`Erro: ${acceptState.error}`)
         setCurrentStep('confirm')
         setCurrentAction(null)
         setPendingTaskId('')
@@ -136,12 +119,8 @@ export function useApproveTask() {
   useEffect(() => {
     if (currentAction === 'reject') {
       if (rejectState.success) {
-        toast.dismiss()
-        toast.success('Aplicação rejeitada com sucesso!')
         setCurrentStep('success')
       } else if (rejectState.error) {
-        toast.dismiss()
-        toast.error(`Erro: ${rejectState.error}`)
         setCurrentStep('confirm')
         setCurrentAction(null)
       }
@@ -151,35 +130,47 @@ export function useApproveTask() {
   // Handle contract errors
   useEffect(() => {
     if (contractError && currentAction === 'accept') {
-      toast.dismiss()
-      toast.error(`Erro no contrato: ${contractError.message}`)
+      console.error('❌ Contract error:', contractError.message)
       setCurrentStep('confirm')
       setCurrentAction(null)
       setPendingTaskId('')
     }
   }, [contractError, currentAction])
 
-  // Accept developer function - calls contract first
+  // Handle receipt errors
+  useEffect(() => {
+    if (isReceiptError && receiptError && currentAction === 'accept') {
+      console.error('❌ Receipt error:', receiptError)
+      setCurrentStep('confirm')
+      setCurrentAction(null)
+      setPendingTaskId('')
+    }
+  }, [isReceiptError, receiptError, currentAction])
+
+  // Accept developer function - calls contract first usando contractTaskId
   const handleAcceptDeveloper = async (
     taskId: string,
     developerWalletAddress: string,
+    contractTaskId: string, // ← NOVO: ID usado no contrato
   ) => {
     try {
       setCurrentAction('accept')
       setCurrentStep('blockchain')
-      setPendingTaskId(taskId)
-      toast.loading('Confirmando no blockchain...')
+      setPendingTaskId(taskId) // ID do banco para server action
+
+      console.log('🔍 DEBUG Enviando transação para aceitar desenvolvedor:', {
+        taskId,
+        developerWalletAddress,
+      })
 
       writeContract({
         address: contract.address,
         abi: contract.abi,
         functionName: 'acceptDeveloper',
-        args: [taskId, developerWalletAddress as `0x${string}`],
+        args: [taskId, developerWalletAddress as `0x${string}`], // ← Usar contractTaskId
       })
     } catch (error) {
       console.error('Erro ao aceitar desenvolvedor:', error)
-      toast.dismiss()
-      toast.error('Erro ao processar transação')
       resetOnError()
     }
   }
@@ -189,15 +180,12 @@ export function useApproveTask() {
     try {
       setCurrentAction('reject')
       setCurrentStep('database')
-      toast.loading('Rejeitando aplicação...')
 
       startTransition(() => {
         rejectAction(taskId)
       })
     } catch (error) {
       console.error('Erro ao rejeitar desenvolvedor:', error)
-      toast.dismiss()
-      toast.error('Erro ao rejeitar desenvolvedor')
       resetOnError()
     }
   }
@@ -207,14 +195,12 @@ export function useApproveTask() {
     setCurrentStep('confirm')
     setCurrentAction(null)
     setPendingTaskId('')
-    toast.dismiss()
   }
 
   const resetToInitial = () => {
     setCurrentStep('confirm')
     setCurrentAction(null)
     setPendingTaskId('')
-    toast.dismiss()
   }
 
   // Get current state based on action
@@ -246,15 +232,16 @@ export function useApproveTask() {
     // Web3 states
     isContractPending,
     isConfirming,
-    isContractSuccess,
+    isContractSuccess: isContractSuccess,
     contractError,
     contractTx: hash,
+    receipt,
 
     // Connection state
     isConnected,
     address,
 
-    // Actions (atualizadas para receber wallet address)
+    // Actions (atualizado para receber contractTaskId)
     acceptDeveloper: handleAcceptDeveloper,
     rejectDeveloper: handleRejectDeveloper,
     resetOnError,
@@ -262,8 +249,11 @@ export function useApproveTask() {
 
     // Computed states
     isProcessing: getCurrentPending() || isTransitioning,
-    hasError: !!(contractError || getCurrentState().error),
-    errorMessage: contractError?.message || getCurrentState().error,
+    hasError: !!(contractError || receiptError || getCurrentState().error),
+    errorMessage:
+      contractError?.message ||
+      receiptError?.message ||
+      getCurrentState().error,
     isSuccess: getCurrentState().success,
 
     // New states for blockchain steps

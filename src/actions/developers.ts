@@ -200,9 +200,9 @@ export async function acceptDeveloper(prevState: any, taskId: string) {
       console.error('❌ Erro ao criar repositório:', repositoryResult.error)
     }
 
-    revalidatePath('/tasks')
-    revalidatePath('/dashboard')
-    revalidatePath(`/tasks/${taskId}`)
+    // revalidatePath('/tasks')
+    // revalidatePath('/dashboard')
+    // revalidatePath(`/tasks/${taskId}`)
 
     return {
       success: true,

@@ -121,9 +121,6 @@ export type ApplyTaskData = {
 
 export type TaskListResponse = {
   tasks: TaskWithRelations[]
-  total: number
-  page: number
-  limit: number
 }
 
 export type TaskDetailsResponse = TaskWithRelations

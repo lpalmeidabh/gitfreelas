@@ -28,7 +28,7 @@ export function WalletStatusCard() {
   }, [])
 
   // Render consistent placeholder during SSR
-  if (!isMounted) {
+  if (!isMounted || !isConnected) {
     return (
       <Card>
         <CardContent className="p-6">
@@ -47,30 +47,11 @@ export function WalletStatusCard() {
     )
   }
 
-  if (!isConnected) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="text-center space-y-4">
-            <Wallet className="h-12 w-12 mx-auto text-muted-foreground" />
-            <div>
-              <h3 className="font-semibold">Wallet não conectada</h3>
-              <p className="text-sm text-muted-foreground">
-                Conecte sua wallet para interagir com o GitFreelas
-              </p>
-            </div>
-            <WalletConnectButton />
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
   return (
     <Card>
       <CardContent className="p-6">
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col items-center justify-between">
             <h3 className="font-semibold flex items-center gap-2">
               <div className="w-3 h-3 bg-green-500 rounded-full" />
               Wallet Conectada

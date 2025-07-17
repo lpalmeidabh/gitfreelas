@@ -8,8 +8,10 @@ import { TaskFormStep } from './create/task-form-step'
 import { TaskConfirmationStep } from './create/task-confirmation-step'
 import { TaskProgressStep } from './create/task-progress-step'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 export function CreateTaskForm() {
+  const router = useRouter()
   const {
     form,
     currentStep,
@@ -33,34 +35,17 @@ export function CreateTaskForm() {
   // Calcular custos em tempo real
   const costs = calculateTaskCosts(form.watch('valueInEther'))
 
-  // Quando transação do contrato confirmar, enviar para banco
   useEffect(() => {
-    if (createSuccess && createTx && currentStep === 'blockchain') {
-      const formData = form.getValues()
-      submitToDatabase(formData, createTx)
-    }
-  }, [createSuccess, createTx, currentStep])
-
-  // Quando server action completar
-  useEffect(() => {
-    if (state.message && !isPending) {
-      toast.dismiss() // Remove loading toasts
-
-      if (state.success) {
+    if (currentStep === 'success') {
+      setTimeout(() => {
         toast.success('Tarefa criada com sucesso!')
-        // Redirecionamento será feito automaticamente pela server action
-      } else {
-        toast.error(state.message)
-        resetOnError()
-      }
+      }, 100)
     }
-  }, [state, isPending])
+  }, [currentStep, router])
 
-  // Tratar erros do contrato
   useEffect(() => {
     if (createError) {
-      toast.dismiss()
-      toast.error(`Erro no contrato: ${createError.message}`)
+      console.error('Erro no contrato:', createError.message)
       resetOnError()
     }
   }, [createError])
@@ -78,7 +63,7 @@ export function CreateTaskForm() {
   // Handler para confirmação (step 2)
   const onConfirm = async () => {
     const data = form.getValues()
-    await createTaskContract(data)
+    await submitToDatabase(data)
   }
 
   // Renderizar step correto
@@ -87,7 +72,7 @@ export function CreateTaskForm() {
       <TaskConfirmationStep
         formData={form.getValues()}
         costs={costs}
-        platformFee={3} // TODO: pegar do contrato
+        platformFee={3}
         isSubmitting={isProcessing}
         onBack={goBackToForm}
         onConfirm={onConfirm}
@@ -95,7 +80,11 @@ export function CreateTaskForm() {
     )
   }
 
-  if (currentStep === 'blockchain' || currentStep === 'database') {
+  if (
+    currentStep === 'database' ||
+    currentStep === 'blockchain' ||
+    currentStep === 'database_tx'
+  ) {
     return (
       <TaskProgressStep
         currentStep={currentStep}

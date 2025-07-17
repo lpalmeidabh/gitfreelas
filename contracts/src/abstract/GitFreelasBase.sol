@@ -339,7 +339,7 @@ abstract contract GitFreelasBase is
         task.status = TaskStatus.ACTIVE;
 
         // Emit event
-        emit DeveloperApplied(
+        emit DeveloperAccepted(
             internalId,
             taskId,
             developerAddress,
