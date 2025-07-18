@@ -41,7 +41,7 @@ export async function createRepositoryForTask(taskId: string) {
       where: {
         id: taskId,
         creatorId: user.id, // Apenas o criador pode aceitar
-        status: 'APPLIED',
+        status: 'IN_PROGRESS',
         deletedAt: null,
       },
       include: {
@@ -124,8 +124,8 @@ export async function createRepositoryForTask(taskId: string) {
       // Não falha a operação, pode ser adicionado manualmente
     }
 
-    revalidatePath('/tasks')
-    revalidatePath(`/tasks/${taskId}`)
+    // revalidatePath('/tasks')
+    // revalidatePath(`/tasks/${taskId}`)
 
     return {
       success: true,
@@ -320,8 +320,8 @@ export async function deleteRepositoryForTask(taskId: string) {
       },
     })
 
-    revalidatePath('/tasks')
-    revalidatePath(`/tasks/${taskId}`)
+    // revalidatePath('/tasks')
+    // revalidatePath(`/tasks/${taskId}`)
 
     return {
       success: true,

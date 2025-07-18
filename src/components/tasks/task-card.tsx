@@ -1,5 +1,6 @@
 'use client'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,133 +11,111 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { TaskWithRelations, TASK_STATUS_LABELS } from '@/types'
-import { weiToEther } from '@/lib/web3/config'
+import { DeveloperProfileCard } from '@/components/developer-profile-card'
+import {
+  formatTimeDistance,
+  isDateOverdue,
+  getDaysUntilDate,
+  isDateUrgent,
+} from '@/lib/date-utils'
 import {
   Calendar,
-  User,
-  Wallet,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
   Circle,
-  Play,
-  Pause,
-  X,
-  Undo,
+  Clock,
+  DollarSign,
+  User,
+  AlertTriangle,
+  CheckCircle,
 } from 'lucide-react'
 import Link from 'next/link'
-import { formatDistanceToNow } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { cn } from '@/lib/utils'
+import type { TaskWithRelations } from '@/types'
 
 interface TaskCardProps {
   task: TaskWithRelations
-  showActions?: boolean
-  variant?: 'default' | 'compact'
   currentUserId?: string
-}
-
-const statusIcons = {
-  OPEN: Circle,
-  APPLIED: Clock,
-  IN_PROGRESS: Play,
-  PENDING_APPROVAL: Pause,
-  COMPLETED: CheckCircle,
-  CANCELLED: X,
-  OVERDUE: AlertTriangle,
-  REFUNDED: Undo,
+  showActions?: boolean
 }
 
 export function TaskCard({
   task,
-  showActions = true,
-  variant = 'default',
   currentUserId,
+  showActions = true,
 }: TaskCardProps) {
-  const StatusIcon = statusIcons[task.status]
-  const statusInfo = TASK_STATUS_LABELS[task.status]
+  const isOverdue = isDateOverdue(task.deadline)
+  const daysUntilDeadline = getDaysUntilDate(task.deadline) || 0
+  const isUrgent = isDateUrgent(task.deadline)
 
-  // Verificar relação do usuário atual com a tarefa
   const isOwner = currentUserId === task.creatorId
-  const isDeveloper = currentUserId === task.taskDeveloper?.developerId
-  const canApply = !isOwner && !task.taskDeveloper && task.status === 'OPEN'
+  const isDeveloper = task.taskDeveloper?.developerId === currentUserId
 
-  // Calcular se está próximo do deadline
-  const daysUntilDeadline = Math.ceil(
-    (new Date(task.deadline).getTime() - new Date().getTime()) /
-      (1000 * 60 * 60 * 24),
-  )
-
-  const isUrgent = daysUntilDeadline <= 2 && daysUntilDeadline > 0
-  const isOverdue = daysUntilDeadline < 0
-
-  const formatValue = (weiValue: string) => {
-    const ethValue = weiToEther(weiValue)
-    return `${parseFloat(ethValue).toFixed(4)} ETH`
+  const formatValue = (valueInWei: string) => {
+    const ethValue = parseFloat(valueInWei) / 1e18
+    return `${ethValue.toFixed(4)} ETH`
   }
 
-  const formatDeadline = (deadline: Date) => {
-    return formatDistanceToNow(new Date(deadline), {
-      addSuffix: true,
-      locale: ptBR,
-    })
+  const getStatusInfo = () => {
+    switch (task.status) {
+      case 'OPEN':
+        return {
+          label: 'Aberta',
+          color: 'bg-green-100 text-green-800',
+          icon: CheckCircle,
+        }
+      case 'APPLIED':
+        return {
+          label: 'Aplicada',
+          color: 'bg-blue-100 text-blue-800',
+          icon: Clock,
+        }
+      case 'IN_PROGRESS':
+        return {
+          label: 'Em Progresso',
+          color: 'bg-purple-100 text-purple-800',
+          icon: Clock,
+        }
+      case 'PENDING_APPROVAL':
+        return {
+          label: 'Aguardando Aprovação',
+          color: 'bg-yellow-100 text-yellow-800',
+          icon: Clock,
+        }
+      case 'COMPLETED':
+        return {
+          label: 'Concluída',
+          color: 'bg-green-100 text-green-800',
+          icon: CheckCircle,
+        }
+      case 'CANCELLED':
+        return {
+          label: 'Cancelada',
+          color: 'bg-gray-100 text-gray-800',
+          icon: AlertTriangle,
+        }
+      case 'OVERDUE':
+        return {
+          label: 'Vencida',
+          color: 'bg-red-100 text-red-800',
+          icon: AlertTriangle,
+        }
+      default:
+        return {
+          label: 'Status desconhecido',
+          color: 'bg-gray-100 text-gray-800',
+          icon: AlertTriangle,
+        }
+    }
   }
 
-  if (variant === 'compact') {
-    return (
-      <Card className="hover:shadow-md transition-shadow">
-        <CardContent className="p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                <StatusIcon className={cn('h-4 w-4', statusInfo.color)} />
-                <Badge variant="outline" className={statusInfo.color}>
-                  {statusInfo.label}
-                </Badge>
-                {isUrgent && (
-                  <Badge variant="destructive" className="text-xs">
-                    Urgente
-                  </Badge>
-                )}
-              </div>
-
-              <h4 className="font-medium truncate mb-1">{task.title}</h4>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                {task.description}
-              </p>
-
-              <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Wallet className="h-3 w-3" />
-                  {formatValue(task.valueInWei)}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  {formatDeadline(task.deadline)}
-                </span>
-              </div>
-            </div>
-
-            <Link href={`/tasks/${task.id}`}>
-              <Button size="sm" variant="outline">
-                Ver
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
+  const statusInfo = getStatusInfo()
+  const StatusIcon = statusInfo.icon
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200">
+    <Card className="hover:shadow-md transition-shadow">
       <CardHeader>
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <StatusIcon className={cn('h-4 w-4', statusInfo.color)} />
+              <StatusIcon className="h-4 w-4" />
               <Badge variant="outline" className={statusInfo.color}>
                 {statusInfo.label}
               </Badge>
@@ -165,8 +144,8 @@ export function TaskCard({
       </CardHeader>
 
       <CardContent>
-        <div className="space-y-3">
-          {/* Criador */}
+        <div className="space-y-4">
+          {/* Cliente */}
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-muted-foreground" />
             <div className="flex items-center gap-2">
@@ -185,36 +164,35 @@ export function TaskCard({
             </div>
           </div>
 
-          {/* Desenvolvedor (se aplicado) */}
+          {/* Desenvolvedor - USANDO DeveloperProfileCard COMPACTO */}
           {task.taskDeveloper && (
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-muted-foreground" />
+            <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Avatar className="h-6 w-6">
-                  <AvatarImage src={task.taskDeveloper.developer.image} />
-                  <AvatarFallback className="text-xs">
-                    {task.taskDeveloper.developer.name
-                      .slice(0, 2)
-                      .toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-sm">
-                  {task.taskDeveloper.developer.name}
-                </span>
+                <User className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Desenvolvedor:</span>
                 {isDeveloper && (
                   <Badge variant="secondary" className="text-xs">
                     Você
                   </Badge>
                 )}
               </div>
+
+              {/* Card compacto do desenvolvedor */}
+              <DeveloperProfileCard
+                developer={task.taskDeveloper.developer}
+                walletAddress={task.taskDeveloper.walletAddress}
+                appliedAt={task.taskDeveloper.appliedAt}
+                showBadges={false}
+                className="p-2 bg-muted/30 border-0"
+              />
             </div>
           )}
 
-          {/* Deadline */}
+          {/* Deadline - USANDO HELPER */}
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm">
-              Prazo: {formatDeadline(task.deadline)}
+              Prazo: {formatTimeDistance(task.deadline)}
             </span>
             {isUrgent && !isOverdue && (
               <Badge
@@ -265,9 +243,21 @@ export function TaskCard({
                 Submeter Trabalho
               </Button>
             </Link>
-          ) : (
+          ) : isOwner && task.status === 'PENDING_APPROVAL' ? (
+            <Link href={`/tasks/${task.id}?action=approve`} className="flex-1">
+              <Button variant="default" className="w-full">
+                Aprovar Entrega
+              </Button>
+            </Link>
+          ) : !isOwner && !isDeveloper && task.status === 'OPEN' ? (
             <Link href={`/tasks/${task.id}`} className="flex-1">
               <Button variant="outline" className="w-full">
+                Ver Detalhes
+              </Button>
+            </Link>
+          ) : (
+            <Link href={`/tasks/${task.id}`} className="flex-1">
+              <Button variant="ghost" className="w-full">
                 Ver Detalhes
               </Button>
             </Link>
