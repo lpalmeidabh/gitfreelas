@@ -1,25 +1,70 @@
+// src/hooks/tasks/useCompleteTask.ts
 'use client'
 
-import { useState, useActionState, useTransition } from 'react'
+import React, { useState, useActionState, useTransition } from 'react'
 import {
   useAccount,
   useWriteContract,
   useWaitForTransactionReceipt,
 } from 'wagmi'
 import { submitTaskForApproval } from '@/actions/developers'
+import {
+  approveTaskCompletion,
+  rejectTaskSubmission,
+  requestTaskRevision,
+} from '@/actions/code-review'
 import { APP_CONFIG } from '@/lib/web3/config'
 import { toast } from 'sonner'
 
-export type CompleteStep = 'confirm' | 'blockchain' | 'database' | 'success'
+export type CompleteStep =
+  | 'confirm'
+  | 'blockchain'
+  | 'database'
+  | 'success'
+  | 'error'
+
+export interface CompleteTaskData {
+  taskId: string
+  prNumber?: number
+  feedback?: string
+  action: 'submit' | 'approve' | 'reject' | 'revision'
+}
 
 export function useCompleteTask() {
   const { address, isConnected } = useAccount()
 
-  // Server action
-  const [state, formAction, isPending] = useActionState(submitTaskForApproval, {
-    success: false,
-    error: '',
-  })
+  // Server actions
+  const [submitState, submitAction, isSubmitPending] = useActionState(
+    submitTaskForApproval,
+    {
+      success: false,
+      error: '',
+    },
+  )
+
+  const [approveState, approveAction, isApprovePending] = useActionState(
+    approveTaskCompletion,
+    {
+      success: false,
+      error: '',
+    },
+  )
+
+  const [rejectState, rejectAction, isRejectPending] = useActionState(
+    rejectTaskSubmission,
+    {
+      success: false,
+      error: '',
+    },
+  )
+
+  const [revisionState, revisionAction, isRevisionPending] = useActionState(
+    requestTaskRevision,
+    {
+      success: false,
+      error: '',
+    },
+  )
 
   const [isTransitioning, startTransition] = useTransition()
 
@@ -29,7 +74,9 @@ export function useCompleteTask() {
     data: hash,
     isPending: isContractPending,
     error: contractError,
+    reset: resetContract,
   } = useWriteContract()
+
   const contract = APP_CONFIG.contracts.gitFreelas
 
   // Transaction confirmation
@@ -40,15 +87,35 @@ export function useCompleteTask() {
 
   // Local states
   const [currentStep, setCurrentStep] = useState<CompleteStep>('confirm')
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [currentData, setCurrentData] = useState<CompleteTaskData | null>(null)
 
-  // Complete task on contract (client approves)
-  const completeTaskOnContract = async (taskId: string) => {
+  // Main complete task workflow
+  const completeTask = async (data: CompleteTaskData) => {
     try {
-      setIsProcessing(true)
-      setCurrentStep('blockchain')
+      setCurrentData(data)
 
-      toast.loading('Completando tarefa no contrato...')
+      if (data.action === 'approve') {
+        // Para aprovação, precisa chamar blockchain primeiro
+        await handleBlockchainApproval(data.taskId)
+      } else if (data.action === 'submit') {
+        // Para submit do desenvolvedor, só database
+        await handleSubmitForApproval(data.taskId)
+      } else {
+        // Para reject/revision, só database
+        await handleDatabaseUpdate(data)
+      }
+    } catch (error) {
+      console.error('Erro no fluxo de complete task:', error)
+      setCurrentStep('error')
+      toast.error('Erro ao processar ação')
+    }
+  }
+
+  // Step 1: Blockchain approval (só para approve)
+  const handleBlockchainApproval = async (taskId: string) => {
+    try {
+      setCurrentStep('blockchain')
+      toast.loading('Chamando contrato inteligente...')
 
       writeContract({
         address: contract.address,
@@ -57,71 +124,210 @@ export function useCompleteTask() {
         args: [taskId],
       })
     } catch (error) {
-      console.error('Erro ao completar task no contrato:', error)
+      console.error('Erro ao chamar contrato:', error)
+      setCurrentStep('error')
       toast.error('Erro ao processar transação')
-      resetOnError()
-      throw error
     }
   }
 
   // Submit for approval (developer submits work)
-  const submitForApproval = async (taskId: string) => {
+  const handleSubmitForApproval = async (taskId: string) => {
     try {
       setCurrentStep('database')
       toast.loading('Submetendo para aprovação...')
 
       startTransition(() => {
-        formAction(taskId)
+        submitAction(taskId)
       })
     } catch (error) {
       console.error('Erro ao submeter para aprovação:', error)
+      setCurrentStep('error')
       toast.error('Erro ao submeter tarefa')
-      resetOnError()
     }
   }
 
-  // Navigation helpers
-  const resetOnError = () => {
+  // Step 2: Update database após blockchain ou direto
+  const handleDatabaseUpdate = async (data: CompleteTaskData) => {
+    try {
+      setCurrentStep('database')
+      toast.loading('Atualizando sistema...')
+
+      const formData = new FormData()
+      formData.append('taskId', data.taskId)
+      if (data.prNumber) formData.append('prNumber', data.prNumber.toString())
+      if (data.feedback) formData.append('feedback', data.feedback)
+
+      startTransition(() => {
+        switch (data.action) {
+          case 'approve':
+            approveAction(formData)
+            break
+          case 'reject':
+            rejectAction(formData)
+            break
+          case 'revision':
+            revisionAction(formData)
+            break
+        }
+      })
+    } catch (error) {
+      console.error('Erro ao atualizar database:', error)
+      setCurrentStep('error')
+      toast.error('Erro ao atualizar sistema')
+    }
+  }
+
+  // Legacy functions (backward compatibility)
+  const completeTaskOnContract = async (taskId: string) => {
+    await completeTask({
+      taskId,
+      action: 'approve',
+    })
+  }
+
+  const submitForApproval = async (taskId: string) => {
+    await completeTask({
+      taskId,
+      action: 'submit',
+    })
+  }
+
+  // Monitor blockchain transaction success
+  React.useEffect(() => {
+    if (isContractSuccess && currentStep === 'blockchain' && currentData) {
+      toast.success('Transação confirmada na blockchain!')
+      // Agora atualizar database
+      handleDatabaseUpdate(currentData)
+    }
+  }, [isContractSuccess, currentStep, currentData])
+
+  // Monitor database update success
+  React.useEffect(() => {
+    const getCurrentState = () => {
+      if (currentData?.action === 'submit') return submitState
+      if (currentData?.action === 'approve') return approveState
+      if (currentData?.action === 'reject') return rejectState
+      if (currentData?.action === 'revision') return revisionState
+      return { success: false, error: '' }
+    }
+
+    const state = getCurrentState()
+    if (state.success && currentStep === 'database') {
+      setCurrentStep('success')
+      toast.success('Ação processada com sucesso!')
+    }
+  }, [
+    submitState.success,
+    approveState.success,
+    rejectState.success,
+    revisionState.success,
+    currentStep,
+    currentData,
+  ])
+
+  // Monitor errors
+  React.useEffect(() => {
+    if (contractError) {
+      setCurrentStep('error')
+      toast.error(`Erro na blockchain: ${contractError.message}`)
+    }
+
+    const getCurrentError = () => {
+      if (currentData?.action === 'submit') return submitState.error
+      if (currentData?.action === 'approve') return approveState.error
+      if (currentData?.action === 'reject') return rejectState.error
+      if (currentData?.action === 'revision') return revisionState.error
+      return ''
+    }
+
+    const error = getCurrentError()
+    if (error) {
+      setCurrentStep('error')
+      toast.error(`Erro no sistema: ${error}`)
+    }
+  }, [
+    contractError,
+    submitState.error,
+    approveState.error,
+    rejectState.error,
+    revisionState.error,
+    currentData,
+  ])
+
+  // Reset function
+  const resetFlow = () => {
     setCurrentStep('confirm')
-    setIsProcessing(false)
+    setCurrentData(null)
+    resetContract()
+  }
+
+  // Legacy reset functions
+  const resetOnError = () => {
+    resetFlow()
     toast.dismiss()
   }
 
   const resetToInitial = () => {
-    setCurrentStep('confirm')
-    setIsProcessing(false)
+    resetFlow()
+  }
+
+  // Get current processing state
+  const isProcessing =
+    isContractPending ||
+    isConfirming ||
+    isSubmitPending ||
+    isApprovePending ||
+    isRejectPending ||
+    isRevisionPending ||
+    isTransitioning ||
+    currentStep === 'blockchain' ||
+    currentStep === 'database'
+
+  // Get current state based on action
+  const getCurrentState = () => {
+    if (currentData?.action === 'submit') return submitState
+    if (currentData?.action === 'approve') return approveState
+    if (currentData?.action === 'reject') return rejectState
+    if (currentData?.action === 'revision') return revisionState
+    return { success: false, error: '' }
   }
 
   return {
+    // Main API
+    completeTask,
+    resetFlow,
+
     // States
     currentStep,
-    isProcessing,
-
-    // Server action state
-    state,
-    isPending: isPending || isTransitioning,
-
-    // Web3 states
-    isContractPending,
-    isConfirming,
-    isContractSuccess,
-    contractError,
-    contractTx: hash,
-
-    // Connection state
+    currentData,
     isConnected,
     address,
+    isProcessing,
 
-    // Actions
-    completeTaskOnContract, // Para cliente aprovar
-    submitForApproval, // Para desenvolvedor submeter
+    // Legacy API (backward compatibility)
+    completeTaskOnContract,
+    submitForApproval,
     resetOnError,
     resetToInitial,
 
     // Computed states
+    hasError: !!(contractError || getCurrentState().error),
+    errorMessage: contractError?.message || getCurrentState().error,
+    isSuccess: currentStep === 'success',
+    canClose: currentStep !== 'blockchain' && currentStep !== 'database',
+
+    // Transaction data
+    txHash: hash,
+    state: getCurrentState(),
+
+    // Legacy states (backward compatibility)
     isCompleting: isContractPending || isConfirming,
-    isSubmitting: isPending || isTransitioning,
-    hasError: !!(contractError || state.error),
-    errorMessage: contractError?.message || state.error,
+    isSubmitting: isSubmitPending || isTransitioning,
+    contractError,
+    contractTx: hash,
+    isContractPending,
+    isConfirming,
+    isContractSuccess,
+    isPending: isSubmitPending || isTransitioning,
   }
 }

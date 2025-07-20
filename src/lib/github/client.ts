@@ -2,11 +2,16 @@ import { createAppAuth } from '@octokit/auth-app'
 import { Octokit } from '@octokit/rest'
 
 // Configurações do GitHub App
+
 const GITHUB_CONFIG = {
-  appId: process.env.GITHUB_APP_ID!,
-  privateKey: process.env.GITHUB_APP_PRIVATE_KEY!.replace(/\\n/g, '\n'),
-  installationId: parseInt(process.env.GITHUB_INSTALLATION_ID!),
-  webhookSecret: process.env.GITHUB_WEBHOOK_SECRET!,
+  appId: process.env.GITHUB_APP_ID || '',
+  privateKey: process.env.GITHUB_APP_PRIVATE_KEY
+    ? process.env.GITHUB_APP_PRIVATE_KEY.replace(/\\n/g, '\n')
+    : '',
+  installationId: process.env.GITHUB_INSTALLATION_ID
+    ? parseInt(process.env.GITHUB_INSTALLATION_ID)
+    : 0,
+  webhookSecret: process.env.GITHUB_WEBHOOK_SECRET || '',
 } as const
 
 console.log('GITHUB_CONFIG:', GITHUB_CONFIG)

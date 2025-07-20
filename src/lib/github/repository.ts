@@ -82,7 +82,7 @@ export async function createTaskRepository(
       org: githubConfig.owner, // 'gitfreelas-org'
       name: repositoryName,
       description: `[GitFreelas] ${data.title}`,
-      private: false, // Público para facilitar o desenvolvimento
+      private: true, // Repositório privado
       auto_init: true, // Cria com README automático
       has_issues: true,
       has_projects: false,
