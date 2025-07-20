@@ -85,8 +85,8 @@ export async function createRepositoryForTask(taskId: string) {
       taskId,
       title: task.title,
       description: task.description,
-      clientName: task.creator.name,
-      developerUsername: task.taskDeveloper.developer.name, // Assumindo que o name é o username
+      clientName: task.creator.email,
+      developerUsername: task.taskDeveloper.developer.email, // Assumindo que o name é o username
     }
 
     // Criar repositório no GitHub
@@ -113,7 +113,7 @@ export async function createRepositoryForTask(taskId: string) {
     // Adicionar desenvolvedor como colaborador
     const addResult = await addDeveloperToRepository(
       repoResult.repositoryName,
-      task.taskDeveloper.developer.name,
+      task.taskDeveloper.developer.email,
     )
 
     if (!addResult.success) {

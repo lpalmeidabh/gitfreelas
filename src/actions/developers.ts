@@ -264,9 +264,9 @@ export async function rejectDeveloper(prevState: any, taskId: string) {
       })
     })
 
-    revalidatePath('/tasks')
-    revalidatePath('/dashboard')
-    revalidatePath(`/tasks/${taskId}`)
+    // revalidatePath('/tasks')
+    // revalidatePath('/dashboard')
+    // revalidatePath(`/tasks/${taskId}`)
 
     return { success: true }
   } catch (error) {
@@ -308,9 +308,9 @@ export async function submitTaskForApproval(prevState: any, taskId: string) {
       data: { status: TaskStatus.PENDING_APPROVAL },
     })
 
-    revalidatePath('/tasks')
-    revalidatePath('/dashboard')
-    revalidatePath(`/tasks/${taskId}`)
+    // revalidatePath('/tasks')
+    // revalidatePath('/dashboard')
+    // revalidatePath(`/tasks/${taskId}`)
 
     return { success: true, task: updatedTask }
   } catch (error) {
@@ -363,9 +363,9 @@ export async function cancelTaskApplication(prevState: any, taskId: string) {
       })
     })
 
-    revalidatePath('/tasks')
-    revalidatePath('/dashboard')
-    revalidatePath(`/tasks/${taskId}`)
+    // revalidatePath('/tasks')
+    // revalidatePath('/dashboard')
+    // revalidatePath(`/tasks/${taskId}`)
 
     return { success: true }
   } catch (error) {

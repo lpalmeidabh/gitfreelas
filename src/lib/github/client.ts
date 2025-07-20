@@ -14,7 +14,7 @@ const GITHUB_CONFIG = {
   webhookSecret: process.env.GITHUB_WEBHOOK_SECRET || '',
 } as const
 
-console.log('GITHUB_CONFIG:', GITHUB_CONFIG)
+// console.log('GITHUB_CONFIG:', GITHUB_CONFIG)
 // Validar configurações essenciais
 if (
   !GITHUB_CONFIG.appId ||

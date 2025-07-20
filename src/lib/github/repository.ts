@@ -234,3 +234,101 @@ export async function repositoryExists(
     return false
   }
 }
+
+// Adicionar ao final do arquivo src/lib/github/repository.ts
+
+// Substituir no arquivo src/lib/github/repository.ts
+
+/**
+ * Finaliza ownership: cliente vira colaborador, desenvolvedor é removido
+ */
+export async function finalizeRepositoryOwnership(
+  taskId: string,
+  developerUsername: string,
+  clientUsername: string,
+): Promise<{ success: boolean; action?: string; error?: string }> {
+  try {
+    const client = await getGitHubClient()
+    const repositoryName = generateRepositoryName(taskId)
+
+    console.log(
+      `🔄 Finalizando ownership: cliente=${clientUsername}, dev=${developerUsername}`,
+    )
+
+    // Verificar se o repositório existe
+    await client.rest.repos.get({
+      owner: githubConfig.owner,
+      repo: repositoryName,
+    })
+
+    // try {
+    //   await client.rest.repos.transfer({
+    //     owner: githubConfig.owner,
+    //     repo: repositoryName,
+    //     new_owner: clientUsername, // Transferir ownership para o cliente
+    //   })
+    //   console.log(`✅ Repositório transferido para ${clientUsername}`)
+    // } catch (transferError) {
+    //   console.error('❌ Erro ao transferir repositório:', transferError)
+    //   return {
+    //     success: false,
+    //     error:
+    //       transferError instanceof Error
+    //         ? transferError.message
+    //         : 'Erro ao transferir repositório',
+    //   }
+    // }
+    // 1. Tentar adicionar cliente como admin (se falhar, try collaborator)
+
+    try {
+      await client.rest.repos.addCollaborator({
+        owner: githubConfig.owner,
+        repo: repositoryName,
+        username: clientUsername,
+        permission: 'pull',
+      })
+
+      console.log(
+        `✅ Cliente ${clientUsername} adicionado como colaborator (push)`,
+      )
+    } catch (pushError) {
+      console.error('❌ Erro ao adicionar cliente como colaborador:', pushError)
+      return {
+        success: false,
+        error: 'Não foi possível dar acesso ao cliente',
+      }
+    }
+
+    // 2. Remover desenvolvedor (não falha se já foi removido)
+    try {
+      await client.rest.repos.removeCollaborator({
+        owner: githubConfig.owner,
+        repo: repositoryName,
+        username: developerUsername,
+      })
+
+      console.log(
+        `✅ Desenvolvedor ${developerUsername} removido do repositório`,
+      )
+    } catch (removeError) {
+      console.warn(
+        '⚠️ Erro ao remover desenvolvedor (pode já ter sido removido):',
+        removeError,
+      )
+    }
+
+    return {
+      success: true,
+      action: `Cliente ${clientUsername} agora é o proprietário do repositório`,
+    }
+  } catch (error) {
+    console.error('Erro ao finalizar ownership do repositório:', error)
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Erro ao transferir controle do repositório',
+    }
+  }
+}

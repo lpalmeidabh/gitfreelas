@@ -41,9 +41,7 @@ export interface PullRequestFile {
 /**
  * Busca todas as PRs abertas para uma task
  */
-export async function getPullRequestsForTask(
-  taskId: string,
-): Promise<{
+export async function getPullRequestsForTask(taskId: string): Promise<{
   success: boolean
   pullRequests?: PullRequestInfo[]
   error?: string
@@ -205,6 +203,158 @@ export async function getRepositoryInfo(taskId: string) {
       success: false,
       error:
         error instanceof Error ? error.message : 'Repositório não encontrado',
+    }
+  }
+}
+
+// Adicionar ao final do arquivo src/lib/github/pull-requests.ts
+
+/**
+ * Fecha e faz merge de uma Pull Request após aprovação
+ */
+export async function closePullRequest(
+  taskId: string,
+  prNumber: number,
+  mergeCommitMessage?: string,
+): Promise<{
+  success: boolean
+  prNumber?: number
+  mergedAt?: string
+  error?: string
+}> {
+  try {
+    const client = await getGitHubClient()
+    const repositoryName = `gitfreelas-task-${taskId}`
+
+    // Primeiro, verificar se a PR existe e está aberta
+    const { data: pr } = await client.rest.pulls.get({
+      owner: githubConfig.owner,
+      repo: repositoryName,
+      pull_number: prNumber,
+    })
+
+    if (pr.state !== 'open') {
+      return {
+        success: false,
+        error: `PR #${prNumber} já está ${pr.state}`,
+      }
+    }
+
+    // Fazer merge da PR
+    const { data: mergeResult } = await client.rest.pulls.merge({
+      owner: githubConfig.owner,
+      repo: repositoryName,
+      pull_number: prNumber,
+      commit_title: mergeCommitMessage || `Merge PR #${prNumber}: ${pr.title}`,
+      commit_message: 'Trabalho aprovado pela plataforma GitFreelas',
+      merge_method: 'merge',
+    })
+
+    if (mergeResult.merged) {
+      console.log(`✅ PR #${prNumber} merged successfully`)
+      return {
+        success: true,
+        prNumber,
+        mergedAt: new Date().toISOString(),
+      }
+    } else {
+      return {
+        success: false,
+        error: 'Não foi possível fazer merge da PR',
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao fechar PR:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Erro desconhecido',
+    }
+  }
+}
+
+/**
+ * Adiciona comentário final na PR antes de fechar
+ */
+export async function addApprovalComment(
+  taskId: string,
+  prNumber: number,
+  feedback?: string,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const client = await getGitHubClient()
+    const repositoryName = `gitfreelas-task-${taskId}`
+
+    const commentBody = `
+🎉 **Trabalho Aprovado!**
+
+${feedback ? `**Feedback do Cliente:**\n${feedback}\n\n` : ''}
+
+✅ Este trabalho foi aprovado pela plataforma GitFreelas
+💰 O pagamento foi liberado automaticamente
+🚀 O repositório será transferido para você em breve
+
+---
+*Comentário automático da plataforma GitFreelas*
+`
+
+    await client.rest.issues.createComment({
+      owner: githubConfig.owner,
+      repo: repositoryName,
+      issue_number: prNumber,
+      body: commentBody,
+    })
+
+    return { success: true }
+  } catch (error) {
+    console.error('Erro ao adicionar comentário:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Erro ao comentar',
+    }
+  }
+}
+
+/**
+ * Adiciona comentário de rejeição na PR
+ */
+export async function addRejectionComment(
+  taskId: string,
+  prNumber: number,
+  feedback: string,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const client = await getGitHubClient()
+    const repositoryName = `gitfreelas-task-${taskId}`
+
+    const commentBody = `
+❌ **Trabalho Rejeitado**
+
+**Motivo da Rejeição:**
+${feedback}
+
+---
+
+❗ Esta tarefa foi rejeitada pelo cliente e será cancelada.
+💸 O valor depositado será devolvido ao cliente
+📝 Esta PR permanecerá aberta para referência
+
+---
+*Comentário automático da plataforma GitFreelas*
+`
+
+    await client.rest.issues.createComment({
+      owner: githubConfig.owner,
+      repo: repositoryName,
+      issue_number: prNumber,
+      body: commentBody,
+    })
+
+    return { success: true }
+  } catch (error) {
+    console.error('Erro ao adicionar comentário de rejeição:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Erro ao comentar',
     }
   }
 }

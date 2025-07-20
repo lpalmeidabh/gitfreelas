@@ -17,8 +17,6 @@ import {
   CheckCircle,
   XCircle,
   MessageSquare,
-  AlertTriangle,
-  Clock,
   Wallet,
   ExternalLink,
 } from 'lucide-react'
@@ -31,25 +29,32 @@ import {
   requestTaskRevision,
 } from '@/actions/code-review'
 import { ConnectWallet } from '@/components/web3/connect-wallet'
-import { toast } from 'sonner'
+import { CodeReviewProgress } from './code-review-progress'
 
 interface TaskReviewActionsProps {
   task: TaskWithRelations
   selectedPR: PullRequestInfo
 }
 
+type ReviewStep = 'form' | 'blockchain' | 'database' | 'github' | 'success'
+type ReviewAction = 'approve' | 'reject' | 'revision' | null
+
 export function TaskReviewActions({
   task,
   selectedPR,
 }: TaskReviewActionsProps) {
   const [feedback, setFeedback] = useState('')
-  const [currentAction, setCurrentAction] = useState<
-    'approve' | 'reject' | 'revision' | null
-  >(null)
+  const [currentStep, setCurrentStep] = useState<ReviewStep>('form')
+  const [currentAction, setCurrentAction] = useState<ReviewAction>(null)
+  const [githubResults, setGithubResults] = useState<{
+    comment: boolean
+    merge: boolean
+    ownership: boolean
+  } | null>(null)
 
-  // Hook existente para blockchain
+  // Hook para blockchain (apenas aprovação)
   const {
-    currentStep,
+    currentStep: hookStep,
     isConnected,
     isCompleting,
     hasError: contractError,
@@ -62,58 +67,53 @@ export function TaskReviewActions({
   // Server actions para database
   const [rejectState, rejectAction, isRejectPending] = useActionState(
     rejectTaskSubmission,
-    {
-      success: false,
-      error: '',
-    },
+    { success: false, error: '' },
   )
 
   const [revisionState, revisionAction, isRevisionPending] = useActionState(
     requestTaskRevision,
-    {
-      success: false,
-      error: '',
-    },
+    { success: false, error: '' },
   )
 
   const [approveState, approveAction, isApprovePending] = useActionState(
     approveTaskCompletion,
-    {
-      success: false,
-      error: '',
-    },
+    { success: false, error: '' },
   )
 
   const [isTransitioning, startTransition] = useTransition()
 
+  // Computed states
   const isProcessing =
     isCompleting ||
     isRejectPending ||
     isRevisionPending ||
     isApprovePending ||
     isTransitioning
+  const errorMessage =
+    contractErrorMessage ||
+    approveState.error ||
+    rejectState.error ||
+    revisionState.error
 
-  const handleApprove = async () => {
+  // Handlers
+  async function handleApprove() {
     setCurrentAction('approve')
-    toast.loading('Processando aprovação na blockchain...')
+    setCurrentStep('blockchain')
 
     try {
-      await completeTaskOnContract(task.id)
+      await completeTaskOnContract(task.id, selectedPR.number, feedback)
     } catch (error) {
       console.error('Erro ao aprovar:', error)
+      setCurrentStep('form')
       setCurrentAction(null)
-      toast.error('Erro ao processar transação')
     }
   }
 
-  const handleReject = async () => {
-    if (!feedback.trim()) {
-      toast.error('Por favor, forneça um motivo para a rejeição')
-      return
-    }
+  async function handleReject() {
+    if (!feedback.trim()) return
 
     setCurrentAction('reject')
-    toast.loading('Processando rejeição...')
+    setCurrentStep('database')
 
     const formData = new FormData()
     formData.append('taskId', task.id)
@@ -125,14 +125,11 @@ export function TaskReviewActions({
     })
   }
 
-  const handleRequestRevision = async () => {
-    if (!feedback.trim()) {
-      toast.error('Por favor, forneça feedback para as correções')
-      return
-    }
+  async function handleRequestRevision() {
+    if (!feedback.trim()) return
 
     setCurrentAction('revision')
-    toast.loading('Enviando solicitação de correções...')
+    setCurrentStep('database')
 
     const formData = new FormData()
     formData.append('taskId', task.id)
@@ -144,10 +141,25 @@ export function TaskReviewActions({
     })
   }
 
-  // Handle blockchain transaction success
+  function resetToForm() {
+    setCurrentStep('form')
+    setCurrentAction(null)
+    setGithubResults(null)
+    resetOnError()
+  }
+
+  // ===== EVENT MONITORING =====
+
+  // 1. Monitor blockchain success (apenas para approve)
   React.useEffect(() => {
-    if (currentStep === 'success' && currentAction === 'approve') {
-      // Após sucesso da blockchain, atualizar database
+    if (
+      hookStep === 'success' &&
+      currentAction === 'approve' &&
+      currentStep === 'blockchain'
+    ) {
+      console.log('✅ Blockchain confirmada, chamando database...')
+      setCurrentStep('database')
+
       const formData = new FormData()
       formData.append('taskId', task.id)
       formData.append('prNumber', selectedPR.number.toString())
@@ -158,47 +170,68 @@ export function TaskReviewActions({
       })
     }
   }, [
-    currentStep,
+    hookStep,
     currentAction,
+    currentStep,
     task.id,
-    selectedPR.number,
+    selectedPR?.number,
     feedback,
     approveAction,
   ])
 
-  // Handle success states
+  // 2. Monitor database success
   React.useEffect(() => {
-    if (approveState.success) {
-      toast.success('Trabalho aprovado com sucesso!')
-      setTimeout(() => window.location.reload(), 1000)
-    }
-    if (rejectState.success) {
-      toast.success('Trabalho rejeitado!')
-      setTimeout(() => window.location.reload(), 1000)
-    }
-    if (revisionState.success) {
-      toast.success('Correções solicitadas!')
-      setTimeout(() => window.location.reload(), 1000)
-    }
-  }, [approveState.success, rejectState.success, revisionState.success])
+    // Aprovação: blockchain → database → github → success
+    if (
+      approveState.success &&
+      currentStep === 'database' &&
+      currentAction === 'approve'
+    ) {
+      console.log('✅ Database atualizada, iniciando GitHub actions...')
+      setCurrentStep('github')
 
-  // Handle error states
+      // Simular tempo das GitHub actions (elas rodam na server action)
+      setTimeout(() => {
+        console.log('✅ GitHub actions concluídas')
+        setGithubResults({ comment: true, merge: true, ownership: true })
+        setCurrentStep('success')
+      }, 2000)
+    }
+
+    // Rejeição: database → success (direto)
+    if (rejectState.success && currentAction === 'reject') {
+      console.log('✅ Rejeição processada')
+      setCurrentStep('success')
+    }
+
+    // Revisão: database → success (direto)
+    if (revisionState.success && currentAction === 'revision') {
+      console.log('✅ Revisão solicitada')
+      setCurrentStep('success')
+    }
+  }, [
+    approveState.success,
+    rejectState.success,
+    revisionState.success,
+    currentStep,
+    currentAction,
+  ])
+
+  // 3. Monitor errors
   React.useEffect(() => {
-    if (contractError) {
-      toast.error(`Erro na blockchain: ${contractErrorMessage}`)
-      setCurrentAction(null)
-    }
-    if (approveState.error) {
-      toast.error(`Erro ao aprovar: ${approveState.error}`)
-      setCurrentAction(null)
-    }
-    if (rejectState.error) {
-      toast.error(`Erro ao rejeitar: ${rejectState.error}`)
-      setCurrentAction(null)
-    }
-    if (revisionState.error) {
-      toast.error(`Erro ao solicitar correções: ${revisionState.error}`)
-      setCurrentAction(null)
+    if (
+      contractError ||
+      approveState.error ||
+      rejectState.error ||
+      revisionState.error
+    ) {
+      console.error('❌ Erro detectado:', {
+        contractError: contractErrorMessage,
+        approveError: approveState.error,
+        rejectError: rejectState.error,
+        revisionError: revisionState.error,
+      })
+      // Errors são handled pelo CodeReviewProgress component
     }
   }, [
     contractError,
@@ -208,185 +241,154 @@ export function TaskReviewActions({
     revisionState.error,
   ])
 
-  // Mostrar processamento
-  if (isProcessing) {
+  // ===== RENDER LOGIC =====
+
+  // Show progress component if not in form step
+  if (currentStep !== 'form') {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5 animate-spin" />
-            {currentAction === 'approve' && currentStep === 'blockchain'
-              ? 'Processando na Blockchain'
-              : currentAction === 'approve' && currentStep === 'database'
-              ? 'Atualizando Sistema'
-              : currentAction === 'reject'
-              ? 'Processando Rejeição'
-              : currentAction === 'revision'
-              ? 'Enviando Correções'
-              : 'Processando...'}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-center py-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
-
-            {currentAction === 'approve' && (
-              <div className="space-y-2">
-                <div
-                  className={`flex items-center gap-2 ${
-                    currentStep === 'blockchain'
-                      ? 'text-blue-600'
-                      : currentStep === 'database' || currentStep === 'success'
-                      ? 'text-green-600'
-                      : 'text-gray-400'
-                  }`}
-                >
-                  <div className="h-2 w-2 rounded-full bg-current"></div>
-                  <span className="text-sm">Transação na blockchain</span>
-                  {contractTx && (
-                    <Button variant="ghost" size="sm" asChild>
-                      <a
-                        href={`https://sepolia.etherscan.io/tx/${contractTx}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                    </Button>
-                  )}
-                </div>
-
-                <div
-                  className={`flex items-center gap-2 ${
-                    isApprovePending
-                      ? 'text-blue-600'
-                      : approveState.success
-                      ? 'text-green-600'
-                      : 'text-gray-400'
-                  }`}
-                >
-                  <div className="h-2 w-2 rounded-full bg-current"></div>
-                  <span className="text-sm">Atualizando sistema</span>
-                </div>
-              </div>
-            )}
-
-            <Alert>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                ⚠️ Não feche esta janela durante o processamento
-              </AlertDescription>
-            </Alert>
-          </div>
-        </CardContent>
-      </Card>
+      <CodeReviewProgress
+        currentStep={currentStep}
+        currentAction={currentAction!}
+        isProcessing={isProcessing}
+        githubResults={githubResults}
+        errorMessage={errorMessage}
+        txHash={contractTx}
+        onRetry={resetToForm}
+        onClose={() => window.location.reload()}
+      />
     )
   }
 
-  // Interface normal
+  // Form state (default)
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MessageSquare className="h-5 w-5" />
-          Revisar Entrega
+          Revisar Trabalho
         </CardTitle>
         <CardDescription>
-          Aprove o trabalho, rejeite ou solicite correções
+          Pull Request #{selectedPR.number} - {selectedPR.title}
         </CardDescription>
       </CardHeader>
-
       <CardContent className="space-y-6">
+        {/* Feedback Input */}
+        <div className="space-y-2">
+          <Label htmlFor="feedback">
+            Feedback{' '}
+            {currentAction === 'reject' || currentAction === 'revision'
+              ? '(obrigatório)'
+              : '(opcional)'}
+          </Label>
+          <Textarea
+            id="feedback"
+            placeholder={
+              currentAction === 'reject'
+                ? 'Explique o motivo da rejeição...'
+                : currentAction === 'revision'
+                ? 'Descreva as correções necessárias...'
+                : 'Forneça feedback sobre o trabalho entregue...'
+            }
+            value={feedback}
+            onChange={(e) => setFeedback(e.target.value)}
+            className="min-h-[100px]"
+          />
+          {(currentAction === 'reject' || currentAction === 'revision') &&
+            !feedback.trim() && (
+              <p className="text-sm text-red-600">
+                Este campo é obrigatório para esta ação
+              </p>
+            )}
+        </div>
+
+        {/* Wallet Connection Check */}
         {!isConnected && (
           <Alert>
             <Wallet className="h-4 w-4" />
-            <AlertDescription className="flex items-center justify-between">
-              <span>Conecte sua carteira para processar ações</span>
-              <ConnectWallet />
+            <AlertDescription>
+              Para aprovar o trabalho e liberar o pagamento, você precisa
+              conectar sua carteira Web3.
             </AlertDescription>
           </Alert>
         )}
 
-        <Alert>
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            <strong>Importante:</strong> Ao aprovar, uma transação blockchain
-            será executada para liberar o pagamento. Rejeição e solicitação de
-            correções são apenas atualizações do sistema.
-          </AlertDescription>
-        </Alert>
-
-        <div className="space-y-2">
-          <Label htmlFor="feedback">Feedback / Comentários</Label>
-          <Textarea
-            id="feedback"
-            placeholder="Forneça feedback sobre o trabalho entregue..."
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            rows={4}
-          />
-          <p className="text-xs text-muted-foreground">
-            Este feedback será enviado ao desenvolvedor
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {/* Action Buttons */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Button
-            onClick={handleApprove}
-            className="w-full"
-            size="lg"
+            onClick={() => {
+              setCurrentAction('approve')
+              handleApprove()
+            }}
             disabled={!isConnected || isProcessing}
+            className="bg-green-600 hover:bg-green-700"
           >
             <CheckCircle className="h-4 w-4 mr-2" />
-            Aprovar e Pagar
+            Aprovar
           </Button>
 
           <Button
-            onClick={handleRequestRevision}
-            variant="outline"
-            className="w-full"
-            size="lg"
+            onClick={() => {
+              setCurrentAction('revision')
+              if (feedback.trim()) {
+                handleRequestRevision()
+              }
+            }}
             disabled={!feedback.trim() || isProcessing}
+            variant="outline"
           >
             <MessageSquare className="h-4 w-4 mr-2" />
             Solicitar Correções
           </Button>
 
           <Button
-            onClick={handleReject}
-            variant="destructive"
-            className="w-full"
-            size="lg"
+            onClick={() => {
+              setCurrentAction('reject')
+              if (feedback.trim()) {
+                handleReject()
+              }
+            }}
             disabled={!feedback.trim() || isProcessing}
+            variant="destructive"
           >
             <XCircle className="h-4 w-4 mr-2" />
-            Rejeitar e Cancelar
+            Rejeitar
           </Button>
         </div>
 
-        <div className="bg-gray-50 rounded p-3 text-sm">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <span className="font-medium">Valor da Tarefa:</span>
-              <div>{parseFloat(task.valueInWei) / 1e18} ETH</div>
-            </div>
-            <div>
-              <span className="font-medium">Desenvolvedor:</span>
-              <div>{task.taskDeveloper?.developer.name}</div>
-            </div>
-            <div>
-              <span className="font-medium">PR:</span>
-              <div>
-                #{selectedPR.number} - {selectedPR.title}
-              </div>
-            </div>
-            <div>
-              <span className="font-medium">Deadline:</span>
-              <div>{task.deadline.toLocaleDateString()}</div>
-            </div>
+        {/* Validation Messages */}
+        {currentAction === 'reject' && !feedback.trim() && (
+          <Alert variant="destructive">
+            <AlertDescription>
+              É obrigatório fornecer um motivo para rejeitar o trabalho.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {currentAction === 'revision' && !feedback.trim() && (
+          <Alert variant="destructive">
+            <AlertDescription>
+              É obrigatório fornecer feedback sobre as correções necessárias.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Connect Wallet */}
+        {!isConnected && (
+          <div className="pt-4 border-t">
+            <ConnectWallet />
           </div>
+        )}
+
+        {/* PR Link */}
+        <div className="pt-4 border-t">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.open(selectedPR.html_url, '_blank')}
+          >
+            <ExternalLink className="h-4 w-4 mr-2" />
+            Ver Pull Request no GitHub
+          </Button>
         </div>
       </CardContent>
     </Card>

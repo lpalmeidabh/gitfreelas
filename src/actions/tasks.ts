@@ -227,36 +227,39 @@ export async function getTaskById(
 
 export async function getTasks(): Promise<TaskListResponse> {
   try {
-    const [tasks] = await Promise.all([
-      prisma.task.findMany({
-        include: {
-          creator: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              image: true,
-            },
+    const tasks = await prisma.task.findMany({
+      where: {
+        status: TaskStatus.OPEN, // ✅ APENAS TAREFAS ABERTAS
+        deletedAt: null,
+      },
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
           },
-          taskDeveloper: {
-            include: {
-              developer: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                  image: true,
-                },
+        },
+        taskDeveloper: {
+          include: {
+            developer: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
               },
             },
           },
-          repository: true,
-          transactions: {
-            orderBy: { createdAt: 'desc' },
-          },
         },
-      }),
-    ])
+        repository: true,
+        transactions: {
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    })
 
     return {
       tasks: tasks as TaskWithRelations[],
@@ -274,10 +277,18 @@ export async function getMyTasks() {
     const user = await getCurrentUser()
 
     const [createdTasks, appliedTasks] = await Promise.all([
-      // Tarefas que criei
+      // Tarefas que criei - APENAS ativas
       prisma.task.findMany({
         where: {
           creatorId: user.id,
+          status: {
+            in: [
+              TaskStatus.OPEN,
+              TaskStatus.APPLIED,
+              TaskStatus.IN_PROGRESS,
+              TaskStatus.PENDING_APPROVAL,
+            ], // ✅ NÃO MOSTRAR COMPLETED/CANCELLED
+          },
           deletedAt: null,
         },
         include: {
@@ -309,11 +320,18 @@ export async function getMyTasks() {
         orderBy: { createdAt: 'desc' },
       }),
 
-      // Tarefas onde apliquei
+      // Tarefas onde apliquei - APENAS ativas
       prisma.task.findMany({
         where: {
           taskDeveloper: {
             developerId: user.id,
+          },
+          status: {
+            in: [
+              TaskStatus.APPLIED,
+              TaskStatus.IN_PROGRESS,
+              TaskStatus.PENDING_APPROVAL,
+            ], // ✅ NÃO MOSTRAR COMPLETED/CANCELLED
           },
           deletedAt: null,
         },

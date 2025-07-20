@@ -14,7 +14,6 @@ import {
   requestTaskRevision,
 } from '@/actions/code-review'
 import { APP_CONFIG } from '@/lib/web3/config'
-import { toast } from 'sonner'
 
 export type CompleteStep =
   | 'confirm'
@@ -107,7 +106,6 @@ export function useCompleteTask() {
     } catch (error) {
       console.error('Erro no fluxo de complete task:', error)
       setCurrentStep('error')
-      toast.error('Erro ao processar ação')
     }
   }
 
@@ -115,7 +113,6 @@ export function useCompleteTask() {
   const handleBlockchainApproval = async (taskId: string) => {
     try {
       setCurrentStep('blockchain')
-      toast.loading('Chamando contrato inteligente...')
 
       writeContract({
         address: contract.address,
@@ -126,7 +123,6 @@ export function useCompleteTask() {
     } catch (error) {
       console.error('Erro ao chamar contrato:', error)
       setCurrentStep('error')
-      toast.error('Erro ao processar transação')
     }
   }
 
@@ -134,7 +130,6 @@ export function useCompleteTask() {
   const handleSubmitForApproval = async (taskId: string) => {
     try {
       setCurrentStep('database')
-      toast.loading('Submetendo para aprovação...')
 
       startTransition(() => {
         submitAction(taskId)
@@ -142,7 +137,6 @@ export function useCompleteTask() {
     } catch (error) {
       console.error('Erro ao submeter para aprovação:', error)
       setCurrentStep('error')
-      toast.error('Erro ao submeter tarefa')
     }
   }
 
@@ -150,7 +144,6 @@ export function useCompleteTask() {
   const handleDatabaseUpdate = async (data: CompleteTaskData) => {
     try {
       setCurrentStep('database')
-      toast.loading('Atualizando sistema...')
 
       const formData = new FormData()
       formData.append('taskId', data.taskId)
@@ -173,15 +166,20 @@ export function useCompleteTask() {
     } catch (error) {
       console.error('Erro ao atualizar database:', error)
       setCurrentStep('error')
-      toast.error('Erro ao atualizar sistema')
     }
   }
 
-  // Legacy functions (backward compatibility)
-  const completeTaskOnContract = async (taskId: string) => {
+  // ===== UPDATED: Legacy functions with extra parameters =====
+  const completeTaskOnContract = async (
+    taskId: string,
+    prNumber?: number,
+    feedback?: string,
+  ) => {
     await completeTask({
       taskId,
       action: 'approve',
+      prNumber,
+      feedback,
     })
   }
 
@@ -195,9 +193,9 @@ export function useCompleteTask() {
   // Monitor blockchain transaction success
   React.useEffect(() => {
     if (isContractSuccess && currentStep === 'blockchain' && currentData) {
-      toast.success('Transação confirmada na blockchain!')
-      // Agora atualizar database
-      handleDatabaseUpdate(currentData)
+      console.log('✅ Transação blockchain confirmada!')
+      setCurrentStep('success') // Sinaliza sucesso para o componente
+      // O database update será chamado pelo componente
     }
   }, [isContractSuccess, currentStep, currentData])
 
@@ -214,7 +212,6 @@ export function useCompleteTask() {
     const state = getCurrentState()
     if (state.success && currentStep === 'database') {
       setCurrentStep('success')
-      toast.success('Ação processada com sucesso!')
     }
   }, [
     submitState.success,
@@ -229,7 +226,6 @@ export function useCompleteTask() {
   React.useEffect(() => {
     if (contractError) {
       setCurrentStep('error')
-      toast.error(`Erro na blockchain: ${contractError.message}`)
     }
 
     const getCurrentError = () => {
@@ -243,7 +239,6 @@ export function useCompleteTask() {
     const error = getCurrentError()
     if (error) {
       setCurrentStep('error')
-      toast.error(`Erro no sistema: ${error}`)
     }
   }, [
     contractError,
@@ -264,7 +259,6 @@ export function useCompleteTask() {
   // Legacy reset functions
   const resetOnError = () => {
     resetFlow()
-    toast.dismiss()
   }
 
   const resetToInitial = () => {
@@ -304,8 +298,8 @@ export function useCompleteTask() {
     address,
     isProcessing,
 
-    // Legacy API (backward compatibility)
-    completeTaskOnContract,
+    // ===== UPDATED: Legacy API with extra parameters =====
+    completeTaskOnContract, // Agora aceita (taskId, prNumber?, feedback?)
     submitForApproval,
     resetOnError,
     resetToInitial,
