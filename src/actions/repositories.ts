@@ -32,6 +32,154 @@ async function getCurrentUser() {
 /**
  * Cria repositório quando desenvolvedor é aceito
  */
+export async function approveTaskCompletion(
+  prevState: any,
+  formData: FormData,
+) {
+  try {
+    const taskId = formData.get('taskId') as string
+    const prNumber = formData.get('prNumber') as string
+    const feedback = formData.get('feedback') as string
+
+    if (!taskId) {
+      return {
+        success: false,
+        error: 'TaskId é obrigatório',
+      }
+    }
+
+    const user = await getCurrentUser()
+
+    // Verificar se é o cliente da tarefa
+    const task = await prisma.task.findFirst({
+      where: {
+        id: taskId,
+        creatorId: user.id,
+        status: 'PENDING_APPROVAL',
+        deletedAt: null,
+      },
+      include: {
+        taskDeveloper: {
+          include: {
+            developer: true,
+          },
+        },
+      },
+    })
+
+    if (!task) {
+      return {
+        success: false,
+        error: 'Tarefa não encontrada ou sem permissão para aprovar',
+      }
+    }
+
+    if (!task.taskDeveloper) {
+      return {
+        success: false,
+        error: 'Nenhum desenvolvedor associado à tarefa',
+      }
+    }
+
+    // ✅ CORREÇÃO: Buscar usernames reais do GitHub
+    const { getGitHubUsername } = await import('@/lib/github/user-utils')
+    const [developerUsername, clientUsername] = await Promise.all([
+      getGitHubUsername(task.taskDeveloper.developer.id),
+      getGitHubUsername(user.id),
+    ])
+
+    // 1. Atualizar status da task para COMPLETED
+    const updatedTask = await prisma.task.update({
+      where: { id: taskId },
+      data: {
+        status: 'COMPLETED',
+        updatedAt: new Date(),
+      },
+    })
+
+    // 2. Ações GitHub (se PR number foi fornecido)
+    if (prNumber && developerUsername && clientUsername) {
+      try {
+        // Importar funções GitHub
+        const { addApprovalComment, closePullRequest } = await import(
+          '@/lib/github/pull-requests'
+        )
+        const { finalizeRepositoryOwnership } = await import(
+          '@/lib/github/repository'
+        )
+
+        console.log(`🔄 Iniciando workflow GitHub para task ${taskId}...`)
+
+        // 2a. Adicionar comentário de aprovação na PR
+        const commentResult = await addApprovalComment(
+          taskId,
+          parseInt(prNumber),
+          feedback,
+        )
+        if (!commentResult.success) {
+          console.warn('⚠️ Erro ao adicionar comentário:', commentResult.error)
+        }
+
+        // 2b. Fechar e fazer merge da PR
+        const mergeResult = await closePullRequest(taskId, parseInt(prNumber))
+        if (!mergeResult.success) {
+          console.warn('⚠️ Erro ao fazer merge da PR:', mergeResult.error)
+        }
+
+        // 2c. Transferir controle do repositório para o cliente
+        const ownershipResult = await finalizeRepositoryOwnership(
+          taskId,
+          developerUsername,
+          clientUsername,
+        )
+        if (!ownershipResult.success) {
+          console.warn(
+            '⚠️ Erro ao transferir repositório:',
+            ownershipResult.error,
+          )
+        }
+
+        console.log(`✅ Workflow GitHub concluído:`, {
+          comment: commentResult.success,
+          merge: mergeResult.success,
+          ownership: ownershipResult.success,
+        })
+      } catch (githubError) {
+        console.error('❌ Erro nas ações GitHub:', githubError)
+        // Não falha a aprovação por causa de erros GitHub
+      }
+    } else if (prNumber && (!developerUsername || !clientUsername)) {
+      console.warn('⚠️ Não foi possível obter usernames do GitHub:', {
+        developerUsername,
+        clientUsername,
+      })
+    }
+
+    console.log(
+      `✅ Task ${taskId} aprovada com sucesso. PR #${prNumber}. Feedback: ${feedback}`,
+    )
+
+    // Revalidar caches (comentado para testes)
+    // revalidatePath('/tasks')
+    // revalidatePath('/dashboard')
+    // revalidatePath(`/tasks/${taskId}`)
+
+    return {
+      success: true,
+      message:
+        'Trabalho aprovado com sucesso! Pagamento liberado e repositório transferido.',
+      task: updatedTask,
+    }
+  } catch (error) {
+    console.error('Erro ao aprovar tarefa:', error)
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Erro interno do servidor',
+    }
+  }
+}
+
 export async function createRepositoryForTask(taskId: string) {
   try {
     const user = await getCurrentUser()
@@ -80,13 +228,26 @@ export async function createRepositoryForTask(taskId: string) {
       }
     }
 
+    // ✅ CORREÇÃO: Buscar username real do GitHub
+    const { getGitHubUsername } = await import('@/lib/github/user-utils')
+    const developerUsername = await getGitHubUsername(
+      task.taskDeveloper.developer.id,
+    )
+
+    if (!developerUsername) {
+      return {
+        success: false,
+        error: 'Não foi possível obter username do GitHub do desenvolvedor',
+      }
+    }
+
     // Dados para criar o repositório
     const repoData: CreateTaskRepositoryData = {
       taskId,
       title: task.title,
       description: task.description,
       clientName: task.creator.email,
-      developerUsername: task.taskDeveloper.developer.email, // Assumindo que o name é o username
+      developerUsername, // ✅ Agora usando username real do GitHub
     }
 
     // Criar repositório no GitHub
@@ -113,7 +274,7 @@ export async function createRepositoryForTask(taskId: string) {
     // Adicionar desenvolvedor como colaborador
     const addResult = await addDeveloperToRepository(
       repoResult.repositoryName,
-      task.taskDeveloper.developer.email,
+      developerUsername, // ✅ Usando username real do GitHub
     )
 
     if (!addResult.success) {

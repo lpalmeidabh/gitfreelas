@@ -76,8 +76,12 @@ export async function approveTaskCompletion(
       }
     }
 
-    const developerUsername = task.taskDeveloper.developer.email
-    const clientUsername = user.email // Nome do GitHub do cliente
+    // ✅ CORREÇÃO: Buscar usernames reais do GitHub
+    const { getGitHubUsername } = await import('@/lib/github/user-utils')
+    const [developerUsername, clientUsername] = await Promise.all([
+      getGitHubUsername(task.taskDeveloper.developer.id),
+      getGitHubUsername(user.id),
+    ])
 
     // 1. Atualizar status da task para COMPLETED
     const updatedTask = await prisma.task.update({
@@ -139,6 +143,11 @@ export async function approveTaskCompletion(
         console.error('❌ Erro nas ações GitHub:', githubError)
         // Não falha a aprovação por causa de erros GitHub
       }
+    } else if (prNumber && (!developerUsername || !clientUsername)) {
+      console.warn('⚠️ Não foi possível obter usernames do GitHub:', {
+        developerUsername,
+        clientUsername,
+      })
     }
 
     console.log(
