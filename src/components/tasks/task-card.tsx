@@ -116,7 +116,10 @@ export function TaskCard({
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <StatusIcon className="h-4 w-4" />
-              <Badge variant="outline" className={statusInfo.color}>
+              <Badge
+                variant="outline"
+                className={`${statusInfo.color} font-medium`}
+              >
                 {statusInfo.label}
               </Badge>
               {isUrgent && <Badge variant="destructive">Urgente</Badge>}

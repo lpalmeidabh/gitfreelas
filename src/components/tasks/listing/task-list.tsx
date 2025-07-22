@@ -23,7 +23,7 @@ export function TaskList({
   initialData,
   variant = 'default',
   title = 'Tarefas Disponíveis',
-  description = 'Encontre tarefas que combinam com suas habilidades',
+  description = '',
 }: TaskListProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -119,12 +119,7 @@ export function TaskList({
             )}
           >
             {data.tasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                variant={variant}
-                showActions={true}
-              />
+              <TaskCard key={task.id} task={task} showActions={true} />
             ))}
           </div>
         )}

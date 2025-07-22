@@ -41,31 +41,26 @@ import { WalletStatusCard } from '@/components/web3/wallet-status-card'
 
 const navigationData = {
   main: [
+    // {
+    //   title: 'Dashboard',
+    //   url: '/dashboard',
+    //   icon: LayoutDashboard,
+    // },
     {
-      title: 'Dashboard',
-      url: '/dashboard',
-      icon: LayoutDashboard,
+      title: 'Criar Tarefa',
+      url: '/tasks/create',
+      icon: Plus,
     },
     {
-      title: 'Tarefas',
-      icon: FileText,
-      items: [
-        {
-          title: 'Explorar Tarefas',
-          url: '/tasks',
-          icon: Search,
-        },
-        {
-          title: 'Criar Tarefa',
-          url: '/tasks/create',
-          icon: Plus,
-        },
-        {
-          title: 'Minhas Tarefas',
-          url: '/tasks/my-tasks',
-          icon: User,
-        },
-      ],
+      title: 'Explorar Tarefas',
+      url: '/tasks',
+      icon: Search,
+    },
+
+    {
+      title: 'Minhas Tarefas',
+      url: '/tasks/my-tasks',
+      icon: User,
     },
   ],
   secondary: [
@@ -171,7 +166,7 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Links de Desenvolvimento/Debug */}
+        {/* Links de Desenvolvimento/Debug
         <SidebarGroup>
           <SidebarGroupLabel>Debug & Testes</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -186,11 +181,11 @@ export function AppSidebar({
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup> */}
 
         {/* Navegação Secundária */}
         <SidebarGroup>
-          <SidebarGroupLabel>Outros</SidebarGroupLabel>
+          {/* <SidebarGroupLabel>Outros</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationData.secondary.map((item) => (
@@ -204,7 +199,7 @@ export function AppSidebar({
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
-          </SidebarGroupContent>
+          </SidebarGroupContent> */}
         </SidebarGroup>
         <SidebarGroup>
           <WalletStatusCard />

@@ -281,14 +281,7 @@ export async function getMyTasks() {
       prisma.task.findMany({
         where: {
           creatorId: user.id,
-          status: {
-            in: [
-              TaskStatus.OPEN,
-              TaskStatus.APPLIED,
-              TaskStatus.IN_PROGRESS,
-              TaskStatus.PENDING_APPROVAL,
-            ], // ✅ NÃO MOSTRAR COMPLETED/CANCELLED
-          },
+
           deletedAt: null,
         },
         include: {

@@ -26,21 +26,18 @@ export default async function MyTasksPage() {
 
   return (
     <div className="space-y-8 p-8">
-      <TaskList
-        initialData={{
-          tasks: myTasksData?.createdTasks || [],
-        }}
-        title="Tarefas que Criei"
-        description="Gerencie suas tarefas criadas"
-      />
-
-      {/* Tarefas onde apliquei */}
+      <span className="flex mb-10 font-bold text-3xl">Minhas tarefas</span>
       <TaskList
         initialData={{
           tasks: myTasksData?.appliedTasks || [],
         }}
-        title="Tarefas Onde Apliquei"
-        description="Acompanhe suas aplicações"
+        title="Como Desenvolvedor"
+      />
+      <TaskList
+        initialData={{
+          tasks: myTasksData?.createdTasks || [],
+        }}
+        title="Como Cliente"
       />
     </div>
   )

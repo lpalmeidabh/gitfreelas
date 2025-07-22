@@ -10,7 +10,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { ArrowLeft, Plus, Lightbulb, Clock, Shield } from 'lucide-react'
+import {
+  ArrowLeft,
+  Plus,
+  Lightbulb,
+  Clock,
+  Shield,
+  DollarSign,
+} from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata = {
@@ -31,7 +38,7 @@ export default async function CreateTaskPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container max-w-4xl mx-auto py-8 px-4">
+      <div className="container  mx-auto py-8 px-4">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
@@ -61,7 +68,7 @@ export default async function CreateTaskPage() {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3 mb-2">
-                <Shield className="h-5 w-5 text-blue-600" />
+                <DollarSign className="h-5 w-5 text-blue-600" />
                 <h3 className="font-medium">Pagamento Seguro</h3>
               </div>
               <p className="text-sm text-muted-foreground">

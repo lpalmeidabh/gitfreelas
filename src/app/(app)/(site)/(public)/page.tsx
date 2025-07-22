@@ -10,6 +10,13 @@ import {
   Users,
   Wallet,
   Loader2,
+  Contact,
+  FolderGit,
+  GitBranch,
+  HandMetal,
+  BookCheck,
+  Scroll,
+  Info,
 } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { useState } from 'react'
@@ -85,38 +92,78 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Info className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">
+                1. Cliente posta tarefa
+              </h3>
+              <p className="text-muted-foreground">
+                Descreve o projeto, define valor em ETH e prazo. Neste momento,
+                o valor é travado em um smart contract.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">
-                1. Cliente Posta Tarefa
-              </h3>
+              <h3 className="text-xl font-semibold mb-2">2. Dev se aplica</h3>
               <p className="text-muted-foreground">
-                Descreve o projeto, define valor em ETH e prazo. O valor fica
-                seguro em smart contract.
+                Desenvolvedor se canditada e, no momento em que é escolhido, ele
+                recebe acesso ao repositório GitHub para começar o trabalho.
               </p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Github className="w-8 h-8 text-primary" />
+                <Contact className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">2. Dev se Aplica</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                3. Cliente escolhe o dev
+              </h3>
               <p className="text-muted-foreground">
-                Desenvolvedor conecta carteira, se aplica e recebe acesso
-                automático ao repositório GitHub.
+                Cliente aceita a candidatura do desenvolvedor e o repositório
+                GitHub é criado automaticamente temndo o dev como colaborador.
               </p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Wallet className="w-8 h-8 text-primary" />
+                <GitBranch className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">
-                3. Pagamento Automático
+                4. Dev trabalha na tarefa
               </h3>
               <p className="text-muted-foreground">
-                Após aprovação, o pagamento é liberado automaticamente via smart
-                contract. Sem intermediários.
+                Desenvolvedor trabalha na tarefa e ao concluí-la, ele envia um
+                pull request para o cliente revisar.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Scroll className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">
+                5. Tarefa aprovada e pagamento automatizado
+              </h3>
+              <p className="text-muted-foreground">
+                Assim que o cliente aprova a conclusão da tarefa, o pagamento é
+                liberado automaticamente e os tokens saem do contrato, direto
+                para a carteira do desenvolvedor.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BookCheck className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">
+                6. Cliente recebe o código
+              </h3>
+              <p className="text-muted-foreground">
+                Ao final, o cliente recebe acesso ao repositorio com todo o
+                código da tarefa.
               </p>
             </div>
           </div>
@@ -172,20 +219,6 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div className="bg-muted/30 rounded-lg p-8">
-              <h3 className="text-xl font-semibold mb-4">Tecnologias</h3>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>• Next.js 15</div>
-                <div>• TypeScript</div>
-                <div>• Solidity</div>
-                <div>• GitHub API</div>
-                <div>• Ethereum</div>
-                <div>• Prisma ORM</div>
-                <div>• Tailwind CSS</div>
-                <div>• Better Auth</div>
               </div>
             </div>
           </div>
