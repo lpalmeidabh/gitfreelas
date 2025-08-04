@@ -10,6 +10,12 @@ import {
 import { parseEther } from 'viem'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createTaskSchema, CreateTaskInput } from '@/lib/schemas/task'
+
+// Tipo específico para o formulário
+type CreateTaskFormData = Omit<CreateTaskInput, 'links' | 'attachments'> & {
+  links: Array<{ url: string; description: string }>
+  attachments: Array<{ name: string; url: string; size?: number }>
+}
 import { createTask, updateTaskWithContractHash } from '@/actions/tasks'
 import { APP_CONFIG } from '@/lib/web3/config'
 
@@ -20,6 +26,7 @@ type FormStep =
   | 'blockchain'
   | 'database_tx'
   | 'success'
+  | 'nonce_error'
 
 export function useCreateTask() {
   const { address, isConnected } = useAccount()
@@ -54,8 +61,7 @@ export function useCreateTask() {
     useWaitForTransactionReceipt({ hash })
 
   // Form
-  const form = useForm<CreateTaskInput>({
-    resolver: zodResolver(createTaskSchema),
+  const form = useForm<CreateTaskFormData>({
     defaultValues: {
       title: '',
       description: '',
@@ -63,6 +69,8 @@ export function useCreateTask() {
       valueInEther: '',
       deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       allowOverdue: false,
+      links: [] as Array<{ url: string; description: string }>,
+      attachments: [] as Array<{ name: string; url: string; size?: number }>,
     },
   })
 
@@ -70,7 +78,7 @@ export function useCreateTask() {
   const [currentStep, setCurrentStep] = useState<FormStep>('form')
 
   // Actions
-  const submitToDatabase = async (data: CreateTaskInput) => {
+  const submitToDatabase = async (data: CreateTaskFormData) => {
     try {
       setCurrentStep('database')
 
@@ -81,6 +89,8 @@ export function useCreateTask() {
       formData.append('valueInEther', data.valueInEther)
       formData.append('deadline', data.deadline.toISOString())
       formData.append('allowOverdue', data.allowOverdue.toString())
+      formData.append('links', JSON.stringify(data.links))
+      formData.append('attachments', JSON.stringify(data.attachments))
       if (address) formData.append('walletAddress', address)
 
       startTransition(() => createAction(formData))
@@ -90,7 +100,10 @@ export function useCreateTask() {
     }
   }
 
-  const createTaskContract = async (data: CreateTaskInput, taskId: string) => {
+  const createTaskContract = async (
+    data: CreateTaskFormData,
+    taskId: string,
+  ) => {
     try {
       setCurrentStep('blockchain')
 
@@ -108,6 +121,19 @@ export function useCreateTask() {
       })
     } catch (error) {
       console.error('Erro ao criar task no contrato:', error)
+
+      // Tratamento específico para erro de nonce
+      const errorMessage = (error as any)?.message || ''
+      if (errorMessage.includes('nonce too low')) {
+        console.error('Erro de nonce detectado. Por favor:')
+        console.error('1. Abra o MetaMask')
+        console.error('2. Vá em Configurações > Avançado')
+        console.error('3. Clique em "Reset Account"')
+        console.error('4. Tente novamente')
+        setCurrentStep('nonce_error')
+        return
+      }
+
       resetOnError()
     }
   }
@@ -116,6 +142,11 @@ export function useCreateTask() {
   const goToConfirmStep = () => setCurrentStep('confirm')
   const goBackToForm = () => setCurrentStep('form')
   const resetOnError = () => setCurrentStep('form')
+  const retryAfterNonceError = () => {
+    setCurrentStep('blockchain')
+    const formData = form.getValues()
+    createTaskContract(formData, taskId)
+  }
 
   // Computed states
   const isPending = isCreatePending || isUpdatePending || isTransitioning
@@ -152,18 +183,31 @@ export function useCreateTask() {
 
   // Error handling - consolidado
   useEffect(() => {
-    const hasError =
-      (createState.message && !createState.success) ||
-      contractError ||
-      (updateState.message && !updateState.success)
+    // Verificar erros específicos
+    const createError = createState.message && !createState.success
+    const contractErrorMsg =
+      contractError?.message ||
+      contractError?.name ||
+      (contractError ? 'Contract error' : null)
+    const updateError = updateState.message && !updateState.success
 
-    if (hasError) {
-      console.error('Erro detectado:', {
-        createError: createState.message,
-        contractError: contractError?.message,
-        updateError: updateState.message,
-      })
-      resetOnError()
+    // Só processar se há algum erro real
+    if (createError || contractErrorMsg || updateError) {
+      const errorDetails = {
+        createError: createError ? createState.message : null,
+        contractError: contractErrorMsg,
+        updateError: updateError ? updateState.message : null,
+      }
+
+      // Log apenas se há conteúdo real de erro
+      if (
+        errorDetails.createError ||
+        errorDetails.contractError ||
+        errorDetails.updateError
+      ) {
+        console.error('Erro detectado:', errorDetails)
+        resetOnError()
+      }
     }
   }, [createState, contractError, updateState])
 
@@ -174,6 +218,7 @@ export function useCreateTask() {
     goToConfirmStep,
     goBackToForm,
     resetOnError,
+    retryAfterNonceError,
 
     // States
     state: createState,

@@ -22,6 +22,7 @@ import { AlertTriangle, Calendar, CheckCircle, Clock, User } from 'lucide-react'
 import { TaskActions } from './task-actions'
 import { TaskValueInfo } from './task-value-info'
 import { TransactionHistory } from './transaction-history'
+import { SensitiveInfoSection } from './sensitive-info-section'
 
 interface TaskInfoProps {
   task: TaskWithRelations
@@ -139,6 +140,9 @@ export function TaskInfo({ task, currentUserId, searchParams }: TaskInfoProps) {
               </p>
             </div>
           )}
+
+          {/* Links e Anexos - Com controle de acesso */}
+          <SensitiveInfoSection task={task} currentUserId={currentUserId} />
 
           {/* Deadline e configurações */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

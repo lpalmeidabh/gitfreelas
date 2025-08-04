@@ -7,6 +7,7 @@ import { ConfirmApproval } from './steps/confirm-approval'
 import { ProcessingApproval } from './steps/processing-approval'
 import { SuccessApproval } from './steps/success-approval'
 import { ErrorApproval } from './steps/error-approval'
+import { SuccessNotification } from './success-notification'
 
 interface TaskApprovalModalProps {
   task: TaskWithRelations
@@ -31,6 +32,7 @@ export function TaskApprovalModal({
     errorMessage,
     canCloseModal,
     resetToInitial,
+    isSuccess,
   } = useApproveTask()
 
   // Bloquear fechamento durante processamento
@@ -128,10 +130,29 @@ export function TaskApprovalModal({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
-        {renderContent()}
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+        <DialogContent className="sm:max-w-[600px]">
+          {renderContent()}
+        </DialogContent>
+      </Dialog>
+
+      {/* Fallback notification if modal closes too quickly */}
+      {isSuccess && !isOpen && (
+        <SuccessNotification
+          message={
+            currentAction === 'accept'
+              ? 'Desenvolvedor aprovado com sucesso!'
+              : 'Aplicação rejeitada com sucesso!'
+          }
+          details={
+            currentAction === 'accept'
+              ? 'Repositório criado e desenvolvedor adicionado como colaborador.'
+              : 'A tarefa voltou para o status "Aberta" para receber novas aplicações.'
+          }
+          onClose={() => resetToInitial()}
+        />
+      )}
+    </>
   )
 }

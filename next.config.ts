@@ -1,5 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Configurar webpack para ignorar a pasta de contratos
+  webpack: (config: any) => {
+    // Ignorar arquivos de contratos
+    config.module.rules.push({
+      test: /contracts\/.*\.(ts|js|sol)$/,
+      use: 'ignore-loader',
+    })
+
+    return config
+  },
+
   turbopack: {
     rules: {
       '*.svg': {

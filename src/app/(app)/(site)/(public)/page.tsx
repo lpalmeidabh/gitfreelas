@@ -1,24 +1,22 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import {
-  Shield,
-  Zap,
-  Github,
-  CheckCircle,
-  Users,
-  Wallet,
-  Loader2,
-  Contact,
-  FolderGit,
-  GitBranch,
-  HandMetal,
-  BookCheck,
-  Scroll,
-  Info,
-} from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { authClient } from '@/lib/auth-client'
+import {
+  BookCheck,
+  CheckCircle,
+  Contact,
+  GitBranch,
+  Github,
+  GitPullRequest,
+  Info,
+  Loader2,
+  Scroll,
+  Shield,
+  Users,
+  Zap,
+} from 'lucide-react'
 import { useState } from 'react'
 
 export default function HomePage() {
@@ -42,10 +40,9 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto text-center max-w-4xl">
-          <Badge variant="outline" className="mb-6">
+          <Badge variant="destructive" className="mb-6">
             Trabalho de conclusão do Legal HackBuilders
           </Badge>
-
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
             GitFreelas
           </h1>
@@ -70,13 +67,10 @@ export default function HomePage() {
                 </>
               ) : (
                 <>
-                  <Github className="w-5 h-5 mr-2" />
+                  <GitPullRequest className="w-5 h-5 mr-2" />
                   Começar com GitHub
                 </>
               )}
-            </Button>
-            <Button size="lg" variant="outline" className="w-full sm:w-auto">
-              Ver Como Funciona
             </Button>
           </div>
         </div>
@@ -210,7 +204,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Github className="w-5 h-5 text-gray-600 mt-1" />
+                  <GitPullRequest className="w-5 h-5 text-gray-600 mt-1" />
                   <div>
                     <h3 className="font-semibold">Integração GitHub</h3>
                     <p className="text-muted-foreground text-sm">
@@ -242,7 +236,7 @@ export default function HomePage() {
               </>
             ) : (
               <>
-                <Github className="w-5 h-5 mr-2" />
+                <GitPullRequest className="w-5 h-5 mr-2" />
                 Entrar com GitHub
               </>
             )}

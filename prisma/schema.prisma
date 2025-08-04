@@ -120,6 +120,10 @@ model Task {
   description  String
   requirements String? // Requisitos técnicos específicos
 
+  // Links e anexos
+  links       Json? // Array de objetos com url e description
+  attachments Json? // Array de objetos com name, url e size
+
   // Valores e prazos
   valueInWei   String // Valor em Wei (BigInt como string)
   deadline     DateTime // Data limite de entrega

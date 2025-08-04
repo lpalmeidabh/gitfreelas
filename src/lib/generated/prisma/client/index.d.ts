@@ -6189,6 +6189,8 @@ export namespace Prisma {
     title: number
     description: number
     requirements: number
+    links: number
+    attachments: number
     valueInWei: number
     deadline: number
     allowOverdue: number
@@ -6239,6 +6241,8 @@ export namespace Prisma {
     title?: true
     description?: true
     requirements?: true
+    links?: true
+    attachments?: true
     valueInWei?: true
     deadline?: true
     allowOverdue?: true
@@ -6328,6 +6332,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements: string | null
+    links: JsonValue | null
+    attachments: JsonValue | null
     valueInWei: string
     deadline: Date
     allowOverdue: boolean
@@ -6361,6 +6367,8 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     requirements?: boolean
+    links?: boolean
+    attachments?: boolean
     valueInWei?: boolean
     deadline?: boolean
     allowOverdue?: boolean
@@ -6382,6 +6390,8 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     requirements?: boolean
+    links?: boolean
+    attachments?: boolean
     valueInWei?: boolean
     deadline?: boolean
     allowOverdue?: boolean
@@ -6399,6 +6409,8 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     requirements?: boolean
+    links?: boolean
+    attachments?: boolean
     valueInWei?: boolean
     deadline?: boolean
     allowOverdue?: boolean
@@ -6416,6 +6428,8 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     requirements?: boolean
+    links?: boolean
+    attachments?: boolean
     valueInWei?: boolean
     deadline?: boolean
     allowOverdue?: boolean
@@ -6427,7 +6441,7 @@ export namespace Prisma {
     deletedAt?: boolean
   }
 
-  export type TaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "requirements" | "valueInWei" | "deadline" | "allowOverdue" | "status" | "contractTaskId" | "creatorId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["task"]>
+  export type TaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "requirements" | "links" | "attachments" | "valueInWei" | "deadline" | "allowOverdue" | "status" | "contractTaskId" | "creatorId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["task"]>
   export type TaskInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | UserDefaultArgs<ExtArgs>
     taskDeveloper?: boolean | Task$taskDeveloperArgs<ExtArgs>
@@ -6455,6 +6469,8 @@ export namespace Prisma {
       title: string
       description: string
       requirements: string | null
+      links: Prisma.JsonValue | null
+      attachments: Prisma.JsonValue | null
       valueInWei: string
       deadline: Date
       allowOverdue: boolean
@@ -6895,6 +6911,8 @@ export namespace Prisma {
     readonly title: FieldRef<"Task", 'String'>
     readonly description: FieldRef<"Task", 'String'>
     readonly requirements: FieldRef<"Task", 'String'>
+    readonly links: FieldRef<"Task", 'Json'>
+    readonly attachments: FieldRef<"Task", 'Json'>
     readonly valueInWei: FieldRef<"Task", 'String'>
     readonly deadline: FieldRef<"Task", 'DateTime'>
     readonly allowOverdue: FieldRef<"Task", 'Boolean'>
@@ -10904,6 +10922,8 @@ export namespace Prisma {
     title: 'title',
     description: 'description',
     requirements: 'requirements',
+    links: 'links',
+    attachments: 'attachments',
     valueInWei: 'valueInWei',
     deadline: 'deadline',
     allowOverdue: 'allowOverdue',
@@ -10972,6 +10992,14 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -10986,6 +11014,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -11025,6 +11062,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -11413,6 +11464,8 @@ export namespace Prisma {
     title?: StringFilter<"Task"> | string
     description?: StringFilter<"Task"> | string
     requirements?: StringNullableFilter<"Task"> | string | null
+    links?: JsonNullableFilter<"Task">
+    attachments?: JsonNullableFilter<"Task">
     valueInWei?: StringFilter<"Task"> | string
     deadline?: DateTimeFilter<"Task"> | Date | string
     allowOverdue?: BoolFilter<"Task"> | boolean
@@ -11433,6 +11486,8 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     requirements?: SortOrderInput | SortOrder
+    links?: SortOrderInput | SortOrder
+    attachments?: SortOrderInput | SortOrder
     valueInWei?: SortOrder
     deadline?: SortOrder
     allowOverdue?: SortOrder
@@ -11456,6 +11511,8 @@ export namespace Prisma {
     title?: StringFilter<"Task"> | string
     description?: StringFilter<"Task"> | string
     requirements?: StringNullableFilter<"Task"> | string | null
+    links?: JsonNullableFilter<"Task">
+    attachments?: JsonNullableFilter<"Task">
     valueInWei?: StringFilter<"Task"> | string
     deadline?: DateTimeFilter<"Task"> | Date | string
     allowOverdue?: BoolFilter<"Task"> | boolean
@@ -11476,6 +11533,8 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     requirements?: SortOrderInput | SortOrder
+    links?: SortOrderInput | SortOrder
+    attachments?: SortOrderInput | SortOrder
     valueInWei?: SortOrder
     deadline?: SortOrder
     allowOverdue?: SortOrder
@@ -11498,6 +11557,8 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Task"> | string
     description?: StringWithAggregatesFilter<"Task"> | string
     requirements?: StringNullableWithAggregatesFilter<"Task"> | string | null
+    links?: JsonNullableWithAggregatesFilter<"Task">
+    attachments?: JsonNullableWithAggregatesFilter<"Task">
     valueInWei?: StringWithAggregatesFilter<"Task"> | string
     deadline?: DateTimeWithAggregatesFilter<"Task"> | Date | string
     allowOverdue?: BoolWithAggregatesFilter<"Task"> | boolean
@@ -12101,6 +12162,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -12120,6 +12183,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -12139,6 +12204,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -12158,6 +12225,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -12177,6 +12246,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -12193,6 +12264,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -12208,6 +12281,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -12802,6 +12877,29 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type EnumTaskStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.TaskStatus | EnumTaskStatusFieldRefInput<$PrismaModel>
@@ -12825,6 +12923,8 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     requirements?: SortOrder
+    links?: SortOrder
+    attachments?: SortOrder
     valueInWei?: SortOrder
     deadline?: SortOrder
     allowOverdue?: SortOrder
@@ -12866,6 +12966,32 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type EnumTaskStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -13699,6 +13825,29 @@ export namespace Prisma {
     notIn?: $Enums.TaskStatus[] | ListEnumTaskStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumTaskStatusFilter<$PrismaModel> | $Enums.TaskStatus
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type NestedEnumTaskStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.TaskStatus | EnumTaskStatusFieldRefInput<$PrismaModel>
@@ -13846,6 +13995,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -13864,6 +14015,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -14044,6 +14197,8 @@ export namespace Prisma {
     title?: StringFilter<"Task"> | string
     description?: StringFilter<"Task"> | string
     requirements?: StringNullableFilter<"Task"> | string | null
+    links?: JsonNullableFilter<"Task">
+    attachments?: JsonNullableFilter<"Task">
     valueInWei?: StringFilter<"Task"> | string
     deadline?: DateTimeFilter<"Task"> | Date | string
     allowOverdue?: BoolFilter<"Task"> | boolean
@@ -14516,6 +14671,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -14534,6 +14691,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -14603,6 +14762,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -14621,6 +14782,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -14680,6 +14843,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -14698,6 +14863,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -14732,6 +14899,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -14750,6 +14919,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -14768,6 +14939,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -14786,6 +14959,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -14855,6 +15030,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -14873,6 +15050,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -14957,6 +15136,8 @@ export namespace Prisma {
     title: string
     description: string
     requirements?: string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei: string
     deadline: Date | string
     allowOverdue?: boolean
@@ -15071,6 +15252,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -15089,6 +15272,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean
@@ -15107,6 +15292,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     requirements?: NullableStringFieldUpdateOperationsInput | string | null
+    links?: NullableJsonNullValueInput | InputJsonValue
+    attachments?: NullableJsonNullValueInput | InputJsonValue
     valueInWei?: StringFieldUpdateOperationsInput | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     allowOverdue?: BoolFieldUpdateOperationsInput | boolean

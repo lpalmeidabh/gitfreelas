@@ -1,10 +1,10 @@
 'use client'
 
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, Code, Github, Loader2 } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
-import { useState } from 'react'
+import { Code, GitPullRequest, Loader2 } from 'lucide-react'
+import Link from 'next/link'
+import { ReactNode, useState } from 'react'
 
 function PublicHeader() {
   const [isLoggingIn, setIsLoggingIn] = useState(false)
@@ -32,28 +32,6 @@ function PublicHeader() {
           <span className="text-xl font-bold">GitFreelas</span>
         </Link>
 
-        {/* Navegação */}
-        <nav className="hidden md:flex items-center gap-6">
-          <Link
-            href="/"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Início
-          </Link>
-          <Link
-            href="/sobre"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Sobre
-          </Link>
-          <Link
-            href="/como-funciona"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Como Funciona
-          </Link>
-        </nav>
-
         {/* Botão de Login */}
         <Button onClick={handleLogin} disabled={isLoggingIn}>
           {isLoggingIn ? (
@@ -63,7 +41,7 @@ function PublicHeader() {
             </>
           ) : (
             <>
-              <Github className="w-4 h-4 mr-2" />
+              <GitPullRequest className="w-4 h-4 mr-2" />
               Entrar
             </>
           )}
@@ -73,11 +51,7 @@ function PublicHeader() {
   )
 }
 
-export default function PublicLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader />

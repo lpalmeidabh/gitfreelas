@@ -32,6 +32,30 @@ export const createTaskSchema = z.object({
 
   allowOverdue: z.boolean(),
 
+  // Links e anexos
+  links: z
+    .array(
+      z.object({
+        url: z.string().url('URL deve ser válida'),
+        description: z
+          .string()
+          .max(100, 'Descrição deve ter no máximo 100 caracteres'),
+      }),
+    )
+    .max(5, 'Máximo 5 links')
+    .default([]),
+
+  attachments: z
+    .array(
+      z.object({
+        name: z.string().max(100, 'Nome deve ter no máximo 100 caracteres'),
+        url: z.string().url('URL deve ser válida'),
+        size: z.number().optional(),
+      }),
+    )
+    .max(10, 'Máximo 10 anexos')
+    .default([]),
+
   // Campos Web3 (preenchidos após transação)
   contractTxHash: z.string().optional(),
   walletAddress: z.string().optional(),
@@ -51,6 +75,28 @@ export const createTaskFormSchema = z
       .string()
       .optional()
       .transform((val) => val === 'true'),
+    links: z
+      .string()
+      .optional()
+      .transform((val) => {
+        if (!val) return []
+        try {
+          return JSON.parse(val)
+        } catch {
+          return []
+        }
+      }),
+    attachments: z
+      .string()
+      .optional()
+      .transform((val) => {
+        if (!val) return []
+        try {
+          return JSON.parse(val)
+        } catch {
+          return []
+        }
+      }),
     contractTxHash: z.string().optional(),
     walletAddress: z.string().optional(),
   })
@@ -58,4 +104,6 @@ export const createTaskFormSchema = z
     ...data,
     allowOverdue: data.allowOverdue || false,
     requirements: data.requirements || undefined,
+    links: data.links || [],
+    attachments: data.attachments || [],
   }))

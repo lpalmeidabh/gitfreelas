@@ -116,7 +116,7 @@ interface IGitFreelas {
     );
 
     /**
-     * @dev Emitted when a task expires definitively
+     * @dev Emitted when a task period ends
      */
     event TaskExpired(
         uint256 indexed internalTaskId,
@@ -163,6 +163,7 @@ interface IGitFreelas {
     error PaymentFailed();
     error InsufficientBalance();
     error NoFeesToWithdraw();
+    error InsufficientGFTBalance();
 
     // ============================================================================
     // CONSTANTS & CONFIGURATION
@@ -233,7 +234,7 @@ interface IGitFreelas {
     ) external view returns (uint256);
 
     /**
-     * @dev Check if task is overdue
+     * @dev Check if task has reached its deadline and is overdue
      */
     function isTaskOverdue(uint256 internalTaskId) external view returns (bool);
 
@@ -273,10 +274,16 @@ interface IGitFreelas {
         bool allowOverdue
     ) external payable;
 
+    /**
+     * @dev Apply to a task as a developer
+     * @param taskId External task ID
+     * @param developerAddress Developer's wallet address
+     */
     function acceptDeveloper(
         string calldata taskId,
         address developerAddress
     ) external;
+
     /**
      * @dev Mark task as completed and release payment
      * @param taskId External task ID

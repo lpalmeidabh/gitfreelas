@@ -76,6 +76,21 @@ extract-abi: ## 📋 Extrai ABI do contrato para o frontend
 	@echo "$(YELLOW)📁 Arquivos criados:$(NC)"
 	@echo "   - ../src/lib/web3/abis/GitFreelas.json"
 	@echo "   - ../src/lib/web3/abis/GitFreelas.ts"
+	@echo "$(GREEN)🔄 Atualizando endereços no .env...$(NC)"
+	@if [ -f deployments/sepolia.json ]; then \
+		CONTRACT_ADDR=$$(cat deployments/sepolia.json | jq -r '.contractAddress') && \
+		GFT_ADDR=$$(cat deployments/sepolia.json | jq -r '.gftTokenAddress') && \
+		if [ "$$CONTRACT_ADDR" != "null" ] && [ "$$CONTRACT_ADDR" != "" ]; then \
+			sed -i '' 's/NEXT_PUBLIC_GITFREELAS_CONTRACT_ADDRESS=0x[^[:space:]]*/NEXT_PUBLIC_GITFREELAS_CONTRACT_ADDRESS='"$$CONTRACT_ADDR"'/' ../.env && \
+			echo "$(GREEN)✅ GitFreelas address atualizado: $$CONTRACT_ADDR$(NC)"; \
+		fi && \
+		if [ "$$GFT_ADDR" != "null" ] && [ "$$GFT_ADDR" != "" ]; then \
+			sed -i '' 's/NEXT_PUBLIC_GFT_TOKEN_ADDRESS=0x[^[:space:]]*/NEXT_PUBLIC_GFT_TOKEN_ADDRESS='"$$GFT_ADDR"'/' ../.env && \
+			echo "$(GREEN)✅ GFT Token address atualizado: $$GFT_ADDR$(NC)"; \
+		fi; \
+	else \
+		echo "$(YELLOW)⚠️  deployments/sepolia.json não encontrado$(NC)"; \
+	fi
 
 update-frontend: ## 🔄 Atualiza endereço do contrato no frontend
 	@echo "$(GREEN)Atualizando endereço do contrato no frontend...$(NC)"

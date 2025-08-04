@@ -17,7 +17,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { authClient } from '@/lib/auth-client'
-import { Badge, CreditCard, DotSquare, LogOut, UserCircle } from 'lucide-react'
+import { DotSquare, LogOut, UserCircle } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
 export function NavUser({

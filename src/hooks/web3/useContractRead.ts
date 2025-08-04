@@ -151,31 +151,5 @@ export function useGetTask(taskId: string) {
   }
 }
 
-/**
- * Hook para calcular custos de uma task
- */
-export function calculateTotalDeposit(
-  taskValueEth: string,
-  platformFeePercentage: number = 3,
-) {
-  try {
-    const taskValue = parseFloat(taskValueEth)
-    const platformFee = (taskValue * platformFeePercentage) / 100
-    const totalDeposit = taskValue + platformFee
-
-    return {
-      taskValue: taskValue.toFixed(4),
-      platformFee: platformFee.toFixed(4),
-      totalDeposit: totalDeposit.toFixed(4),
-    }
-  } catch {
-    return {
-      taskValue: '0',
-      platformFee: '0',
-      totalDeposit: '0',
-    }
-  }
-}
-
 // Re-export para compatibilidade
 export { useGitFreelasRead as useContractRead }

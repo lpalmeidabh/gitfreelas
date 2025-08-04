@@ -4,6 +4,7 @@ pragma solidity ^0.8.27;
 import {Script} from 'forge-std/Script.sol';
 import {console} from 'forge-std/console.sol';
 import '../src/GitFreelas.sol';
+import '../src/GitFreelasToken.sol';
 
 /**
  * @title Deploy Script for GitFreelas
@@ -33,10 +34,17 @@ contract Deploy is Script {
         // Start broadcasting transactions
         vm.startBroadcast(vm.envUint('PRIVATE_KEY'));
 
+        console.log('Deploying GitFreelasToken contract...');
+
+        // Deploy GFT token first with zero address (will be updated by GitFreelas contract)
+        GitFreelasToken gftToken = new GitFreelasToken('GitFreelasToken', 'GFT', address(0));
+
+        console.log('GFT Token deployed at:', address(gftToken));
+
         console.log('Deploying GitFreelas contract...');
 
         // Deploy GitFreelas contract
-        gitFreelas = new GitFreelas(contractOwner);
+        gitFreelas = new GitFreelas(contractOwner, address(gftToken));
 
         console.log('GitFreelas deployed at:', address(gitFreelas));
 
@@ -79,6 +87,9 @@ contract Deploy is Script {
             ',\n',
             '  "contractAddress": "',
             vm.toString(address(gitFreelas)),
+            '",\n',
+            '  "gftTokenAddress": "',
+            vm.toString(address(gitFreelas.gftToken())),
             '",\n',
             '  "deployerAddress": "',
             vm.toString(deployer),

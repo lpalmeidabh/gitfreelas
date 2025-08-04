@@ -4,6 +4,7 @@ pragma solidity ^0.8.27;
 import {Test} from 'forge-std/Test.sol';
 import {console} from 'forge-std/console.sol';
 import '../src/GitFreelas.sol';
+import '../src/GitFreelasToken.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Pausable.sol';
 
@@ -61,13 +62,27 @@ contract GitFreelasTest is Test {
         uint256 platformFee
     );
 
+    event GFTTokensDistributed(
+        address indexed recipient,
+        uint256 amount,
+        string indexed taskId
+    );
+
+    event VigilanceBadgeAcquired(
+        address indexed user,
+        uint256 expiryTime
+    );
+
     // ============================================================================
     // SETUP
     // ============================================================================
 
-    function setUp() public {
+                    function setUp() public {
+        // Deploy GFT token first
+        GitFreelasToken gftToken = new GitFreelasToken('GitFreelasToken', 'GFT', address(0));
+
         // Deploy contract
-        gitFreelas = new GitFreelas(owner);
+        gitFreelas = new GitFreelas(owner, address(gftToken));
 
         // Fund test accounts
         vm.deal(client, 100 ether);
@@ -172,10 +187,14 @@ contract GitFreelasTest is Test {
         // (ou seja, recebeu reembolso do excesso)
         assertTrue(totalSpent < totalSent, 'Should have received refund');
 
-        // E que o valor gasto está próximo do TOTAL_DEPOSIT
+        // Verificar que o valor gasto está próximo do valor esperado
+        // O contrato calcula taskValue = msg.value * 100 / 103
+        uint256 expectedTaskValue = (totalSent * 100) / 103;
+        uint256 expectedTotalDeposit = gitFreelas.calculateTotalDeposit(expectedTaskValue);
+
         assertApproxEqAbs(
             totalSpent,
-            TOTAL_DEPOSIT,
+            expectedTotalDeposit,
             0.01 ether,
             'Should refund excess payment'
         );
@@ -558,5 +577,92 @@ contract GitFreelasTest is Test {
         assertEq(tasks.length, 2);
         assertEq(tasks[0].developer, developer);
         assertEq(tasks[1].developer, developer);
+    }
+
+    // ============================================================================
+    // GFT TOKEN TESTS
+    // ============================================================================
+
+    function test_CompleteTask_DistributesGFTTokens() public {
+        // Setup: Create and complete task
+        uint256 deadline = block.timestamp + DEADLINE_DELAY;
+        vm.prank(client);
+        gitFreelas.createTask{value: TOTAL_DEPOSIT}(TASK_ID, deadline, false);
+
+        vm.prank(client);
+        gitFreelas.acceptDeveloper(TASK_ID, developer);
+
+        // Complete task
+        vm.prank(client);
+        vm.expectEmit(true, true, true, true);
+        emit GFTTokensDistributed(developer, 100 * 10**18, TASK_ID);
+        gitFreelas.completeTask(TASK_ID);
+
+        // Verify tokens were distributed only to developer
+        GitFreelasToken gftToken = GitFreelasToken(gitFreelas.gftToken());
+        assertEq(gftToken.balanceOf(developer), 100 * 10**18);
+        assertEq(gftToken.balanceOf(client), 0); // Client doesn't get GFT
+    }
+
+    function test_AcquireVigilanceBadge() public {
+        // Setup: Complete a task to get GFT tokens (developer gets tokens)
+        uint256 deadline = block.timestamp + DEADLINE_DELAY;
+        vm.prank(client);
+        gitFreelas.createTask{value: TOTAL_DEPOSIT}(TASK_ID, deadline, false);
+
+        vm.prank(client);
+        gitFreelas.acceptDeveloper(TASK_ID, developer);
+
+        vm.prank(client);
+        gitFreelas.completeTask(TASK_ID);
+
+        // Developer should have GFT tokens now (client doesn't get any)
+        GitFreelasToken gftToken = GitFreelasToken(gitFreelas.gftToken());
+        assertEq(gftToken.balanceOf(developer), 100 * 10**18);
+        assertEq(gftToken.balanceOf(client), 0);
+
+        // Developer acquires vigilance badge
+        vm.prank(developer);
+        vm.expectEmit(true, true, true, true);
+        emit VigilanceBadgeAcquired(developer, block.timestamp + 72 hours);
+        gitFreelas.acquireVigilanceBadge();
+
+        // Verify badge was acquired
+        assertTrue(gitFreelas.hasVigilanceBadge(developer));
+        assertEq(gitFreelas.getVigilanceBadgeExpiry(developer), block.timestamp + 72 hours);
+
+        // Verify tokens were burned
+        assertEq(gftToken.balanceOf(developer), 50 * 10**18); // 100 - 50 = 50
+    }
+
+    function test_AcquireVigilanceBadge_RevertIf_InsufficientTokens() public {
+        vm.prank(client);
+        vm.expectRevert(IGitFreelas.InsufficientGFTBalance.selector);
+        gitFreelas.acquireVigilanceBadge();
+    }
+
+    function test_VigilanceBadgeExpiry() public {
+        // Setup: Complete a task and acquire badge
+        uint256 deadline = block.timestamp + DEADLINE_DELAY;
+        vm.prank(client);
+        gitFreelas.createTask{value: TOTAL_DEPOSIT}(TASK_ID, deadline, false);
+
+        vm.prank(client);
+        gitFreelas.acceptDeveloper(TASK_ID, developer);
+
+        vm.prank(client);
+        gitFreelas.completeTask(TASK_ID);
+
+        vm.prank(developer);
+        gitFreelas.acquireVigilanceBadge();
+
+        // Badge should be active
+        assertTrue(gitFreelas.hasVigilanceBadge(developer));
+
+        // Fast forward past expiry
+        vm.warp(block.timestamp + 73 hours);
+
+        // Badge should be expired
+        assertFalse(gitFreelas.hasVigilanceBadge(developer));
     }
 }

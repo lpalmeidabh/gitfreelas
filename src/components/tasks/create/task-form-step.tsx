@@ -25,6 +25,7 @@ import { Wallet, AlertCircle, Clock, Info } from 'lucide-react'
 import { WalletConnectButton } from '@/components/web3/wallet-connect-button'
 import { CreateTaskInput } from '@/lib/schemas/task'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { LinkAttachmentManager } from './link-attachment-manager'
 
 interface TaskFormStepProps {
   form: UseFormReturn<CreateTaskInput>
@@ -266,6 +267,28 @@ export function TaskFormStep({
                         desconto de 10% do valor por dia
                       </p>
                     </div>
+                  </FormItem>
+                )}
+              />
+
+              {/* Links e Anexos */}
+              <FormField
+                control={form.control}
+                name="links"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Links e Anexos</FormLabel>
+                    <FormControl>
+                      <LinkAttachmentManager
+                        links={field.value || []}
+                        attachments={form.watch('attachments') || []}
+                        onLinksChange={(links) => field.onChange(links)}
+                        onAttachmentsChange={(attachments) =>
+                          form.setValue('attachments', attachments)
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

@@ -13,6 +13,15 @@ export type Task = {
   title: string
   description: string
   requirements?: string
+  links?: Array<{
+    url: string
+    description: string
+  }>
+  attachments?: Array<{
+    name: string
+    url: string
+    size?: number
+  }>
   valueInWei: string
   deadline: Date
   allowOverdue: boolean
@@ -97,6 +106,15 @@ export type CreateTaskData = {
   title: string
   description: string
   requirements?: string
+  links: Array<{
+    url: string
+    description: string
+  }>
+  attachments: Array<{
+    name: string
+    url: string
+    size?: number
+  }>
   valueInEther: string // Para o formulário em Ether
   deadline: Date
   allowOverdue: boolean

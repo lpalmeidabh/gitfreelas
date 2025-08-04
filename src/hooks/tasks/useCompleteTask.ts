@@ -211,7 +211,10 @@ export function useCompleteTask() {
 
     const state = getCurrentState()
     if (state.success && currentStep === 'database') {
-      setCurrentStep('success')
+      // Adicionar delay para garantir que o modal de sucesso seja exibido
+      setTimeout(() => {
+        setCurrentStep('success')
+      }, 500)
     }
   }, [
     submitState.success,

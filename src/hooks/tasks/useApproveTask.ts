@@ -65,7 +65,10 @@ export function useApproveTask() {
   // Handle server action results
   useEffect(() => {
     if (currentAction === 'accept' && acceptState.success) {
-      setCurrentStep('success')
+      // Adicionar delay para garantir que o modal de sucesso seja exibido
+      setTimeout(() => {
+        setCurrentStep('success')
+      }, 500)
     } else if (currentAction === 'accept' && acceptState.error) {
       setCurrentStep('error')
     }

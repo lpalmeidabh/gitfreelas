@@ -30,6 +30,7 @@ import {
 } from '@/actions/code-review'
 import { ConnectWallet } from '@/components/web3/connect-wallet'
 import { CodeReviewProgress } from './code-review-progress'
+import { SuccessNotification } from '../approval/success-notification'
 
 interface TaskReviewActionsProps {
   task: TaskWithRelations
@@ -261,136 +262,165 @@ export function TaskReviewActions({
 
   // Form state (default)
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <MessageSquare className="h-5 w-5" />
-          Revisar Trabalho
-        </CardTitle>
-        <CardDescription>
-          Pull Request #{selectedPR.number} - {selectedPR.title}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Feedback Input */}
-        <div className="space-y-2">
-          <Label htmlFor="feedback">
-            Feedback{' '}
-            {currentAction === 'reject' || currentAction === 'revision'
-              ? '(obrigatório)'
-              : '(opcional)'}
-          </Label>
-          <Textarea
-            id="feedback"
-            placeholder={
-              currentAction === 'reject'
-                ? 'Explique o motivo da rejeição...'
-                : currentAction === 'revision'
-                ? 'Descreva as correções necessárias...'
-                : 'Forneça feedback sobre o trabalho entregue...'
-            }
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            className="min-h-[100px]"
-          />
-          {(currentAction === 'reject' || currentAction === 'revision') &&
-            !feedback.trim() && (
-              <p className="text-sm text-red-600">
-                Este campo é obrigatório para esta ação
-              </p>
-            )}
-        </div>
-
-        {/* Wallet Connection Check */}
-        {!isConnected && (
-          <Alert>
-            <Wallet className="h-4 w-4" />
-            <AlertDescription>
-              Para aprovar o trabalho e liberar o pagamento, você precisa
-              conectar sua carteira Web3.
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Button
-            onClick={() => {
-              setCurrentAction('approve')
-              handleApprove()
-            }}
-            disabled={!isConnected || isProcessing}
-            className="bg-green-600 hover:bg-green-700"
-          >
-            <CheckCircle className="h-4 w-4 mr-2" />
-            Aprovar
-          </Button>
-
-          <Button
-            onClick={() => {
-              setCurrentAction('revision')
-              if (feedback.trim()) {
-                handleRequestRevision()
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5" />
+            Revisar Trabalho
+          </CardTitle>
+          <CardDescription>
+            Pull Request #{selectedPR.number} - {selectedPR.title}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Feedback Input */}
+          <div className="space-y-2">
+            <Label htmlFor="feedback">
+              Feedback{' '}
+              {currentAction === 'reject' || currentAction === 'revision'
+                ? '(obrigatório)'
+                : '(opcional)'}
+            </Label>
+            <Textarea
+              id="feedback"
+              placeholder={
+                currentAction === 'reject'
+                  ? 'Explique o motivo da rejeição...'
+                  : currentAction === 'revision'
+                  ? 'Descreva as correções necessárias...'
+                  : 'Forneça feedback sobre o trabalho entregue...'
               }
-            }}
-            disabled={!feedback.trim() || isProcessing}
-            variant="outline"
-          >
-            <MessageSquare className="h-4 w-4 mr-2" />
-            Solicitar Correções
-          </Button>
-
-          <Button
-            onClick={() => {
-              setCurrentAction('reject')
-              if (feedback.trim()) {
-                handleReject()
-              }
-            }}
-            disabled={!feedback.trim() || isProcessing}
-            variant="destructive"
-          >
-            <XCircle className="h-4 w-4 mr-2" />
-            Rejeitar
-          </Button>
-        </div>
-
-        {/* Validation Messages */}
-        {currentAction === 'reject' && !feedback.trim() && (
-          <Alert variant="destructive">
-            <AlertDescription>
-              É obrigatório fornecer um motivo para rejeitar o trabalho.
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {currentAction === 'revision' && !feedback.trim() && (
-          <Alert variant="destructive">
-            <AlertDescription>
-              É obrigatório fornecer feedback sobre as correções necessárias.
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Connect Wallet */}
-        {!isConnected && (
-          <div className="pt-4 border-t">
-            <ConnectWallet />
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              className="min-h-[100px]"
+            />
+            {(currentAction === 'reject' || currentAction === 'revision') &&
+              !feedback.trim() && (
+                <p className="text-sm text-red-600">
+                  Este campo é obrigatório para esta ação
+                </p>
+              )}
           </div>
-        )}
 
-        {/* PR Link */}
-        <div className="pt-4 border-t">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.open(selectedPR.html_url, '_blank')}
-          >
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Ver Pull Request no GitHub
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          {/* Wallet Connection Check */}
+          {!isConnected && (
+            <Alert>
+              <Wallet className="h-4 w-4" />
+              <AlertDescription>
+                Para aprovar o trabalho e liberar o pagamento, você precisa
+                conectar sua carteira Web3.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Action Buttons */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Button
+              onClick={() => {
+                setCurrentAction('approve')
+                handleApprove()
+              }}
+              disabled={!isConnected || isProcessing}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Aprovar
+            </Button>
+
+            <Button
+              onClick={() => {
+                setCurrentAction('revision')
+                if (feedback.trim()) {
+                  handleRequestRevision()
+                }
+              }}
+              disabled={!feedback.trim() || isProcessing}
+              variant="outline"
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Solicitar Correções
+            </Button>
+
+            <Button
+              onClick={() => {
+                setCurrentAction('reject')
+                if (feedback.trim()) {
+                  handleReject()
+                }
+              }}
+              disabled={!feedback.trim() || isProcessing}
+              variant="destructive"
+            >
+              <XCircle className="h-4 w-4 mr-2" />
+              Rejeitar
+            </Button>
+          </div>
+
+          {/* Validation Messages */}
+          {currentAction === 'reject' && !feedback.trim() && (
+            <Alert variant="destructive">
+              <AlertDescription>
+                É obrigatório fornecer um motivo para rejeitar o trabalho.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {currentAction === 'revision' && !feedback.trim() && (
+            <Alert variant="destructive">
+              <AlertDescription>
+                É obrigatório fornecer feedback sobre as correções necessárias.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Connect Wallet */}
+          {!isConnected && (
+            <div className="pt-4 border-t">
+              <ConnectWallet />
+            </div>
+          )}
+
+          {/* PR Link */}
+          <div className="pt-4 border-t">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(selectedPR.html_url, '_blank')}
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Ver Pull Request no GitHub
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Fallback notification for PR approval success */}
+      {(approveState.success ||
+        rejectState.success ||
+        revisionState.success) && (
+        <SuccessNotification
+          message={
+            approveState.success
+              ? 'Trabalho aprovado com sucesso!'
+              : rejectState.success
+              ? 'Trabalho rejeitado com sucesso!'
+              : 'Solicitação de correção enviada!'
+          }
+          details={
+            approveState.success
+              ? 'Pagamento liberado e repositório transferido para o cliente.'
+              : rejectState.success
+              ? 'O desenvolvedor foi notificado sobre a rejeição.'
+              : 'O desenvolvedor recebeu feedback detalhado para correções.'
+          }
+          onClose={() => {
+            approveState.success && approveAction({} as any)
+            rejectState.success && rejectAction({} as any)
+            revisionState.success && revisionAction({} as any)
+          }}
+        />
+      )}
+    </>
   )
 }

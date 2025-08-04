@@ -62,6 +62,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
+    "ignore-loader": "^0.1.2",
     "next": "^15.3.4",
     "prisma": "^6.11.0",
     "tailwindcss": "^4",

@@ -41,6 +41,8 @@ export async function createTask(prevState: any, formData: FormData) {
       valueInEther: formData.get('valueInEther') as string,
       deadline: formData.get('deadline') as string,
       allowOverdue: formData.get('allowOverdue') as string,
+      links: formData.get('links') as string,
+      attachments: formData.get('attachments') as string,
       walletAddress: (formData.get('walletAddress') as string) || undefined,
     }
 
@@ -59,6 +61,8 @@ export async function createTask(prevState: any, formData: FormData) {
         title: validatedData.title,
         description: validatedData.description,
         requirements: validatedData.requirements,
+        links: validatedData.links,
+        attachments: validatedData.attachments,
         valueInWei,
         deadline: validatedData.deadline,
         allowOverdue: validatedData.allowOverdue,
@@ -262,7 +266,7 @@ export async function getTasks(): Promise<TaskListResponse> {
     })
 
     return {
-      tasks: tasks as TaskWithRelations[],
+      tasks: tasks as unknown as TaskWithRelations[],
     }
   } catch (error) {
     console.error('Erro ao buscar tarefas:', error)
@@ -359,8 +363,8 @@ export async function getMyTasks() {
     ])
 
     return {
-      createdTasks: createdTasks as TaskWithRelations[],
-      appliedTasks: appliedTasks as TaskWithRelations[],
+      createdTasks: createdTasks as unknown as TaskWithRelations[],
+      appliedTasks: appliedTasks as unknown as TaskWithRelations[],
     }
   } catch (error) {
     console.error('Erro ao buscar minhas tarefas:', error)

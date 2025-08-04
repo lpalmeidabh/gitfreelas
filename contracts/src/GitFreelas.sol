@@ -2,6 +2,7 @@
 pragma solidity ^0.8.27;
 
 import './abstract/GitFreelasBase.sol';
+import './GitFreelasToken.sol';
 
 /**
  * @title GitFreelas
@@ -10,6 +11,18 @@ import './abstract/GitFreelasBase.sol';
  * @author GitFreelas Team
  */
 contract GitFreelas is GitFreelasBase {
+    // ============================================================================
+    // STATE VARIABLES
+    // ============================================================================
+
+    GitFreelasToken public immutable gftToken;
+    uint256 public constant GFT_REWARD_AMOUNT = 100 * 10**18; // 100 GFT tokens
+    uint256 public constant VIGILANCE_BADGE_COST = 50 * 10**18; // 50 GFT tokens
+    uint256 public constant VIGILANCE_BADGE_DURATION = 72 hours; // 72 hours
+
+    // Mapping to track vigilance badge holders
+    mapping(address => uint256) public vigilanceBadgeExpiry;
+
     // ============================================================================
     // EVENTS
     // ============================================================================
@@ -34,6 +47,23 @@ contract GitFreelas is GitFreelasBase {
         address client
     );
 
+    /**
+     * @dev Emitted when GFT tokens are distributed
+     */
+    event GFTTokensDistributed(
+        address indexed recipient,
+        uint256 amount,
+        string indexed taskId
+    );
+
+    /**
+     * @dev Emitted when vigilance badge is acquired
+     */
+    event VigilanceBadgeAcquired(
+        address indexed user,
+        uint256 expiryTime
+    );
+
     // ============================================================================
     // CONSTRUCTOR
     // ============================================================================
@@ -41,8 +71,17 @@ contract GitFreelas is GitFreelasBase {
     /**
      * @dev Deploy the GitFreelas contract
      * @param initialOwner Address that will own the contract (can pause, withdraw fees)
+     * @param gftTokenAddress Address of the GFT token contract
      */
-    constructor(address initialOwner) GitFreelasBase(initialOwner) {
+        constructor(
+        address initialOwner,
+        address gftTokenAddress
+    ) GitFreelasBase(initialOwner) {
+        gftToken = GitFreelasToken(gftTokenAddress);
+
+        // Update the token's GitFreelas address to point to this contract
+        gftToken.updateGitFreelasAddress(address(this));
+
         // Emit deployment event for indexing
         emit GitFreelasPlatformDeployed(
             initialOwner,
@@ -75,7 +114,6 @@ contract GitFreelas is GitFreelasBase {
         whenNotPaused
         validDeadline(deadline)
     {
-        // Para evitar problemas de precisão com divisão, vamos trabalhar com msg.value diretamente
         // Verificar se msg.value é suficiente para pelo menos o valor mínimo + taxa
         uint256 minimumTotalDeposit = calculateTotalDeposit(MINIMUM_TASK_VALUE);
         if (msg.value < minimumTotalDeposit) revert InvalidTaskValue();
@@ -88,16 +126,11 @@ contract GitFreelas is GitFreelasBase {
         // Verificar se o taskValue calculado ainda atende ao mínimo
         if (taskValue < MINIMUM_TASK_VALUE) revert InvalidTaskValue();
 
-        // Calcular o depósito exato necessário para esse taskValue
-        uint256 exactTotalDeposit = calculateTotalDeposit(taskValue);
-
-        // Verificar se temos valor suficiente
-        if (msg.value < exactTotalDeposit) revert InsufficientDeposit();
-
         // Criar a tarefa
         _createTask(taskId, deadline, allowOverdue, taskValue);
 
         // Refund qualquer excesso
+        uint256 exactTotalDeposit = calculateTotalDeposit(taskValue);
         uint256 excess = msg.value - exactTotalDeposit;
         if (excess > 0) {
             (bool success, ) = payable(msg.sender).call{value: excess}('');
@@ -173,6 +206,9 @@ contract GitFreelas is GitFreelasBase {
 
         // Complete the task
         _completeTask(taskId);
+
+        // Distribute GFT tokens to developer
+        _distributeGFTTokens(task.developer, taskId);
     }
 
     /**
@@ -431,6 +467,61 @@ contract GitFreelas is GitFreelasBase {
                 }
             }
         }
+    }
+
+    // ============================================================================
+    // GFT TOKEN FUNCTIONS
+    // ============================================================================
+
+    /**
+     * @dev Distribute GFT tokens to developer when task is completed
+     * @param developer Developer address
+     * @param taskId Task ID for event
+     */
+    function _distributeGFTTokens(
+        address developer,
+        string calldata taskId
+    ) internal {
+        // Mint tokens for developer only
+        gftToken.mint(developer, GFT_REWARD_AMOUNT);
+        emit GFTTokensDistributed(developer, GFT_REWARD_AMOUNT, taskId);
+    }
+
+    /**
+     * @dev Acquire vigilance badge by burning GFT tokens
+     * @notice Costs 50 GFT tokens and lasts for 72 hours
+     */
+    function acquireVigilanceBadge() external {
+        // Check if user has enough tokens
+        if (gftToken.balanceOf(msg.sender) < VIGILANCE_BADGE_COST) {
+            revert InsufficientGFTBalance();
+        }
+
+        // Burn tokens
+        gftToken.burnFrom(msg.sender, VIGILANCE_BADGE_COST);
+
+        // Set badge expiry
+        vigilanceBadgeExpiry[msg.sender] = block.timestamp + VIGILANCE_BADGE_DURATION;
+
+        emit VigilanceBadgeAcquired(msg.sender, block.timestamp + VIGILANCE_BADGE_DURATION);
+    }
+
+    /**
+     * @dev Check if user has active vigilance badge
+     * @param user User address to check
+     * @return True if user has active badge
+     */
+    function hasVigilanceBadge(address user) external view returns (bool) {
+        return vigilanceBadgeExpiry[user] > block.timestamp;
+    }
+
+    /**
+     * @dev Get vigilance badge expiry time for user
+     * @param user User address
+     * @return Expiry timestamp (0 if no badge)
+     */
+    function getVigilanceBadgeExpiry(address user) external view returns (uint256) {
+        return vigilanceBadgeExpiry[user];
     }
 
     // ============================================================================

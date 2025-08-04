@@ -125,7 +125,7 @@ abstract contract GitFreelasBase is
 
     function getTask(
         uint256 internalTaskId
-    ) external view override returns (Task memory) {
+    ) external view returns (Task memory) {
         if (internalTaskId == 0 || internalTaskId > _taskCounter)
             revert TaskNotFound();
         return _tasks[internalTaskId];
@@ -133,7 +133,7 @@ abstract contract GitFreelasBase is
 
     function getTaskByTaskId(
         string calldata taskId
-    ) external view override returns (Task memory) {
+    ) external view returns (Task memory) {
         uint256 internalId = _taskIdToIndex[taskId];
         if (internalId == 0) revert TaskNotFound();
         return _tasks[internalId];
@@ -141,7 +141,7 @@ abstract contract GitFreelasBase is
 
     function getInternalTaskId(
         string calldata taskId
-    ) external view override returns (uint256) {
+    ) external view returns (uint256) {
         uint256 internalId = _taskIdToIndex[taskId];
         if (internalId == 0) revert TaskNotFound();
         return internalId;
@@ -150,21 +150,19 @@ abstract contract GitFreelasBase is
     /**
      * @dev Public implementation of taskExists (implements interface)
      */
-    function taskExists(
-        string calldata taskId
-    ) external view override returns (bool) {
+    function taskExists(string calldata taskId) external view returns (bool) {
         return _taskExists(taskId);
     }
 
     function calculateTotalDeposit(
         uint256 taskValue
-    ) public pure override returns (uint256) {
+    ) public pure returns (uint256) {
         return taskValue + (taskValue * PLATFORM_FEE_PERCENTAGE) / 100;
     }
 
     function calculateOverduePenalty(
         uint256 internalTaskId
-    ) public view override returns (uint256) {
+    ) public view returns (uint256) {
         if (internalTaskId == 0 || internalTaskId > _taskCounter)
             revert TaskNotFound();
 
@@ -188,7 +186,7 @@ abstract contract GitFreelasBase is
 
     function isTaskOverdue(
         uint256 internalTaskId
-    ) external view override returns (bool) {
+    ) external view returns (bool) {
         if (internalTaskId == 0 || internalTaskId > _taskCounter) return false;
 
         Task storage task = _tasks[internalTaskId];
@@ -198,16 +196,11 @@ abstract contract GitFreelasBase is
 
     function isTaskExpired(
         uint256 internalTaskId
-    ) external view override returns (bool) {
+    ) external view returns (bool) {
         return _isTaskExpired(internalTaskId);
     }
 
-    function getPlatformStats()
-        external
-        view
-        override
-        returns (PlatformStats memory)
-    {
+    function getPlatformStats() external view returns (PlatformStats memory) {
         return
             PlatformStats({
                 totalTasks: _taskCounter,
@@ -218,16 +211,11 @@ abstract contract GitFreelasBase is
             });
     }
 
-    function getAvailablePlatformFees()
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function getAvailablePlatformFees() external view returns (uint256) {
         return _availablePlatformFees;
     }
 
-    function getTaskCount() external view override returns (uint256) {
+    function getTaskCount() external view returns (uint256) {
         return _taskCounter;
     }
 
@@ -463,7 +451,7 @@ abstract contract GitFreelasBase is
 
     function withdrawPlatformFees(
         address payable recipient
-    ) external override onlyOwner {
+    ) external onlyOwner {
         if (_availablePlatformFees == 0) revert NoFeesToWithdraw();
 
         uint256 amount = _availablePlatformFees;
@@ -475,7 +463,7 @@ abstract contract GitFreelasBase is
         emit PlatformFeesWithdrawn(recipient, amount);
     }
 
-    function processExpiredTasks(string[] calldata taskIds) external override {
+    function processExpiredTasks(string[] calldata taskIds) external onlyOwner {
         for (uint256 i = 0; i < taskIds.length; i++) {
             uint256 internalId = _taskIdToIndex[taskIds[i]];
             if (internalId != 0 && _isTaskExpired(internalId)) {
@@ -490,17 +478,17 @@ abstract contract GitFreelasBase is
         }
     }
 
-    function pause() external override onlyOwner {
+    function pause() external onlyOwner {
         _pause();
     }
 
-    function unpause() external override onlyOwner {
+    function unpause() external onlyOwner {
         _unpause();
     }
 
     function emergencyWithdraw(
         string calldata taskId
-    ) external override whenPaused {
+    ) external onlyOwner whenPaused {
         uint256 internalId = _taskIdToIndex[taskId];
         if (internalId == 0) revert TaskNotFound();
 

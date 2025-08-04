@@ -3,9 +3,15 @@ import { http, createConfig } from 'wagmi'
 import { sepolia, localhost } from 'wagmi/chains'
 import { metaMask } from 'wagmi/connectors'
 import { GitFreelasABI } from './abis/GitFreelas'
+import { GitFreelasTokenABI } from './abis/GitFreelasToken'
 
 // Pegar variáveis do .env
-const contractAddress = process.env.NEXT_PUBLIC_GITFREELAS_CONTRACT_ADDRESS
+const contractAddress =
+  process.env.NEXT_PUBLIC_GITFREELAS_CONTRACT_ADDRESS ||
+  '0x75eB05f61dF28263453C3Bf5E01F14772e2DC288'
+const gftTokenAddress =
+  process.env.NEXT_PUBLIC_GFT_TOKEN_ADDRESS ||
+  '0x165634C521a8A35584c20fe533f76DA3fAA6287C'
 const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
 
 // Validação básica
@@ -53,9 +59,12 @@ export const APP_CONFIG = {
   // Endereços dos contratos (agora vem do .env)
   contracts: {
     gitFreelas: {
-      address: (contractAddress ||
-        '0x0000000000000000000000000000000000000000') as `0x${string}`,
+      address: contractAddress as `0x${string}`,
       abi: GitFreelasABI, // Agora importa a ABI real
+    },
+    gftToken: {
+      address: gftTokenAddress as `0x${string}`,
+      abi: GitFreelasTokenABI,
     },
   },
 
