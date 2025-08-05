@@ -363,15 +363,6 @@ make verify-sepolia CONTRACT_ADDRESS=0x...
 
 Este projeto está licenciado sob a MIT License - veja o arquivo [LICENSE](LICENSE) para detalhes.
 
-## 📞 **Suporte**
-
-### **Canais de Ajuda**
-
-- **Issues:** GitHub Issues
-- **Documentação:** [docs.gitfreelas.com](https://docs.gitfreelas.com)
-- **Comunidade:** Discord
-- **Email:** support@gitfreelas.com
-
 ### **Links Úteis**
 
 - **Plataforma:** [gitfreelas.com](https://gitfreelas.com)
