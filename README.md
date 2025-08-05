@@ -365,7 +365,6 @@ Este projeto está licenciado sob a MIT License - veja o arquivo [LICENSE](LICEN
 
 ### **Links Úteis**
 
-- **Plataforma:** [gitfreelas.com](https://gitfreelas.com)
 - **Contratos:** [Etherscan](https://sepolia.etherscan.io/address/0x75eB05f61dF28263453C3Bf5E01F14772e2DC288)
 - **GitHub:** [github.com/gitfreelas](https://github.com/gitfreelas)
 
