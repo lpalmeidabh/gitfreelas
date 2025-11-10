@@ -43,7 +43,7 @@ GitFreelas é uma plataforma de freelancing que utiliza blockchain para automati
 - **Estado:** React Hooks + Server Actions
 - **Web3:** Wagmi + Ethers.js v6
 
-### **Backend (Prisma + PostgreSQL)**
+### **BD (Prisma + PostgreSQL)**
 
 - **ORM:** Prisma
 - **Database:** PostgreSQL (Supabase)
